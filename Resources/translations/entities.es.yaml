@@ -1,0 +1,9 @@
+# Buyback module
+buyback_module.name: Módulo de recuperación
+buyback_module.name.plural: Módulos de recuperación
+buyback_module.fields.comment: Comentario
+buyback_module.fields.excluded_scope: Perímetro excluido
+buyback_module.fields.identifier_type: Tipo de identificación
+buyback_module.associations.default_invoice_address: Dirección de facturación por defecto
+buyback_module.associations.default_audit_request_status: Estado predeterminado de las solicitudes de auditoría
+buyback_module.associations.supplier: Proveedor

@@ -1,0 +1,9 @@
+# Repair module
+buyback_module.name: Module de reprise
+buyback_module.name.plural: Modules de reprise
+buyback_module.fields.comment: Commentaire
+buyback_module.fields.excluded_scope: Périmètre exclus
+buyback_module.fields.identifier_type: Type d'identification
+buyback_module.associations.default_invoice_address: Adresse de facturation par défaut
+buyback_module.associations.default_audit_request_status: Statut par défaut des demandes d'audit
+buyback_module.associations.supplier: Prestataire

@@ -1,0 +1,9 @@
+# Buyback module
+buyback_module.name: Buyback module
+buyback_module.name.plural: Buyback modules
+buyback_module.fields.comment: Comment
+buyback_module.fields.excluded_scope: Excluded scope
+buyback_module.fields.identifier_type: Identifier type
+buyback_module.associations.default_invoice_address: Default invoice address
+buyback_module.associations.default_audit_request_status: Default audit request status
+buyback_module.associations.supplier: Provider
