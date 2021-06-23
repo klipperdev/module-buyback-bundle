@@ -64,6 +64,13 @@ interface BuybackModuleInterface extends
     /**
      * @return static
      */
+    public function setDefaultAuditWorkflow(?AuditWorkflowInterface $defaultAuditWorkflow);
+
+    public function getDefaultAuditWorkflow(): ?AuditWorkflowInterface;
+
+    /**
+     * @return static
+     */
     public function setDefaultAuditRequestStatus(?ChoiceInterface $defaultAuditRequestStatus);
 
     public function getDefaultAuditRequestStatus(): ?ChoiceInterface;

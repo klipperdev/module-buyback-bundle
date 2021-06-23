@@ -109,6 +109,17 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
 
     /**
      * @ORM\ManyToOne(
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditWorkflowInterface",
+     *     fetch="EXTRA_LAZY"
+     * )
+     *
+     * @Serializer\Expose
+     * @Serializer\MaxDepth(1)
+     */
+    protected ?AuditWorkflowInterface $defaultAuditWorkflow = null;
+
+    /**
+     * @ORM\ManyToOne(
      *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface",
      *     fetch="EXTRA_LAZY"
      * )
@@ -197,6 +208,21 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
     public function getDefaultInvoiceAddress(): ?PartnerAddressInterface
     {
         return $this->defaultInvoiceAddress;
+    }
+
+    /**
+     * @return static
+     */
+    public function setDefaultAuditWorkflow(?AuditWorkflowInterface $defaultAuditWorkflow): self
+    {
+        $this->defaultAuditWorkflow = $defaultAuditWorkflow;
+
+        return $this;
+    }
+
+    public function getDefaultAuditWorkflow(): ?AuditWorkflowInterface
+    {
+        return $this->defaultAuditWorkflow;
     }
 
     public function setDefaultAuditRequestStatus(?ChoiceInterface $defaultAuditRequestStatus): self

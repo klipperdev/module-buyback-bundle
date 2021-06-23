@@ -7,3 +7,18 @@ buyback_module.fields.identifier_type: Tipo de identificación
 buyback_module.associations.default_invoice_address: Dirección de facturación por defecto
 buyback_module.associations.default_audit_request_status: Estado predeterminado de las solicitudes de auditoría
 buyback_module.associations.supplier: Proveedor
+
+# Audit Step
+audit_step.name: Paso de auditoría
+audit_step.name.plural: Pasos de auditoría
+
+# Audit Workflow
+audit_workflow.name: Flujo de trabajo de auditoría
+audit_workflow.name.plural: Flujos de trabajo de auditoría
+
+# Audit Workflow Step
+audit_workflow_step.name: Paso de flujo de trabajo de auditoría
+audit_workflow_step.name.plural: Pasos de flujo de trabajo de auditoría
+audit_workflow_step.fields.closed: Cerrada
+audit_workflow_step.fields.validated: Validada
+audit_workflow_step.associations.automatic_status: Estado automático

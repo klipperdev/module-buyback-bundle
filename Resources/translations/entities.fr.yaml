@@ -1,4 +1,4 @@
-# Repair module
+# Buyback module
 buyback_module.name: Module de reprise
 buyback_module.name.plural: Modules de reprise
 buyback_module.fields.comment: Commentaire
@@ -7,3 +7,18 @@ buyback_module.fields.identifier_type: Type d'identification
 buyback_module.associations.default_invoice_address: Adresse de facturation par défaut
 buyback_module.associations.default_audit_request_status: Statut par défaut des demandes d'audit
 buyback_module.associations.supplier: Prestataire
+
+# Audit Step
+audit_step.name: Etape d'audit
+audit_step.name.plural: Etapes d'audit
+
+# Audit Workflow
+audit_workflow.name: Flux de travail d'audit
+audit_workflow.name.plural: Flux de travail d'audit
+
+# Audit Workflow Step
+audit_workflow_step.name: Étape du flux de travail d'audit
+audit_workflow_step.name.plural: Étapes du flux de travail d'audit
+audit_workflow_step.fields.closed: Clôturé
+audit_workflow_step.fields.validated: Validé
+audit_workflow_step.associations.automatic_status: Statut automatique
