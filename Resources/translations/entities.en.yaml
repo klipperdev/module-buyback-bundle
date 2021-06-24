@@ -8,6 +8,10 @@ buyback_module.associations.default_invoice_address: Default invoice address
 buyback_module.associations.default_audit_request_status: Default audit request status
 buyback_module.associations.supplier: Provider
 
+# Audit Condition
+audit_condition.name: Audit Condition
+audit_condition.name.plural: Audit Conditions
+
 # Audit Step
 audit_step.name: Audit step
 audit_step.name.plural: Audit steps
