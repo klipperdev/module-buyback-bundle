@@ -56,6 +56,17 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
 
     /**
      * @ORM\ManyToOne(
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface",
+     *     fetch="EXTRA_LAZY"
+     * )
+     *
+     * @Serializer\Expose
+     * @Serializer\MaxDepth(2)
+     */
+    protected ?PartnerAddressInterface $shippingAddress = null;
+
+    /**
+     * @ORM\ManyToOne(
      *     targetEntity="Klipper\Module\PartnerBundle\Model\AccountInterface",
      *     fetch="EAGER"
      * )
@@ -63,7 +74,7 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
      * @Assert\NotNull
      * @Assert\Expression(
      *     expression="!(!value || !value.isSupplier())",
-     *     message="klipper_buyback.buyback_module.invalid_supplier"
+     *     message="klipper_buyback.account.invalid_supplier"
      * )
      *
      * @Serializer\Expose
@@ -72,16 +83,15 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
     protected ?AccountInterface $supplier = null;
 
     /**
-     * @ORM\Column(type="string", length=128, nullable=true)
-     *
-     * @KlipperDeviceAssert\DeviceIdentifierTypeChoice
-     * @Assert\Type(type="string")
-     * @Assert\Length(min=0, max=128)
-     * @Assert\NotBlank
+     * @ORM\ManyToOne(
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface",
+     *     fetch="EXTRA_LAZY"
+     * )
      *
      * @Serializer\Expose
+     * @Serializer\MaxDepth(2)
      */
-    protected ?string $identifierType = null;
+    protected ?PartnerAddressInterface $invoiceAddress = null;
 
     /**
      * @ORM\ManyToOne(
@@ -97,26 +107,16 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
     protected ?WorkcenterInterface $workcenter = null;
 
     /**
-     * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface",
-     *     fetch="EXTRA_LAZY"
-     * )
+     * @ORM\Column(type="string", length=128, nullable=true)
+     *
+     * @KlipperDeviceAssert\DeviceIdentifierTypeChoice
+     * @Assert\Type(type="string")
+     * @Assert\Length(min=0, max=128)
+     * @Assert\NotBlank
      *
      * @Serializer\Expose
-     * @Serializer\MaxDepth(2)
      */
-    protected ?PartnerAddressInterface $defaultInvoiceAddress = null;
-
-    /**
-     * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditWorkflowInterface",
-     *     fetch="EXTRA_LAZY"
-     * )
-     *
-     * @Serializer\Expose
-     * @Serializer\MaxDepth(1)
-     */
-    protected ?AuditWorkflowInterface $defaultAuditWorkflow = null;
+    protected ?string $identifierType = null;
 
     /**
      * @ORM\ManyToOne(
@@ -151,6 +151,18 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
      */
     protected ?string $excludedScope = null;
 
+    public function setShippingAddress(?PartnerAddressInterface $shippingAddress): self
+    {
+        $this->shippingAddress = $shippingAddress;
+
+        return $this;
+    }
+
+    public function getShippingAddress(): ?PartnerAddressInterface
+    {
+        return $this->shippingAddress;
+    }
+
     public function setAccount(?AccountInterface $account): self
     {
         $this->account = $account;
@@ -174,16 +186,16 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
         return $this->supplier;
     }
 
-    public function setIdentifierType(?string $identifierType): self
+    public function setInvoiceAddress(?PartnerAddressInterface $invoiceAddress): self
     {
-        $this->identifierType = $identifierType;
+        $this->invoiceAddress = $invoiceAddress;
 
         return $this;
     }
 
-    public function getIdentifierType(): ?string
+    public function getInvoiceAddress(): ?PartnerAddressInterface
     {
-        return $this->identifierType;
+        return $this->invoiceAddress;
     }
 
     public function setWorkcenter(?WorkcenterInterface $workcenter): self
@@ -198,31 +210,16 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
         return $this->workcenter;
     }
 
-    public function setDefaultInvoiceAddress(?PartnerAddressInterface $defaultInvoiceAddress): self
+    public function setIdentifierType(?string $identifierType): self
     {
-        $this->defaultInvoiceAddress = $defaultInvoiceAddress;
+        $this->identifierType = $identifierType;
 
         return $this;
     }
 
-    public function getDefaultInvoiceAddress(): ?PartnerAddressInterface
+    public function getIdentifierType(): ?string
     {
-        return $this->defaultInvoiceAddress;
-    }
-
-    /**
-     * @return static
-     */
-    public function setDefaultAuditWorkflow(?AuditWorkflowInterface $defaultAuditWorkflow): self
-    {
-        $this->defaultAuditWorkflow = $defaultAuditWorkflow;
-
-        return $this;
-    }
-
-    public function getDefaultAuditWorkflow(): ?AuditWorkflowInterface
-    {
-        return $this->defaultAuditWorkflow;
+        return $this->identifierType;
     }
 
     public function setDefaultAuditRequestStatus(?ChoiceInterface $defaultAuditRequestStatus): self

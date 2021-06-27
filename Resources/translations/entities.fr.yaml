@@ -4,25 +4,12 @@ buyback_module.name.plural: Modules de reprise
 buyback_module.fields.comment: Commentaire
 buyback_module.fields.excluded_scope: Périmètre exclus
 buyback_module.fields.identifier_type: Type d'identification
-buyback_module.associations.default_invoice_address: Adresse de facturation par défaut
+buyback_module.associations.invoice_address: Adresse de facturation du prestataire
 buyback_module.associations.default_audit_request_status: Statut par défaut des demandes d'audit
+buyback_module.associations.shipping_address: Adresse d'expédition
 buyback_module.associations.supplier: Prestataire
 
 # Audit Condition
 audit_condition.name: Condition d'audit
 audit_condition.name.plural: Conditions d'audit
-
-# Audit Step
-audit_step.name: Etape d'audit
-audit_step.name.plural: Etapes d'audit
-
-# Audit Workflow
-audit_workflow.name: Flux de travail d'audit
-audit_workflow.name.plural: Flux de travail d'audit
-
-# Audit Workflow Step
-audit_workflow_step.name: Étape du flux de travail d'audit
-audit_workflow_step.name.plural: Étapes du flux de travail d'audit
-audit_workflow_step.fields.closed: Clôturé
-audit_workflow_step.fields.validated: Validé
-audit_workflow_step.associations.automatic_status: Statut automatique
+audit_condition.fields.state: Etat

@@ -36,6 +36,13 @@ interface BuybackModuleInterface extends
     /**
      * @return static
      */
+    public function setShippingAddress(?PartnerAddressInterface $shippingAddress);
+
+    public function getShippingAddress(): ?PartnerAddressInterface;
+
+    /**
+     * @return static
+     */
     public function setSupplier(?AccountInterface $supplier);
 
     public function getSupplier(): ?AccountInterface;
@@ -43,9 +50,9 @@ interface BuybackModuleInterface extends
     /**
      * @return static
      */
-    public function setIdentifierType(?string $identifierType);
+    public function setInvoiceAddress(?PartnerAddressInterface $invoiceAddress);
 
-    public function getIdentifierType(): ?string;
+    public function getInvoiceAddress(): ?PartnerAddressInterface;
 
     /**
      * @return static
@@ -57,16 +64,9 @@ interface BuybackModuleInterface extends
     /**
      * @return static
      */
-    public function setDefaultInvoiceAddress(?PartnerAddressInterface $defaultInvoiceAddress);
+    public function setIdentifierType(?string $identifierType);
 
-    public function getDefaultInvoiceAddress(): ?PartnerAddressInterface;
-
-    /**
-     * @return static
-     */
-    public function setDefaultAuditWorkflow(?AuditWorkflowInterface $defaultAuditWorkflow);
-
-    public function getDefaultAuditWorkflow(): ?AuditWorkflowInterface;
+    public function getIdentifierType(): ?string;
 
     /**
      * @return static

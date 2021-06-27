@@ -33,4 +33,10 @@ interface AuditConditionInterface extends
     TimestampableInterface,
     UserTrackableInterface
 {
+    /**
+     * @return static
+     */
+    public function setState(?string $state);
+
+    public function getState(): ?string;
 }
