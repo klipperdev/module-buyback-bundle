@@ -13,3 +13,30 @@ buyback_module.associations.supplier: Provider
 audit_condition.name: Audit Condition
 audit_condition.name.plural: Audit Conditions
 audit_condition.fields.state: State
+
+# Audit Request
+audit_request.name: Audit request
+audit_request.name.plural: Audit requests
+audit_request.fields.reference: Reference
+audit_request.fields.identifier_type: Identifier type
+audit_request.fields.supplier_order_number: Supplier order number
+audit_request.fields.customer_reference: Customer reference
+audit_request.fields.date: Date
+audit_request.fields.estimated_delivery_date: Estimated delivery date
+audit_request.fields.estimated_processing_date: Estimated processing date
+audit_request.fields.receipted_at: Receipted at
+audit_request.fields.expected_quantity: Expected quantity
+audit_request.fields.received_quantity: Received quantity
+audit_request.fields.comment: Comment
+audit_request.fields.closed: Closed
+audit_request.fields.validated: Validated
+audit_request.associations.shipping_address: Shipping address
+audit_request.associations.supplier: Provider
+audit_request.associations.invoice_address: Invoice address
+audit_request.associations.status: Status
+
+# Audit Request Item
+audit_request_item.name: Audit
+audit_request_item.name.plural: Audits
+audit_request_item.fields.expected_quantity: Expected quantity
+audit_request_item.fields.received_quantity: Received quantity

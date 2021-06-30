@@ -124,7 +124,7 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
      *     fetch="EXTRA_LAZY"
      * )
      *
-     * @EntityDoctrineChoice("buyback_audit_request_status")
+     * @EntityDoctrineChoice("audit_request_status")
      *
      * @Serializer\Expose
      * @Serializer\MaxDepth(1)

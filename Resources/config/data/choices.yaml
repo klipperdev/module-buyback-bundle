@@ -1,0 +1,30 @@
+audit_request_status:
+    -   value: registered_request
+        label: Registered request
+        icon: fa-fw fa-comment-medical
+        translations:
+            fr: { label: Demande enregistrée }
+    -   value: waiting_treatment
+        label: Received - Waiting for treatment
+        icon: fa-fw fa-box
+        color: '#40c1b8'
+        translations:
+            fr: { label: Réceptionné - En attente de traitement }
+    -   value: waiting_customer_feedback
+        label: Waiting for customer feedback
+        icon: fa-fw fa-user
+        color: '#f7a40b'
+        translations:
+            fr: { label: En attente retour client }
+    -   value: validated
+        label: Validated
+        icon: fa-fw fa-check
+        color: '#149c7d'
+        translations:
+            fr: { label: Validée }
+    -   value: canceled
+        label: Canceled
+        icon: fa-fw fa-times
+        color: '#b42727'
+        translations:
+            fr: { label: Annulée }
