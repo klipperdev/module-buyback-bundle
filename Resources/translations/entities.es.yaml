@@ -36,7 +36,19 @@ audit_request.associations.invoice_address: Dirección de facturación
 audit_request.associations.status: Estado
 
 # Audit Request Item
-audit_request_item.name: Auditoría
-audit_request_item.name.plural: Auditorias
+audit_request_item.name: Equipo de auditoria
+audit_request_item.name.plural: Equipos de auditoria
 audit_request_item.fields.expected_quantity: Cantidad esperada
 audit_request_item.fields.received_quantity: Cantidad recibida
+
+# Audit Item
+audit_item.name: Auditoría
+audit_item.name.plural: Auditorias
+audit_request_item.fields.receipted_at: Recibido el
+audit_request_item.fields.condition_price: Precio por condición
+audit_request_item.fields.state_price: Precio por estado
+audit_request_item.fields.comment: Comentario
+audit_request_item.fields.closed: Cerrado
+audit_request_item.fields.validated: Validado
+audit_request_item.associations.status: Estado
+audit_request_item.associations.audit_condition: Condición

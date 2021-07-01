@@ -28,3 +28,21 @@ audit_request_status:
         color: '#b42727'
         translations:
             fr: { label: Annulée }
+
+audit_item_status:
+    -   value: confirmed
+        label: Confirmed
+        translations:
+            fr: { label: Confirmé }
+    -   value: qualified
+        label: Qualified
+        translations:
+            fr: { label: Qualifié }
+    -   value: audited
+        label: Audited
+        translations:
+            fr: { label: Audité }
+    -   value: valorised
+        label: Valorised
+        translations:
+            fr: { label: Valorisé }
