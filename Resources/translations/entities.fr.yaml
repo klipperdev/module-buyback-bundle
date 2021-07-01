@@ -44,11 +44,11 @@ audit_request_item.fields.received_quantity: Quantité reçue
 # Audit Item
 audit_item.name: Audit
 audit_item.name.plural: Audits
-audit_request_item.fields.receipted_at: Reçu le
-audit_request_item.fields.condition_price: Prix par condition
-audit_request_item.fields.state_price: Prix par état
-audit_request_item.fields.comment: Commentaire
-audit_request_item.fields.closed: Clôturée
-audit_request_item.fields.validated: Validée
-audit_request_item.associations.status: Statut
-audit_request_item.associations.audit_condition: Condition
+audit_item.fields.receipted_at: Reçu le
+audit_item.fields.condition_price: Prix par condition
+audit_item.fields.state_price: Prix par état
+audit_item.fields.comment: Commentaire
+audit_item.fields.closed: Clôturée
+audit_item.fields.validated: Validée
+audit_item.associations.status: Statut
+audit_item.associations.audit_condition: Condition
