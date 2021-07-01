@@ -46,3 +46,29 @@ audit_item_status:
         label: Valorised
         translations:
             fr: { label: Valorisé }
+
+buyback_offer_status:
+    -   value: draft
+        label: Draft
+        translations:
+            fr: { label: Brouillon }
+    -   value: waiting_customer
+        label: Sent - Waiting
+        translations:
+            fr: { label: Envoyée - En attente }
+    -   value: waiting_manager
+        label: Waiting the manager
+        translations:
+            fr: { label: En attente du responsable }
+    -   value: accepted
+        label: Accepted
+        translations:
+            fr: { label: Acceptée }
+    -   value: refused
+        label: Refused
+        translations:
+            fr: { label: Refusée }
+    -   value: canceled
+        label: Canceled
+        translations:
+            fr: { label: Annulée }

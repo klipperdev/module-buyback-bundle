@@ -1,3 +1,7 @@
 # Buyback Audit Item State
 buyback_audit_item_state.functional: Functional
 buyback_audit_item_state.nonfunctional: Nonfunctional
+
+# Buyback Offer Calculation Method State
+buyback_offer_calculation_method.by_condition: By condition
+buyback_offer_calculation_method.by_state: By state

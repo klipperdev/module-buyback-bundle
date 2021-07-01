@@ -90,6 +90,13 @@ interface AuditItemInterface extends
     /**
      * @return static
      */
+    public function setBuybackOffer(?BuybackOfferInterface $buybackOffer);
+
+    public function getBuybackOffer(): ?BuybackOfferInterface;
+
+    /**
+     * @return static
+     */
     public function setComment(?string $comment);
 
     public function getComment(): ?string;

@@ -119,6 +119,16 @@ abstract class AbstractAuditItem implements AuditItemInterface
     protected float $statePrice = 0.0;
 
     /**
+     * @ORM\ManyToOne(
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\BuybackOfferInterface",
+     *     fetch="EAGER"
+     * )
+     *
+     * @Serializer\Expose
+     */
+    protected ?BuybackOfferInterface $buybackOffer = null;
+
+    /**
      * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\Type(type="string")
@@ -237,6 +247,18 @@ abstract class AbstractAuditItem implements AuditItemInterface
     public function getStatePrice(): float
     {
         return $this->statePrice;
+    }
+
+    public function setBuybackOffer(?BuybackOfferInterface $buybackOffer): self
+    {
+        $this->buybackOffer = $buybackOffer;
+
+        return $this;
+    }
+
+    public function getBuybackOffer(): ?BuybackOfferInterface
+    {
+        return $this->buybackOffer;
     }
 
     public function setComment(?string $comment): self

@@ -52,3 +52,21 @@ audit_item.fields.closed: Cerrado
 audit_item.fields.validated: Validado
 audit_item.associations.status: Estado
 audit_item.associations.audit_condition: Condición
+
+# Buyback Offer
+buyback_offer.name: Oferta de recuperación
+buyback_offer.name.plural: Ofertas de recuperación
+buyback_offer.fields.reference: Referencia
+buyback_offer.fields.date: Fecha
+buyback_offer.fields.expiration_date: Fecha de caducidad
+buyback_offer.fields.calculation_method: Método de calculo
+buyback_offer.fields.total_condition_price: Precio total por condición
+buyback_offer.fields.total_state_price: Precio total por estado
+buyback_offer.fields.total_price: Precio total
+buyback_offer.fields.comment: Comentario
+buyback_offer.fields.closed: Cerrado
+buyback_offer.fields.validated: Validado
+buyback_offer.associations.shipping_address: Dirección de envío
+buyback_offer.associations.supplier: Proveedor
+buyback_offer.associations.invoice_address: Dirección de facturación
+buyback_offer.associations.status: Estado
