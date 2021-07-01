@@ -106,7 +106,6 @@ abstract class AbstractAuditItem implements AuditItemInterface
      * @Assert\Type(type="float")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
      */
     protected float $conditionPrice = 0.0;
 
@@ -116,7 +115,6 @@ abstract class AbstractAuditItem implements AuditItemInterface
      * @Assert\Type(type="float")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
      */
     protected float $statePrice = 0.0;
 
