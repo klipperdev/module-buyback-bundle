@@ -22,6 +22,7 @@ use Klipper\Module\DeviceBundle\Validator\Constraints as KlipperDeviceAssert;
 use Klipper\Module\PartnerBundle\Model\AccountInterface;
 use Klipper\Module\PartnerBundle\Model\PartnerAddressInterface;
 use Klipper\Module\PartnerBundle\Model\Traits\AccountableRequiredTrait;
+use Klipper\Module\PartnerBundle\Model\Traits\ContactableOptionalTrait;
 use Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -54,6 +55,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 abstract class AbstractAuditRequest implements AuditRequestInterface
 {
     use AccountableRequiredTrait;
+    use ContactableOptionalTrait;
     use OrganizationalRequiredTrait;
     use TimestampableTrait;
     use UserTrackableTrait;

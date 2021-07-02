@@ -19,6 +19,7 @@ use Klipper\Component\Model\Traits\UserTrackableInterface;
 use Klipper\Module\PartnerBundle\Model\AccountInterface;
 use Klipper\Module\PartnerBundle\Model\PartnerAddressInterface;
 use Klipper\Module\PartnerBundle\Model\Traits\AccountableRequiredInterface;
+use Klipper\Module\PartnerBundle\Model\Traits\ContactableOptionalInterface;
 use Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface;
 
 /**
@@ -28,6 +29,7 @@ use Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface;
  */
 interface AuditRequestInterface extends
     AccountableRequiredInterface,
+    ContactableOptionalInterface,
     IdInterface,
     OrganizationalRequiredInterface,
     TimestampableInterface,
