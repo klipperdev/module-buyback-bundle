@@ -22,7 +22,7 @@ use Klipper\Module\DeviceBundle\Validator\Constraints as KlipperDeviceAssert;
 use Klipper\Module\PartnerBundle\Model\AccountInterface;
 use Klipper\Module\PartnerBundle\Model\PartnerAddressInterface;
 use Klipper\Module\PartnerBundle\Model\Traits\AccountableRequiredTrait;
-use Klipper\Module\PartnerBundle\Model\Traits\ContactableOptionalTrait;
+use Klipper\Module\PartnerBundle\Model\Traits\ContactableRequiredTrait;
 use Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -55,7 +55,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 abstract class AbstractAuditRequest implements AuditRequestInterface
 {
     use AccountableRequiredTrait;
-    use ContactableOptionalTrait;
+    use ContactableRequiredTrait;
     use OrganizationalRequiredTrait;
     use TimestampableTrait;
     use UserTrackableTrait;
@@ -77,6 +77,11 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      *     fetch="EXTRA_LAZY"
      * )
      *
+     * @Assert\Expression(
+     *     expression="!(!value && !(!this.getAccount() || !this.getAccount().getBuybackModule() || !this.getAccount().getBuybackModule().getShippingAddress()))",
+     *     message="This value should not be blank."
+     * )
+     *
      * @Serializer\Expose
      * @Serializer\MaxDepth(2)
      */
@@ -88,9 +93,8 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      *     fetch="EAGER"
      * )
      *
-     * @Assert\NotNull
      * @Assert\Expression(
-     *     expression="!(!value || !value.isSupplier())",
+     *     expression="!(!!value && !value.isSupplier())",
      *     message="klipper_buyback.account.invalid_supplier"
      * )
      *
@@ -116,8 +120,6 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      *     fetch="EAGER"
      * )
      *
-     * @Assert\NotBlank
-     *
      * @Serializer\Expose
      * @Serializer\MaxDepth(1)
      */
@@ -129,7 +131,6 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @KlipperDeviceAssert\DeviceIdentifierTypeChoice
      * @Assert\Type(type="string")
      * @Assert\Length(min=0, max=128)
-     * @Assert\NotBlank
      *
      * @Serializer\Expose
      */
@@ -172,7 +173,6 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @ORM\Column(type="date", nullable=true)
      *
      * @Assert\Type(type="datetime")
-     * @Assert\NotBlank
      *
      * @Serializer\Expose
      */

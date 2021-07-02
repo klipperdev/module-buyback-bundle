@@ -1,1 +1,2 @@
 klipper_buyback.account.invalid_supplier: Le compte sélectionné doit être un fournisseur
+klipper_buyback.audit_request.module_must_be_enabled: Le module de reprise doit être activé pour ce compte
