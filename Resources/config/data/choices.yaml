@@ -1,4 +1,9 @@
 audit_request_status:
+    -   value: draft
+        label: Brouillon
+        icon: fa-fw fa-sticky-note
+        translations:
+            fr: { label: Brouillon }
     -   value: registered_request
         label: Registered request
         icon: fa-fw fa-comment-medical
