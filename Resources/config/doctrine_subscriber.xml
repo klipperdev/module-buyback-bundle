@@ -10,6 +10,7 @@
             <tag name="doctrine.event_subscriber" />
             <argument type="service" id="klipper_buyback.generator.audit_request_reference"/>
             <argument type="service" id="translator"/>
+            <argument type="service" id="klipper_resource.object_factory"/>
             <argument type="collection"/>
             <argument type="collection"/>
         </service>

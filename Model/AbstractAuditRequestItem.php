@@ -56,6 +56,7 @@ abstract class AbstractAuditRequestItem implements AuditRequestItemInterface
     /**
      * @ORM\ManyToOne(
      *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditRequestInterface",
+     *     inversedBy="items",
      *     fetch="EAGER"
      * )
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)

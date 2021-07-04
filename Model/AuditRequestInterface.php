@@ -11,6 +11,7 @@
 
 namespace Klipper\Module\BuybackBundle\Model;
 
+use Doctrine\Common\Collections\Collection;
 use Klipper\Component\DoctrineChoice\Model\ChoiceInterface;
 use Klipper\Component\Model\Traits\IdInterface;
 use Klipper\Component\Model\Traits\OrganizationalRequiredInterface;
@@ -174,4 +175,16 @@ interface AuditRequestInterface extends
     public function setValidated(bool $validated);
 
     public function isValidated(): bool;
+
+    /**
+     * @return static
+     */
+    public function setConverted(bool $converted);
+
+    public function isConverted(): bool;
+
+    /**
+     * @return AuditRequestItemInterface[]
+     */
+    public function getItems(): Collection;
 }

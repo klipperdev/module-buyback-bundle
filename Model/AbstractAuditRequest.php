@@ -11,6 +11,8 @@
 
 namespace Klipper\Module\BuybackBundle\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Klipper\Component\DoctrineChoice\Model\ChoiceInterface;
@@ -275,6 +277,28 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      */
     protected bool $validated = false;
 
+    /**
+     * @ORM\Column(type="boolean")
+     *
+     * @Assert\Type(type="boolean")
+     *
+     * @Serializer\Expose
+     * @Serializer\ReadOnly
+     */
+    protected bool $converted = false;
+
+    /**
+     * @var null|AuditRequestItemInterface[]|Collection
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditRequestItemInterface",
+     *     mappedBy="auditRequest",
+     *     fetch="EXTRA_LAZY",
+     *     cascade={"persist", "remove"}
+     * )
+     */
+    protected ?Collection $items = null;
+
     public function setReference(?string $reference): self
     {
         $this->reference = $reference;
@@ -513,5 +537,22 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
     public function isValidated(): bool
     {
         return $this->validated;
+    }
+
+    public function setConverted(bool $converted): self
+    {
+        $this->converted = $converted;
+
+        return $this;
+    }
+
+    public function isConverted(): bool
+    {
+        return $this->converted;
+    }
+
+    public function getItems(): Collection
+    {
+        return $this->items ?: $this->items = new ArrayCollection();
     }
 }

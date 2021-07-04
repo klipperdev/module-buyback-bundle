@@ -32,6 +32,7 @@ audit_request.fields.comment: Commentaire
 audit_request.fields.completed: Complétée
 audit_request.fields.closed: Clôturée
 audit_request.fields.validated: Validée
+audit_request.fields.converted: Convertie
 audit_request.associations.shipping_address: Adresse d'expédition
 audit_request.associations.supplier: Fournisseur
 audit_request.associations.invoice_address: Adresse de facturation

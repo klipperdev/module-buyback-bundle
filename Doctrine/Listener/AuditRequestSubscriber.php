@@ -20,6 +20,8 @@ use Klipper\Component\CodeGenerator\CodeGenerator;
 use Klipper\Component\DoctrineChoice\Listener\Traits\DoctrineListenerChoiceTrait;
 use Klipper\Component\DoctrineExtensionsExtra\Util\ListenerUtil;
 use Klipper\Component\DoctrineExtra\Util\ClassUtils;
+use Klipper\Component\Resource\Object\ObjectFactoryInterface;
+use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -35,6 +37,8 @@ class AuditRequestSubscriber implements EventSubscriber
 
     private TranslatorInterface $translator;
 
+    private ObjectFactoryInterface $objectFactory;
+
     private array $closedStatues;
 
     private array $validatedStatues;
@@ -42,11 +46,13 @@ class AuditRequestSubscriber implements EventSubscriber
     public function __construct(
         CodeGenerator $generator,
         TranslatorInterface $translator,
+        ObjectFactoryInterface $objectFactory,
         array $closedStatues = [],
         array $validatedStatues = []
     ) {
         $this->generator = $generator;
         $this->translator = $translator;
+        $this->objectFactory = $objectFactory;
         $this->closedStatues = $closedStatues;
         $this->validatedStatues = $validatedStatues;
     }
@@ -150,11 +156,13 @@ class AuditRequestSubscriber implements EventSubscriber
             $this->validateModuleEnabled($object);
             $this->updateClosed($em, $object, true);
             $this->validateClosedEmptyItems($object);
+            $this->convertToAuditItems($em, $object, true);
         }
 
         foreach ($uow->getScheduledEntityUpdates() as $object) {
-            $this->updateClosed($em, $object, true);
+            $this->updateClosed($em, $object);
             $this->validateClosedEmptyItems($object);
+            $this->convertToAuditItems($em, $object);
         }
     }
 
@@ -203,6 +211,48 @@ class AuditRequestSubscriber implements EventSubscriber
                     [],
                     'validators'
                 ));
+            }
+        }
+    }
+
+    private function convertToAuditItems(EntityManagerInterface $em, object $object, bool $create = false): void
+    {
+        if ($object instanceof AuditRequestInterface) {
+            $uow = $em->getUnitOfWork();
+            $changeSet = $uow->getEntityChangeSet($object);
+
+            if ($create || isset($changeSet['status'])) {
+                $validated = null !== $object->getStatus() && 'validated' === $object->getStatus()->getValue();
+
+                if ($validated && !$object->isConverted()) {
+                    $object->setConverted(true);
+
+                    $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
+                    $uow = $em->getUnitOfWork();
+                    $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
+
+                    $this->createAuditItems($em, $object);
+                }
+            }
+        }
+    }
+
+    private function createAuditItems(EntityManagerInterface $em, AuditRequestInterface $object): void
+    {
+        $uow = $em->getUnitOfWork();
+
+        foreach ($object->getItems() as $item) {
+            for ($i = 0; $i < (int) $item->getReceivedQuantity(); ++$i) {
+                /** @var AuditItemInterface $auditItem */
+                $auditItem = $this->objectFactory->create(AuditItemInterface::class);
+                $auditItem->setAuditRequest($object);
+                $auditItem->setProduct($item->getProduct());
+                $auditItem->setProductCombination($item->getProductCombination());
+                $auditItem->setReceiptedAt($object->getReceiptedAt() ?? new \DateTime());
+
+                $em->persist($auditItem);
+                $auditItemMeta = $em->getClassMetadata(ClassUtils::getClass($auditItem));
+                $uow->computeChangeSet($auditItemMeta, $auditItem);
             }
         }
     }
