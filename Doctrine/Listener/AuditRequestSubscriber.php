@@ -123,6 +123,13 @@ class AuditRequestSubscriber implements EventSubscriber
                     }
                 }
             }
+
+            if (null === $object->getReceiptedAt()
+                && null !== $object->getStatus()
+                && 'waiting_treatment' === $object->getStatus()->getValue()
+            ) {
+                $object->setReceiptedAt(new \DateTime());
+            }
         }
     }
 
