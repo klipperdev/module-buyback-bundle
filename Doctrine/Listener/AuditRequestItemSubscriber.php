@@ -51,7 +51,10 @@ class AuditRequestItemSubscriber implements EventSubscriber
         $changeSet = $uow->getEntityChangeSet($object);
 
         if ($object instanceof AuditRequestItemInterface) {
-            if (isset($changeSet['expectedQuantity']) || isset($changeSet['receivedQuantity'])) {
+            if (isset($changeSet['expectedQuantity'])
+                || isset($changeSet['receivedQuantity'])
+                || null === $object->getId()
+            ) {
                 $this->reCalculateAuditRequestQuantities($object->getAuditRequest());
             }
         }
@@ -93,11 +96,13 @@ class AuditRequestItemSubscriber implements EventSubscriber
                 // Do not the persist/flush in postFlush event
                 $em->createQueryBuilder()
                     ->update(AuditRequestInterface::class, 'ar')
+                    ->set('ar.numberOfItems', ':numberOfItems')
                     ->set('ar.expectedQuantity', ':expectedQuantity')
                     ->set('ar.receivedQuantity', ':receivedQuantity')
                     ->set('ar.completed', ':completed')
                     ->where('ar.id = :id')
                     ->setParameter('id', $resItem['auditRequestId'])
+                    ->setParameter('numberOfItems', $resItem['total'])
                     ->setParameter('expectedQuantity', (int) $resItem['expectedQuantity'])
                     ->setParameter('receivedQuantity', (int) $resItem['receivedQuantity'])
                     ->setParameter('completed', 0 === (int) $resItem['emptyReceivedItem'])

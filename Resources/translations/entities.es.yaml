@@ -25,6 +25,7 @@ audit_request.fields.date: Fecha
 audit_request.fields.estimated_delivery_date: Fecha de entrega estimada
 audit_request.fields.estimated_processing_date: Fecha estimada de procesamiento
 audit_request.fields.receipted_at: Recibido el
+audit_request.fields.number_of_items: Cantidad de equipo
 audit_request.fields.expected_quantity: Cantidad esperada
 audit_request.fields.received_quantity: Cantidad recibida
 audit_request.fields.comment: Comentario

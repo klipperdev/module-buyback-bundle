@@ -206,6 +206,16 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
     protected ?\DateTime $receiptedAt = null;
 
     /**
+     * @ORM\Column(type="integer", options={"default": 0})
+     *
+     * @Assert\Type(type="integer")
+     *
+     * @Serializer\Expose
+     * @Serializer\ReadOnly
+     */
+    protected int $numberOfItems = 0;
+
+    /**
      * @ORM\Column(type="integer", nullable=true)
      *
      * @Assert\Type(type="integer")
@@ -419,6 +429,18 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
     public function getReceiptedAt(): ?\DateTime
     {
         return $this->receiptedAt;
+    }
+
+    public function setNumberOfItems(int $numberOfItems): self
+    {
+        $this->numberOfItems = $numberOfItems;
+
+        return $this;
+    }
+
+    public function getNumberOfItems(): int
+    {
+        return $this->numberOfItems;
     }
 
     public function setExpectedQuantity(int $expectedQuantity): self

@@ -129,6 +129,13 @@ interface AuditRequestInterface extends
     /**
      * @return static
      */
+    public function setNumberOfItems(int $numberOfItems);
+
+    public function getNumberOfItems(): int;
+
+    /**
+     * @return static
+     */
     public function setExpectedQuantity(int $expectedQuantity);
 
     public function getExpectedQuantity(): int;
