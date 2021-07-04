@@ -149,10 +149,12 @@ class AuditRequestSubscriber implements EventSubscriber
         foreach ($uow->getScheduledEntityInsertions() as $object) {
             $this->validateModuleEnabled($object);
             $this->updateClosed($em, $object, true);
+            $this->validateClosedEmptyItems($object);
         }
 
         foreach ($uow->getScheduledEntityUpdates() as $object) {
             $this->updateClosed($em, $object, true);
+            $this->validateClosedEmptyItems($object);
         }
     }
 
@@ -188,6 +190,19 @@ class AuditRequestSubscriber implements EventSubscriber
 
                 $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
                 $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
+            }
+        }
+    }
+
+    private function validateClosedEmptyItems(object $object): void
+    {
+        if ($object instanceof AuditRequestInterface) {
+            if ($object->isClosed() && $object->isValidated() && 0 === $object->getNumberOfItems()) {
+                ListenerUtil::thrownError($this->translator->trans(
+                    'klipper_buyback.audit_request.cannot_be_validated',
+                    [],
+                    'validators'
+                ));
             }
         }
     }
