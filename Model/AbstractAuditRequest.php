@@ -243,6 +243,16 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @Serializer\Expose
      * @Serializer\ReadOnly
      */
+    protected bool $completed = false;
+
+    /**
+     * @ORM\Column(type="boolean")
+     *
+     * @Assert\Type(type="boolean")
+     *
+     * @Serializer\Expose
+     * @Serializer\ReadOnly
+     */
     protected bool $closed = false;
 
     /**
@@ -445,6 +455,18 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
     public function getComment(): ?string
     {
         return $this->comment;
+    }
+
+    public function setCompleted(bool $completed): self
+    {
+        $this->completed = $completed;
+
+        return $this;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->completed;
     }
 
     public function setClosed(bool $closed): self

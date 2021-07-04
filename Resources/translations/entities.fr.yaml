@@ -28,6 +28,7 @@ audit_request.fields.receipted_at: Reçu le
 audit_request.fields.expected_quantity: Quantité attendue
 audit_request.fields.received_quantity: Quantité reçue
 audit_request.fields.comment: Commentaire
+audit_request.fields.completed: Complétée
 audit_request.fields.closed: Clôturée
 audit_request.fields.validated: Validée
 audit_request.associations.shipping_address: Adresse d'expédition

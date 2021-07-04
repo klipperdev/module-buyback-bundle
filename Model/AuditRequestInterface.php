@@ -150,6 +150,13 @@ interface AuditRequestInterface extends
     /**
      * @return static
      */
+    public function setCompleted(bool $completed);
+
+    public function isCompleted(): bool;
+
+    /**
+     * @return static
+     */
     public function setClosed(bool $closed);
 
     public function isClosed(): bool;
