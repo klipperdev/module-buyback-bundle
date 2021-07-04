@@ -122,6 +122,14 @@ class AuditRequestSubscriber implements EventSubscriber
                         $object->setStatus($status);
                     }
                 }
+
+                if (null === $object->getShippingAddress()) {
+                    ListenerUtil::thrownError($this->translator->trans(
+                        'klipper_buyback.audit_request.shippin_address_required',
+                        [],
+                        'validators'
+                    ), $object, 'shippingAddress');
+                }
             }
 
             if (null === $object->getReceiptedAt()
