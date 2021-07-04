@@ -16,6 +16,7 @@ use JMS\Serializer\Annotation as Serializer;
 use Klipper\Component\Model\Traits\OrganizationalRequiredTrait;
 use Klipper\Component\Model\Traits\TimestampableTrait;
 use Klipper\Component\Model\Traits\UserTrackableTrait;
+use Klipper\Component\SecurityExtra\Doctrine\Validator\Constraints as KlipperSecurityDoctrineAssert;
 use Klipper\Module\ProductBundle\Model\Traits\ProductableTrait;
 use Klipper\Module\ProductBundle\Model\Traits\ProductCombinationableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -32,6 +33,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         @ORM\Index(name="idx_audit_request_item_expected_quantity", columns={"expected_quantity"}),
  *         @ORM\Index(name="idx_audit_request_item_received_quantity", columns={"received_quantity"})
  *     }
+ * )
+ *
+ * @KlipperSecurityDoctrineAssert\OrganizationalUniqueEntity(
+ *     fields={"organization", "product", "productCombination"},
+ *     errorPath="product",
+ *     repositoryMethod="findBy",
+ *     ignoreNull=false,
+ *     allFilters=true
  * )
  *
  * @Serializer\ExclusionPolicy("all")
