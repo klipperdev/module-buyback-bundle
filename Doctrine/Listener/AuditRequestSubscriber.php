@@ -125,7 +125,7 @@ class AuditRequestSubscriber implements EventSubscriber
 
                 if (null === $object->getShippingAddress()) {
                     ListenerUtil::thrownError($this->translator->trans(
-                        'klipper_buyback.audit_request.shippin_address_required',
+                        'klipper_buyback.audit_request.shipping_address_required',
                         [],
                         'validators'
                     ), $object, 'shippingAddress');

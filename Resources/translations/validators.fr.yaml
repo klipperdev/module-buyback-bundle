@@ -1,3 +1,3 @@
 klipper_buyback.account.invalid_supplier: Le compte sélectionné doit être un fournisseur
 klipper_buyback.audit_request.module_must_be_enabled: Le module de reprise doit être activé pour ce compte
-klipper_buyback.audit_request.shippin_address_required: L'adresse d'expédition est requise
+klipper_buyback.audit_request.shipping_address_required: L'adresse d'expédition est requise

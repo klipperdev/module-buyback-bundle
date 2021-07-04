@@ -1,3 +1,3 @@
 klipper_buyback.account.invalid_supplier: The selected account must be a supplier
 klipper_buyback.audit_request.module_must_be_enabled: The buyback module must enabled for this account
-klipper_buyback.audit_request.shippin_address_required: The shipping address is required
+klipper_buyback.audit_request.shipping_address_required: The shipping address is required
