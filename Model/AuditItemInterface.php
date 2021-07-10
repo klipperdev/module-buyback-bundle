@@ -76,16 +76,16 @@ interface AuditItemInterface extends
     /**
      * @return static
      */
-    public function setConditionPrice(float $conditionPrice);
+    public function setConditionPrice(?float $conditionPrice);
 
-    public function getConditionPrice(): float;
+    public function getConditionPrice(): ?float;
 
     /**
      * @return static
      */
-    public function setStatePrice(float $statePrice);
+    public function setStatePrice(?float $statePrice);
 
-    public function getStatePrice(): float;
+    public function getStatePrice(): ?float;
 
     /**
      * @return static

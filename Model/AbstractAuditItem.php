@@ -107,7 +107,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
      *
      * @Serializer\Expose
      */
-    protected float $conditionPrice = 0.0;
+    protected ?float $conditionPrice = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
@@ -116,7 +116,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
      *
      * @Serializer\Expose
      */
-    protected float $statePrice = 0.0;
+    protected ?float $statePrice = null;
 
     /**
      * @ORM\ManyToOne(
@@ -225,26 +225,26 @@ abstract class AbstractAuditItem implements AuditItemInterface
         return $this->auditCondition;
     }
 
-    public function setConditionPrice(float $conditionPrice): self
+    public function setConditionPrice(?float $conditionPrice): self
     {
         $this->conditionPrice = $conditionPrice;
 
         return $this;
     }
 
-    public function getConditionPrice(): float
+    public function getConditionPrice(): ?float
     {
         return $this->conditionPrice;
     }
 
-    public function setStatePrice(float $statePrice): self
+    public function setStatePrice(?float $statePrice): self
     {
         $this->statePrice = $statePrice;
 
         return $this;
     }
 
-    public function getStatePrice(): float
+    public function getStatePrice(): ?float
     {
         return $this->statePrice;
     }
