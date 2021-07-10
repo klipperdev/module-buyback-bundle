@@ -46,6 +46,14 @@ class AuditItemSubscriber implements EventSubscriber
             if (null === $object->getStatePrice()) {
                 $object->setStatePrice(0.0);
             }
+
+            if (null === $object->getReceiptedAt()) {
+                if (null !== $object->getAuditRequest() && null !== $object->getAuditRequest()->getReceiptedAt()) {
+                    $object->setReceiptedAt($object->getAuditRequest()->getReceiptedAt());
+                } else {
+                    $object->setReceiptedAt(new \DateTime());
+                }
+            }
         }
     }
 }
