@@ -1,3 +1,20 @@
+device_status:
+    -   value: in_audit
+        label: In audit
+        color: '#0ff5e2'
+        translations:
+            fr: { label: En audit }
+    -   value: in_buyback_offer
+        label: In buyback offer
+        color: '#0ff5e2'
+        translations:
+            fr: { label: En offre de reprise }
+    -   value: buybacked
+        label: Buybacked
+        color: '#469ff1'
+        translations:
+            fr: { label: Repris }
+
 audit_request_status:
     -   value: draft
         label: Brouillon
