@@ -12,8 +12,12 @@
 namespace Klipper\Module\BuybackBundle\Doctrine\Listener;
 
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
+use Klipper\Component\DoctrineChoice\Listener\Traits\DoctrineListenerChoiceTrait;
+use Klipper\Component\DoctrineExtra\Util\ClassUtils;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 
 /**
@@ -21,11 +25,14 @@ use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
  */
 class AuditItemSubscriber implements EventSubscriber
 {
+    use DoctrineListenerChoiceTrait;
+
     public function getSubscribedEvents(): array
     {
         return [
             Events::prePersist,
             Events::preUpdate,
+            Events::onFlush,
         ];
     }
 
@@ -55,5 +62,60 @@ class AuditItemSubscriber implements EventSubscriber
                 }
             }
         }
+    }
+
+    public function onFlush(OnFlushEventArgs $event): void
+    {
+        $em = $event->getEntityManager();
+        $uow = $em->getUnitOfWork();
+
+        foreach ($uow->getScheduledEntityInsertions() as $object) {
+            $this->updateStatus($em, $object);
+        }
+
+        foreach ($uow->getScheduledEntityUpdates() as $object) {
+            $this->updateStatus($em, $object);
+        }
+    }
+
+    private function updateStatus(EntityManagerInterface $em, object $object): void
+    {
+        if ($object instanceof AuditItemInterface) {
+            $uow = $em->getUnitOfWork();
+            $currentStatus = $object->getStatus();
+            $currentStatusValue = null !== $currentStatus ? $currentStatus->getValue() : null;
+            $newStatusValue = $this->findStatusValue($object);
+
+            if ($newStatusValue !== $currentStatusValue) {
+                $object->setStatus($this->getChoice($em, 'audit_item_status', $newStatusValue));
+
+                $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
+                $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
+            }
+        }
+    }
+
+    private function findStatusValue(AuditItemInterface $object): ?string
+    {
+        $newStatusValue = 'confirmed';
+
+        if (null !== $object->getAuditRequest()
+            && null !== $object->getAuditRequest()->getSupplierOrderNumber()
+            && null !== $object->getProduct()
+        ) {
+            $newStatusValue = 'qualified';
+
+            if (null !== $object->getDevice()
+                && null !== $object->getAuditCondition()
+            ) {
+                $newStatusValue = 'audited';
+
+                if (null !== $object->getBuybackOffer()) {
+                    $newStatusValue = 'valorised';
+                }
+            }
+        }
+
+        return $newStatusValue;
     }
 }
