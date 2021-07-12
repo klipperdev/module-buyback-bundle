@@ -48,6 +48,9 @@ audit_request_item.fields.received_quantity: Quantité reçue
 audit_item.name: Audit
 audit_item.name.plural: Audits
 audit_item.fields.receipted_at: Reçu le
+audit_item.fields.qualified_at: Qualifié le
+audit_item.fields.audited_at: Audité le
+audit_item.fields.valorised_at: Valorisé le
 audit_item.fields.condition_price: Prix par condition
 audit_item.fields.state_price: Prix par état
 audit_item.fields.comment: Commentaire

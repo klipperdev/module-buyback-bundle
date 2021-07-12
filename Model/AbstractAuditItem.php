@@ -82,6 +82,33 @@ abstract class AbstractAuditItem implements AuditItemInterface
     protected ?\DateTime $receiptedAt = null;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Assert\Type(type="datetime")
+     *
+     * @Serializer\Expose
+     */
+    protected ?\DateTime $qualifiedAt = null;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Assert\Type(type="datetime")
+     *
+     * @Serializer\Expose
+     */
+    protected ?\DateTime $auditedAt = null;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Assert\Type(type="datetime")
+     *
+     * @Serializer\Expose
+     */
+    protected ?\DateTime $valorisedAt = null;
+
+    /**
      * @ORM\ManyToOne(
      *     targetEntity="Klipper\Module\DeviceBundle\Model\DeviceInterface",
      *     fetch="EAGER"
@@ -236,6 +263,42 @@ abstract class AbstractAuditItem implements AuditItemInterface
     public function getReceiptedAt(): ?\DateTime
     {
         return $this->receiptedAt;
+    }
+
+    public function setQualifiedAt(?\DateTime $qualifiedAt): self
+    {
+        $this->qualifiedAt = $qualifiedAt;
+
+        return $this;
+    }
+
+    public function getQualifiedAt(): ?\DateTime
+    {
+        return $this->qualifiedAt;
+    }
+
+    public function setAuditedAt(?\DateTime $auditedAt): self
+    {
+        $this->auditedAt = $auditedAt;
+
+        return $this;
+    }
+
+    public function getAuditedAt(): ?\DateTime
+    {
+        return $this->auditedAt;
+    }
+
+    public function setValorisedAt(?\DateTime $valorisedAt): self
+    {
+        $this->valorisedAt = $valorisedAt;
+
+        return $this;
+    }
+
+    public function getValorisedAt(): ?\DateTime
+    {
+        return $this->valorisedAt;
     }
 
     public function setDevice(?DeviceInterface $device): self

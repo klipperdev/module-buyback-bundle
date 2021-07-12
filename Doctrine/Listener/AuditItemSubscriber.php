@@ -95,6 +95,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateLastAuditOnDevice($em, $object, true);
             $this->updateStatus($em, $object);
             $this->updateClosed($em, $object, true);
+            $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
             $this->updateDeviceStatus($em, $object, true);
         }
@@ -103,7 +104,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateLastAuditOnDevice($em, $object);
             $this->updateStatus($em, $object);
             $this->updateClosed($em, $object);
-
+            $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
             $this->updateDeviceStatus($em, $object);
         }
@@ -194,6 +195,52 @@ class AuditItemSubscriber implements EventSubscriber
                 $closed = null === $object->getStatus() || \in_array($object->getStatus()->getValue(), $this->closedStatues, true);
                 $object->setClosed($closed);
 
+                $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
+                $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
+            }
+        }
+    }
+
+    private function updateAuditDates(EntityManagerInterface $em, object $object): void
+    {
+        if ($object instanceof AuditItemInterface) {
+            $uow = $em->getUnitOfWork();
+            $auditStatus = null !== $object->getStatus() ? $object->getStatus()->getValue() : '';
+            $edited = false;
+
+            if ('qualified' === $auditStatus) {
+                if (null === $object->getQualifiedAt()) {
+                    $object->setQualifiedAt(new \DateTime());
+                    $edited = true;
+                }
+            } elseif ('audited' === $auditStatus) {
+                if (null === $object->getQualifiedAt()) {
+                    $object->setQualifiedAt(new \DateTime());
+                    $edited = true;
+                }
+
+                if (null === $object->getAuditedAt()) {
+                    $object->setAuditedAt(new \DateTime());
+                    $edited = true;
+                }
+            } elseif ('valorised' === $auditStatus || $object->isClosed()) {
+                if (null === $object->getQualifiedAt()) {
+                    $object->setQualifiedAt(new \DateTime());
+                    $edited = true;
+                }
+
+                if (null === $object->getAuditedAt()) {
+                    $object->setAuditedAt(new \DateTime());
+                    $edited = true;
+                }
+
+                if (null === $object->getValorisedAt()) {
+                    $object->setValorisedAt(new \DateTime());
+                    $edited = true;
+                }
+            }
+
+            if ($edited) {
                 $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
                 $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
             }

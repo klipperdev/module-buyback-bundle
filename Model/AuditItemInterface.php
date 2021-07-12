@@ -58,6 +58,27 @@ interface AuditItemInterface extends
     /**
      * @return static
      */
+    public function setQualifiedAt(?\DateTime $qualifiedAt);
+
+    public function getQualifiedAt(): ?\DateTime;
+
+    /**
+     * @return static
+     */
+    public function setAuditedAt(?\DateTime $auditedAt);
+
+    public function getAuditedAt(): ?\DateTime;
+
+    /**
+     * @return static
+     */
+    public function setValorisedAt(?\DateTime $valorisedAt);
+
+    public function getValorisedAt(): ?\DateTime;
+
+    /**
+     * @return static
+     */
     public function setDevice(?DeviceInterface $device);
 
     public function getDevice(): ?DeviceInterface;
