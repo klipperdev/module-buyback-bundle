@@ -19,6 +19,7 @@ use Klipper\Component\Model\Traits\TimestampableInterface;
 use Klipper\Module\PartnerBundle\Model\AccountInterface;
 use Klipper\Module\PartnerBundle\Model\PartnerAddressInterface;
 use Klipper\Module\PartnerBundle\Model\Traits\AccountableRequiredInterface;
+use Klipper\Module\ProductBundle\Model\PriceListInterface;
 use Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface;
 
 /**
@@ -67,6 +68,18 @@ interface BuybackModuleInterface extends
     public function setIdentifierType(?string $identifierType);
 
     public function getIdentifierType(): ?string;
+
+    /**
+     * @return static
+     */
+    public function setRepairPriceList(?PriceListInterface $repairPriceList);
+
+    public function getRepairPriceList(): ?PriceListInterface;
+
+    /**
+     * @return null|int|string
+     */
+    public function getRepairPriceListId();
 
     /**
      * @return static

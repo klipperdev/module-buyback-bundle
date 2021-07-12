@@ -23,6 +23,7 @@ use Klipper\Module\DeviceBundle\Validator\Constraints as KlipperDeviceAssert;
 use Klipper\Module\PartnerBundle\Model\AccountInterface;
 use Klipper\Module\PartnerBundle\Model\PartnerAddressInterface;
 use Klipper\Module\PartnerBundle\Model\Traits\AccountableTrait;
+use Klipper\Module\ProductBundle\Model\PriceListInterface;
 use Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -117,6 +118,17 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
      * @Serializer\Expose
      */
     protected ?string $identifierType = null;
+
+    /**
+     * @ORM\ManyToOne(
+     *     targetEntity="Klipper\Module\ProductBundle\Model\PriceListInterface",
+     *     fetch="EXTRA_LAZY"
+     * )
+     *
+     * @Serializer\Expose
+     * @Serializer\MaxDepth(1)
+     */
+    protected ?PriceListInterface $repairPriceList = null;
 
     /**
      * @ORM\ManyToOne(
@@ -220,6 +232,25 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
     public function getIdentifierType(): ?string
     {
         return $this->identifierType;
+    }
+
+    public function setRepairPriceList(?PriceListInterface $repairPriceList): self
+    {
+        $this->repairPriceList = $repairPriceList;
+
+        return $this;
+    }
+
+    public function getRepairPriceList(): ?PriceListInterface
+    {
+        return $this->repairPriceList;
+    }
+
+    public function getRepairPriceListId()
+    {
+        return null !== $this->getRepairPriceList()
+            ? $this->getRepairPriceList()->getId()
+            : null;
     }
 
     public function setDefaultAuditRequestStatus(?ChoiceInterface $defaultAuditRequestStatus): self

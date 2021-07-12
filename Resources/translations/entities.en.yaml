@@ -8,6 +8,7 @@ buyback_module.associations.invoice_address: Supplier invoice address
 buyback_module.associations.default_audit_request_status: Default audit request status
 buyback_module.associations.shipping_address: Shipping address
 buyback_module.associations.supplier: Provider
+buyback_module.associations.repair_price_list: Repair price list
 
 # Audit Condition
 audit_condition.name: Audit Condition

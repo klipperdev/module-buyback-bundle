@@ -8,6 +8,7 @@ buyback_module.associations.invoice_address: Dirección de facturación del prov
 buyback_module.associations.default_audit_request_status: Estado predeterminado de las solicitudes de auditoría
 buyback_module.associations.shipping_address: Dirección de envío
 buyback_module.associations.supplier: Proveedor
+buyback_module.associations.repair_price_list: Lista de precios de mantenimiento
 
 # Audit Condition
 audit_condition.name: Condición de auditoría

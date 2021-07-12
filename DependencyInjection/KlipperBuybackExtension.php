@@ -36,6 +36,7 @@ class KlipperBuybackExtension extends Extension
 
         $this->configAuditRequest($container, $loader, $config['audit_request']);
         $this->configAuditItem($container, $loader, $config['audit_item']);
+        $this->configRepair($loader);
     }
 
     /**
@@ -69,5 +70,13 @@ class KlipperBuybackExtension extends Extension
         $def->replaceArgument(2, array_unique(array_merge($config['closed_statuses'], [
             'valorised',
         ])));
+    }
+
+    /**
+     * @throws
+     */
+    protected function configRepair(LoaderInterface $loader): void
+    {
+        $loader->load('doctrine_subscriber_repair.xml');
     }
 }
