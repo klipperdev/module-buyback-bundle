@@ -27,10 +27,5 @@
         <service id="Klipper\Module\BuybackBundle\Doctrine\Listener\AuditRequestItemSubscriber">
             <tag name="doctrine.event_subscriber" />
         </service>
-
-        <!-- Audit Item Listener -->
-        <service id="Klipper\Module\BuybackBundle\Doctrine\Listener\AuditItemSubscriber">
-            <tag name="doctrine.event_subscriber" />
-        </service>
     </services>
 </container>

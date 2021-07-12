@@ -34,6 +34,7 @@ class KlipperBuybackExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $this->configAuditRequest($container, $loader, $config['audit_request']);
+        $this->configAuditItem($container, $loader, $config['audit_item']);
     }
 
     /**
@@ -41,7 +42,7 @@ class KlipperBuybackExtension extends Extension
      */
     protected function configAuditRequest(ContainerBuilder $container, LoaderInterface $loader, array $config): void
     {
-        $loader->load('doctrine_subscriber.xml');
+        $loader->load('doctrine_subscriber_audit_request.xml');
 
         $def = $container->getDefinition(AuditRequestSubscriber::class);
 
@@ -53,5 +54,13 @@ class KlipperBuybackExtension extends Extension
         $def->replaceArgument(4, array_unique(array_merge($config['validated_statuses'], [
             'accepted',
         ])));
+    }
+
+    /**
+     * @throws
+     */
+    protected function configAuditItem(ContainerBuilder $container, LoaderInterface $loader, array $config): void
+    {
+        $loader->load('doctrine_subscriber_audit_item.xml');
     }
 }
