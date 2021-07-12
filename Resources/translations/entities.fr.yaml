@@ -53,6 +53,7 @@ audit_item.fields.state_price: Prix par état
 audit_item.fields.comment: Commentaire
 audit_item.fields.closed: Clôturée
 audit_item.fields.validated: Validée
+audit_item.fields.repair_price: Prix de la maintenance
 audit_item.associations.status: Statut
 audit_item.associations.audit_condition: Condition
 
@@ -73,3 +74,6 @@ buyback_offer.associations.shipping_address: Adresse d'expédition
 buyback_offer.associations.supplier: Fournisseur
 buyback_offer.associations.invoice_address: Adresse de facturation
 buyback_offer.associations.status: Statut
+
+# Device
+device.associations.last_audit_item: Dernier audit

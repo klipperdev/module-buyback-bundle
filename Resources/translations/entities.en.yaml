@@ -52,6 +52,7 @@ audit_item.fields.condition_price: Condition price
 audit_item.fields.state_price: State price
 audit_item.fields.comment: Comment
 audit_item.fields.closed: Closed
+audit_item.fields.repair_price: Repair price
 audit_item.fields.validated: Validated
 audit_item.associations.status: Status
 audit_item.associations.audit_condition: Condition
@@ -73,3 +74,6 @@ buyback_offer.associations.shipping_address: Shipping address
 buyback_offer.associations.supplier: Provider
 buyback_offer.associations.invoice_address: Invoice address
 buyback_offer.associations.status: Status
+
+# Device
+device.associations.last_audit_item: Last audit
