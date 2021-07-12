@@ -54,8 +54,11 @@ audit_item.fields.comment: Commentaire
 audit_item.fields.closed: Clôturée
 audit_item.fields.validated: Validée
 audit_item.fields.repair_price: Prix de la maintenance
+audit_item.associations.auditor: Auditeur
 audit_item.associations.status: Statut
 audit_item.associations.audit_condition: Condition
+audit_item.associations.next_audit_item: Audit suivant
+audit_item.associations.previous_audit_item: Audit précédent
 
 # Buyback Offer
 buyback_offer.name: Offre de reprise
