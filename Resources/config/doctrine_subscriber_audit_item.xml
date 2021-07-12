@@ -8,6 +8,9 @@
         <!-- Audit Item Listener -->
         <service id="Klipper\Module\BuybackBundle\Doctrine\Listener\AuditItemSubscriber">
             <tag name="doctrine.event_subscriber" />
+            <argument type="service" id="translator"/>
+            <argument type="service" id="security.token_storage"/>
+            <argument type="collection"/>
         </service>
 
         <!-- Device Listener -->

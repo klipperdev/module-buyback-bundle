@@ -11,6 +11,7 @@
 
 namespace Klipper\Module\BuybackBundle\DependencyInjection;
 
+use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditItemSubscriber;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditRequestSubscriber;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -62,5 +63,11 @@ class KlipperBuybackExtension extends Extension
     protected function configAuditItem(ContainerBuilder $container, LoaderInterface $loader, array $config): void
     {
         $loader->load('doctrine_subscriber_audit_item.xml');
+
+        $def = $container->getDefinition(AuditItemSubscriber::class);
+
+        $def->replaceArgument(2, array_unique(array_merge($config['closed_statuses'], [
+            'valorised',
+        ])));
     }
 }

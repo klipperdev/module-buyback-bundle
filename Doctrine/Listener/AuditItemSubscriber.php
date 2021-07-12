@@ -17,8 +17,14 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Klipper\Component\DoctrineChoice\Listener\Traits\DoctrineListenerChoiceTrait;
+use Klipper\Component\DoctrineExtensionsExtra\Util\ListenerUtil;
 use Klipper\Component\DoctrineExtra\Util\ClassUtils;
+use Klipper\Component\Security\Model\UserInterface;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
+use Klipper\Module\BuybackBundle\Model\Traits\DeviceAuditableInterface;
+use Klipper\Module\DeviceBundle\Model\DeviceInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@klipper.dev>
@@ -26,6 +32,22 @@ use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 class AuditItemSubscriber implements EventSubscriber
 {
     use DoctrineListenerChoiceTrait;
+
+    private TranslatorInterface $translator;
+
+    private TokenStorageInterface $tokenStorage;
+
+    private array $closedStatues;
+
+    public function __construct(
+        TranslatorInterface $translator,
+        TokenStorageInterface $tokenStorage,
+        array $closedStatues = []
+    ) {
+        $this->translator = $translator;
+        $this->tokenStorage = $tokenStorage;
+        $this->closedStatues = $closedStatues;
+    }
 
     public function getSubscribedEvents(): array
     {
@@ -70,11 +92,54 @@ class AuditItemSubscriber implements EventSubscriber
         $uow = $em->getUnitOfWork();
 
         foreach ($uow->getScheduledEntityInsertions() as $object) {
+            $this->updateLastAuditOnDevice($em, $object, true);
             $this->updateStatus($em, $object);
+            $this->updateClosed($em, $object, true);
+            $this->updateAuditor($em, $object);
+            $this->updateDeviceStatus($em, $object, true);
         }
 
         foreach ($uow->getScheduledEntityUpdates() as $object) {
+            $this->updateLastAuditOnDevice($em, $object);
             $this->updateStatus($em, $object);
+            $this->updateClosed($em, $object);
+
+            $this->updateAuditor($em, $object);
+            $this->updateDeviceStatus($em, $object);
+        }
+    }
+
+    private function updateLastAuditOnDevice(EntityManagerInterface $em, object $object, bool $create = false): void
+    {
+        if ($object instanceof AuditItemInterface && null !== $device = $object->getDevice()) {
+            if ($device instanceof DeviceAuditableInterface) {
+                $uow = $em->getUnitOfWork();
+
+                if ($create && null !== $device->getLastAuditItem() && !$device->getLastAuditItem()->isClosed()) {
+                    ListenerUtil::thrownError($this->translator->trans(
+                        'klipper_buyback.audit_item.previous_audit_already_open',
+                        [],
+                        'validators'
+                    ));
+                }
+
+                if (null === $object->getPreviousAuditItem()
+                    && null !== $device->getLastAuditItem()
+                    && $object !== $device->getLastAuditItem()
+                ) {
+                    $object->setPreviousAuditItem($device->getLastAuditItem());
+
+                    $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
+                    $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
+                }
+
+                if ($create || null === $device->getLastAuditItem()) {
+                    $device->setLastAuditItem($object);
+
+                    $classMetadata = $em->getClassMetadata(ClassUtils::getClass($device));
+                    $uow->recomputeSingleEntityChangeSet($classMetadata, $device);
+                }
+            }
         }
     }
 
@@ -117,5 +182,99 @@ class AuditItemSubscriber implements EventSubscriber
         }
 
         return $newStatusValue;
+    }
+
+    private function updateClosed(EntityManagerInterface $em, object $object, bool $create = false): void
+    {
+        if ($object instanceof AuditItemInterface) {
+            $uow = $em->getUnitOfWork();
+            $changeSet = $uow->getEntityChangeSet($object);
+
+            if ($create || isset($changeSet['status'])) {
+                $closed = null === $object->getStatus() || \in_array($object->getStatus()->getValue(), $this->closedStatues, true);
+                $object->setClosed($closed);
+
+                $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
+                $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
+            }
+        }
+    }
+
+    private function updateAuditor(EntityManagerInterface $em, object $object): void
+    {
+        if ($object instanceof AuditItemInterface) {
+            $uow = $em->getUnitOfWork();
+            $auditStatus = null !== $object->getStatus() ? $object->getStatus()->getValue() : '';
+
+            if (null === $object->getAuditor()
+                && (\in_array($auditStatus, ['audited', 'valorised'], true) || $object->isClosed())
+            ) {
+                $token = $this->tokenStorage->getToken();
+                $user = null !== $token ? $token->getUser() : null;
+
+                if ($user instanceof UserInterface) {
+                    $object->setAuditor($user);
+
+                    $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
+                    $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
+                }
+            }
+        }
+    }
+
+    private function updateDeviceStatus(EntityManagerInterface $em, object $object, bool $create = false): void
+    {
+        if (!$object instanceof AuditItemInterface || null === $object->getDevice()) {
+            return;
+        }
+
+        $uow = $em->getUnitOfWork();
+        $changeSet = $uow->getEntityChangeSet($object);
+        $device = $object->getDevice();
+
+        if ($create || isset($changeSet['device'])) {
+            if (isset($changeSet['device'][0])) {
+                /** @var DeviceInterface $oldDevice */
+                $oldDevice = $changeSet['device'][0];
+                $statusOperational = $this->getChoice($em, 'device_status', 'operational');
+
+                if (null !== $statusOperational) {
+                    $oldDevice->setStatus($statusOperational);
+
+                    $classMetadata = $em->getClassMetadata(ClassUtils::getClass($oldDevice));
+                    $uow->recomputeSingleEntityChangeSet($classMetadata, $oldDevice);
+                }
+            }
+        }
+
+        if (null === $device->getTerminatedAt()) {
+            $auditStatus = null !== $object->getStatus() ? $object->getStatus()->getValue() : '';
+
+            switch ($auditStatus) {
+                case 'valorised':
+                    $newDeviceStatusValue = 'in_buyback_offer';
+
+                    break;
+
+                case 'confirmed':
+                case 'qualified':
+                case 'audited':
+                default:
+                    $newDeviceStatusValue = 'in_audit';
+
+                    break;
+            }
+
+            if (null === $device->getStatus() || $newDeviceStatusValue !== $device->getStatus()->getValue()) {
+                $newDeviceStatus = $this->getChoice($em, 'device_status', $newDeviceStatusValue);
+
+                if (null !== $newDeviceStatus) {
+                    $device->setStatus($newDeviceStatus);
+
+                    $classMetadata = $em->getClassMetadata(ClassUtils::getClass($device));
+                    $uow->recomputeSingleEntityChangeSet($classMetadata, $device);
+                }
+            }
+        }
     }
 }

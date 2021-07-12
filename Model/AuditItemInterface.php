@@ -16,6 +16,7 @@ use Klipper\Component\Model\Traits\IdInterface;
 use Klipper\Component\Model\Traits\OrganizationalRequiredInterface;
 use Klipper\Component\Model\Traits\TimestampableInterface;
 use Klipper\Component\Model\Traits\UserTrackableInterface;
+use Klipper\Component\Security\Model\UserInterface;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
 use Klipper\Module\ProductBundle\Model\Traits\ProductableOptionalInterface;
 use Klipper\Module\ProductBundle\Model\Traits\ProductCombinationableOptionalInterface;
@@ -100,6 +101,32 @@ interface AuditItemInterface extends
     public function setComment(?string $comment);
 
     public function getComment(): ?string;
+
+    /**
+     * @return static
+     */
+    public function setAuditor(?UserInterface $auditor);
+
+    public function getAuditor(): ?UserInterface;
+
+    /**
+     * @return null|int|string
+     */
+    public function getAuditorId();
+
+    /**
+     * @return static
+     */
+    public function setPreviousAuditItem(?AuditItemInterface $previousAuditItem);
+
+    public function getPreviousAuditItem(): ?AuditItemInterface;
+
+    /**
+     * @return static
+     */
+    public function setNextAuditItem(?AuditItemInterface $nextAuditItem);
+
+    public function getNextAuditItem(): ?AuditItemInterface;
 
     /**
      * @return static

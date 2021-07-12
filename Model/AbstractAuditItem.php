@@ -18,6 +18,7 @@ use Klipper\Component\DoctrineChoice\Validator\Constraints\EntityDoctrineChoice;
 use Klipper\Component\Model\Traits\OrganizationalRequiredTrait;
 use Klipper\Component\Model\Traits\TimestampableTrait;
 use Klipper\Component\Model\Traits\UserTrackableTrait;
+use Klipper\Component\Security\Model\UserInterface;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
 use Klipper\Module\ProductBundle\Model\Traits\ProductableTrait;
 use Klipper\Module\ProductBundle\Model\Traits\ProductCombinationableTrait;
@@ -127,6 +128,49 @@ abstract class AbstractAuditItem implements AuditItemInterface
      * @Serializer\Expose
      */
     protected ?BuybackOfferInterface $buybackOffer = null;
+
+    /**
+     * @ORM\ManyToOne(
+     *     targetEntity="Klipper\Component\Security\Model\UserInterface",
+     *     fetch="EAGER"
+     * )
+     *
+     * @Serializer\Expose
+     */
+    protected ?UserInterface $auditor = null;
+
+    /**
+     * @ORM\OneToOne(
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface",
+     *     inversedBy="nextAuditItem",
+     *     cascade={"persist"},
+     *     fetch="EXTRA_LAZY"
+     * )
+     * @ORM\JoinColumn(
+     *     name="previous_audit_item_id",
+     *     referencedColumnName="id",
+     *     onDelete="SET NULL",
+     *     nullable=true
+     * )
+     *
+     * @Serializer\Expose
+     * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"ViewsDetails", "View"})
+     */
+    protected ?AuditItemInterface $previousAuditItem = null;
+
+    /**
+     * @ORM\OneToOne(
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface",
+     *     mappedBy="previousAuditItem",
+     *     fetch="EXTRA_LAZY"
+     * )
+     *
+     * @Serializer\Expose
+     * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"ViewsDetails", "View"})
+     */
+    protected ?AuditItemInterface $nextAuditItem = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -259,6 +303,49 @@ abstract class AbstractAuditItem implements AuditItemInterface
     public function getBuybackOffer(): ?BuybackOfferInterface
     {
         return $this->buybackOffer;
+    }
+
+    public function setAuditor(?UserInterface $auditor): self
+    {
+        $this->auditor = $auditor;
+
+        return $this;
+    }
+
+    public function getAuditor(): ?UserInterface
+    {
+        return $this->auditor;
+    }
+
+    public function getAuditorId()
+    {
+        return null !== $this->getAuditor()
+            ? $this->getAuditor()->getId()
+            : null;
+    }
+
+    public function setPreviousAuditItem(?AuditItemInterface $previousAuditItem): self
+    {
+        $this->previousAuditItem = $previousAuditItem;
+
+        return $this;
+    }
+
+    public function getPreviousAuditItem(): ?AuditItemInterface
+    {
+        return $this->previousAuditItem;
+    }
+
+    public function setNextAuditItem(?AuditItemInterface $nextAuditItem): self
+    {
+        $this->nextAuditItem = $nextAuditItem;
+
+        return $this;
+    }
+
+    public function getNextAuditItem(): ?AuditItemInterface
+    {
+        return $this->nextAuditItem;
     }
 
     public function setComment(?string $comment): self

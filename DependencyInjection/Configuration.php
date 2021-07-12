@@ -33,6 +33,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
             ->append($this->getAuditRequestNode())
+            ->append($this->getAuditItemNode())
             ->end()
         ;
 
@@ -52,5 +53,17 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->end()
         ;
+    }
+
+    private function getAuditItemNode(): NodeDefinition
+    {
+        return NodeUtils::createArrayNode('audit_item')
+            ->addDefaultsIfNotSet()
+            ->children()
+            ->arrayNode('closed_statuses')
+            ->scalarPrototype()->end()
+            ->end()
+            ->end()
+            ;
     }
 }
