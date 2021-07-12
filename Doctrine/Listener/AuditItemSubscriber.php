@@ -95,6 +95,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateLastAuditOnDevice($em, $object, true);
             $this->updateStatus($em, $object);
             $this->updateClosed($em, $object, true);
+            $this->updateValidated($em, $object, true);
             $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
             $this->updateDeviceStatus($em, $object, true);
@@ -104,6 +105,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateLastAuditOnDevice($em, $object);
             $this->updateStatus($em, $object);
             $this->updateClosed($em, $object);
+            $this->updateValidated($em, $object);
             $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
             $this->updateDeviceStatus($em, $object);
@@ -194,6 +196,26 @@ class AuditItemSubscriber implements EventSubscriber
             if ($create || isset($changeSet['status'])) {
                 $closed = null === $object->getStatus() || \in_array($object->getStatus()->getValue(), $this->closedStatues, true);
                 $object->setClosed($closed);
+
+                $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
+                $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
+            }
+        }
+    }
+
+    private function updateValidated(EntityManagerInterface $em, object $object, bool $create = false): void
+    {
+        if ($object instanceof AuditItemInterface) {
+            $uow = $em->getUnitOfWork();
+            $changeSet = $uow->getEntityChangeSet($object);
+
+            if ($create || isset($changeSet['status'])) {
+                $validated = null !== $object->getStatus() && \in_array($object->getStatus()->getValue(), [
+                    'audited',
+                    'validated',
+                ], true);
+
+                $object->setValidated($validated);
 
                 $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
                 $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
