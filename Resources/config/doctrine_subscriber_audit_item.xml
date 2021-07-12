@@ -9,5 +9,10 @@
         <service id="Klipper\Module\BuybackBundle\Doctrine\Listener\AuditItemSubscriber">
             <tag name="doctrine.event_subscriber" />
         </service>
+
+        <!-- Device Listener -->
+        <service id="Klipper\Module\BuybackBundle\Doctrine\Listener\DeviceSubscriber">
+            <tag name="doctrine.event_subscriber" />
+        </service>
     </services>
 </container>
