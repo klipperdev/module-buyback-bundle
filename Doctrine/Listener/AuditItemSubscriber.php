@@ -305,7 +305,7 @@ class AuditItemSubscriber implements EventSubscriber
             if (isset($changeSet['device'][0])) {
                 /** @var DeviceInterface $oldDevice */
                 $oldDevice = $changeSet['device'][0];
-                $statusOperational = $this->getChoice($em, 'device_status', 'operational');
+                $statusOperational = $this->getChoice($em, 'device_status', 'in_use');
 
                 if (null !== $statusOperational) {
                     $oldDevice->setStatus($statusOperational);
