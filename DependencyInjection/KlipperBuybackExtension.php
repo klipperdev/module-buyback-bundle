@@ -11,6 +11,8 @@
 
 namespace Klipper\Module\BuybackBundle\DependencyInjection;
 
+use Klipper\Bundle\ApiBundle\Util\ControllerDefinitionUtil;
+use Klipper\Module\BuybackBundle\Controller\ApiAuditItemController;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditItemSubscriber;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditRequestSubscriber;
 use Symfony\Component\Config\FileLocator;
@@ -37,6 +39,8 @@ class KlipperBuybackExtension extends Extension
         $this->configAuditRequest($container, $loader, $config['audit_request']);
         $this->configAuditItem($container, $loader, $config['audit_item']);
         $this->configRepair($loader);
+
+        ControllerDefinitionUtil::set($container, ApiAuditItemController::class);
     }
 
     /**

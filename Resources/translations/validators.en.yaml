@@ -3,3 +3,4 @@ klipper_buyback.audit_request.module_must_be_enabled: The buyback module must en
 klipper_buyback.audit_request.shipping_address_required: The shipping address is required
 klipper_buyback.audit_request.cannot_be_validated: The audit request cannot be validated without device
 klipper_buyback.audit_item.previous_audit_already_open: A previous audit is already open
+klipper_buyback.audit_item.repair.device_required: The equipment must be filled in before creating a maintenance for an audit
