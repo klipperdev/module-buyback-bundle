@@ -13,6 +13,7 @@ namespace Klipper\Module\BuybackBundle\Controller;
 
 use Klipper\Bundle\ApiBundle\Action\Upsert;
 use Klipper\Bundle\ApiBundle\Controller\ControllerHelper;
+use Klipper\Component\DoctrineChoice\ChoiceManagerInterface;
 use Klipper\Component\Resource\Object\ObjectFactoryInterface;
 use Klipper\Component\SecurityOauth\Scope\ScopeVote;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
@@ -38,6 +39,7 @@ class ApiAuditItemController
     public function transferRepair(
         ControllerHelper $helper,
         ObjectFactoryInterface $objectFactory,
+        ChoiceManagerInterface $choiceManager,
         AuditItemInterface $id
     ): Response {
         if (class_exists(ScopeVote::class)) {
@@ -57,6 +59,7 @@ class ApiAuditItemController
         $repair->setRepairer($id->getAuditor());
         $repair->setOwner($id->getAuditRequest()->getAccount()->getOwner());
         $repair->setDevice($id->getDevice());
+        $repair->setStatus($choiceManager->getChoice('repair_status', 'received'));
 
         if ($repair instanceof RepairAuditableInterface) {
             $repair->setAuditItem($id);
