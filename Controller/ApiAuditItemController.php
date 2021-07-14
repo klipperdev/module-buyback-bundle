@@ -33,7 +33,7 @@ class ApiAuditItemController
      *
      * @Entity("id", class="App:AuditItem")
      *
-     * @Route("/audit_items/{id}/transfert-repair", methods={"PUT"})
+     * @Route("/audit_items/{id}/transfer-repair", methods={"PUT"})
      */
     public function transferRepair(
         ControllerHelper $helper,
