@@ -36,4 +36,11 @@ interface AuditRepairableInterface
     public function setRepairPrice(?float $repairPrice);
 
     public function getRepairPrice(): ?float;
+
+    /**
+     * @return static
+     */
+    public function setIncludedRepairPrice(bool $includedRepairPrice);
+
+    public function isIncludedRepairPrice(): bool;
 }

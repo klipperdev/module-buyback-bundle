@@ -52,6 +52,15 @@ trait AuditRepairableTrait
      */
     protected ?float $repairPrice = null;
 
+    /**
+     * @ORM\Column(type="boolean")
+     *
+     * @Assert\Type(type="boolean")
+     *
+     * @Serializer\Expose
+     */
+    protected bool $includedRepairPrice = false;
+
     public function setRepair(?RepairInterface $repair): self
     {
         if (null !== $this->repair && $this->repair instanceof RepairAuditableInterface) {
@@ -87,5 +96,17 @@ trait AuditRepairableTrait
     public function getRepairPrice(): ?float
     {
         return $this->repairPrice;
+    }
+
+    public function setIncludedRepairPrice(bool $includedRepairPrice): self
+    {
+        $this->includedRepairPrice = $includedRepairPrice;
+
+        return $this;
+    }
+
+    public function isIncludedRepairPrice(): bool
+    {
+        return $this->includedRepairPrice;
     }
 }
