@@ -100,6 +100,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateValidated($em, $object, true);
             $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
+            $this->updateDeviceProduct($em, $object, true);
             $this->updateDeviceStatus($em, $object, true);
         }
 
@@ -110,6 +111,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateValidated($em, $object);
             $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
+            $this->updateDeviceProduct($em, $object);
             $this->updateDeviceStatus($em, $object);
         }
     }
@@ -289,6 +291,38 @@ class AuditItemSubscriber implements EventSubscriber
                     $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
                     $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
                 }
+            }
+        }
+    }
+
+    private function updateDeviceProduct(EntityManagerInterface $em, object $object, bool $create = false): void
+    {
+        if (!$object instanceof AuditItemInterface || null === $object->getDevice()) {
+            return;
+        }
+
+        $uow = $em->getUnitOfWork();
+        $changeSet = $uow->getEntityChangeSet($object);
+        $device = $object->getDevice();
+
+        if (($create && ($object->getProduct() !== $device->getProduct() || $object->getProductCombination() !== $device->getProductCombination()))
+            || (!$create && (isset($changeSet['product']) || isset($changeSet['productCombination']) || isset($changeSet['device'])))
+        ) {
+            $edit = false;
+
+            if (null !== $object->getProduct() && $object->getProduct() !== $device->getProduct()) {
+                $device->setProduct($object->getProduct());
+                $edit = true;
+            }
+
+            if (null !== $object->getProductCombination() && $object->getProductCombination() !== $device->getProductCombination()) {
+                $device->setProductCombination($object->getProductCombination());
+                $edit = true;
+            }
+
+            if ($edit) {
+                $classMetadata = $em->getClassMetadata(ClassUtils::getClass($device));
+                $uow->recomputeSingleEntityChangeSet($classMetadata, $device);
             }
         }
     }
