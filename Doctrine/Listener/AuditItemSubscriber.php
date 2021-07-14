@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
-use Klipper\Component\DoctrineChoice\Listener\Traits\DoctrineListenerChoiceTrait;
+use Klipper\Component\DoctrineChoice\ChoiceManagerInterface;
 use Klipper\Component\DoctrineExtensionsExtra\Util\ListenerUtil;
 use Klipper\Component\DoctrineExtra\Util\ClassUtils;
 use Klipper\Component\Security\Model\UserInterface;
@@ -31,7 +31,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class AuditItemSubscriber implements EventSubscriber
 {
-    use DoctrineListenerChoiceTrait;
+    private ChoiceManagerInterface $choiceManager;
 
     private TranslatorInterface $translator;
 
@@ -40,10 +40,12 @@ class AuditItemSubscriber implements EventSubscriber
     private array $closedStatues;
 
     public function __construct(
+        ChoiceManagerInterface $choiceManager,
         TranslatorInterface $translator,
         TokenStorageInterface $tokenStorage,
         array $closedStatues = []
     ) {
+        $this->choiceManager = $choiceManager;
         $this->translator = $translator;
         $this->tokenStorage = $tokenStorage;
         $this->closedStatues = $closedStatues;
@@ -155,7 +157,7 @@ class AuditItemSubscriber implements EventSubscriber
             $newStatusValue = $this->findStatusValue($object);
 
             if ($newStatusValue !== $currentStatusValue) {
-                $object->setStatus($this->getChoice($em, 'audit_item_status', $newStatusValue));
+                $object->setStatus($this->choiceManager->getChoice('audit_item_status', $newStatusValue));
 
                 $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
                 $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
@@ -305,7 +307,7 @@ class AuditItemSubscriber implements EventSubscriber
             if (isset($changeSet['device'][0])) {
                 /** @var DeviceInterface $oldDevice */
                 $oldDevice = $changeSet['device'][0];
-                $statusOperational = $this->getChoice($em, 'device_status', 'in_use');
+                $statusOperational = $this->choiceManager->getChoice('device_status', 'in_use');
 
                 if (null !== $statusOperational) {
                     $oldDevice->setStatus($statusOperational);
@@ -335,7 +337,7 @@ class AuditItemSubscriber implements EventSubscriber
             }
 
             if (null === $device->getStatus() || $newDeviceStatusValue !== $device->getStatus()->getValue()) {
-                $newDeviceStatus = $this->getChoice($em, 'device_status', $newDeviceStatusValue);
+                $newDeviceStatus = $this->choiceManager->getChoice('device_status', $newDeviceStatusValue);
 
                 if (null !== $newDeviceStatus) {
                     $device->setStatus($newDeviceStatus);

@@ -8,6 +8,7 @@
         <!-- Audit Request Listener -->
         <service id="Klipper\Module\BuybackBundle\Doctrine\Listener\AuditRequestSubscriber">
             <tag name="doctrine.event_subscriber" />
+            <argument type="service" id="klipper_doctrine_choice.manager"/>
             <argument type="service" id="klipper_buyback.generator.audit_request_reference"/>
             <argument type="service" id="translator"/>
             <argument type="service" id="klipper_resource.object_factory"/>

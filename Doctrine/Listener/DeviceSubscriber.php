@@ -14,7 +14,6 @@ namespace Klipper\Module\BuybackBundle\Doctrine\Listener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Klipper\Component\DoctrineChoice\Listener\Traits\DoctrineListenerChoiceTrait;
 use Klipper\Component\DoctrineExtra\Util\ClassUtils;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\DeviceAuditableInterface;
@@ -25,8 +24,6 @@ use Klipper\Module\DeviceBundle\Model\DeviceInterface;
  */
 class DeviceSubscriber implements EventSubscriber
 {
-    use DoctrineListenerChoiceTrait;
-
     public function getSubscribedEvents(): array
     {
         return [

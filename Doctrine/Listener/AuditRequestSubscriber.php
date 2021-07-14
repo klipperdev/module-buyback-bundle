@@ -17,7 +17,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Klipper\Component\CodeGenerator\CodeGenerator;
-use Klipper\Component\DoctrineChoice\Listener\Traits\DoctrineListenerChoiceTrait;
+use Klipper\Component\DoctrineChoice\ChoiceManagerInterface;
 use Klipper\Component\DoctrineExtensionsExtra\Util\ListenerUtil;
 use Klipper\Component\DoctrineExtra\Util\ClassUtils;
 use Klipper\Component\Resource\Object\ObjectFactoryInterface;
@@ -31,7 +31,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class AuditRequestSubscriber implements EventSubscriber
 {
-    use DoctrineListenerChoiceTrait;
+    private ChoiceManagerInterface $choiceManager;
 
     private CodeGenerator $generator;
 
@@ -44,12 +44,14 @@ class AuditRequestSubscriber implements EventSubscriber
     private array $validatedStatues;
 
     public function __construct(
+        ChoiceManagerInterface $choiceManager,
         CodeGenerator $generator,
         TranslatorInterface $translator,
         ObjectFactoryInterface $objectFactory,
         array $closedStatues = [],
         array $validatedStatues = []
     ) {
+        $this->choiceManager = $choiceManager;
         $this->generator = $generator;
         $this->translator = $translator;
         $this->objectFactory = $objectFactory;
@@ -73,7 +75,6 @@ class AuditRequestSubscriber implements EventSubscriber
 
     public function preUpdate(LifecycleEventArgs $event): void
     {
-        $em = $event->getEntityManager();
         $object = $event->getObject();
 
         if ($object instanceof AuditRequestInterface) {
@@ -124,7 +125,7 @@ class AuditRequestSubscriber implements EventSubscriber
                     }
 
                     if (null === $status) {
-                        $status = $module->getDefaultAuditRequestStatus() ?? $this->getChoice($em, 'audit_request_status', null);
+                        $status = $module->getDefaultAuditRequestStatus() ?? $this->choiceManager->getChoice('audit_request_status', null);
                         $object->setStatus($status);
                     }
                 }

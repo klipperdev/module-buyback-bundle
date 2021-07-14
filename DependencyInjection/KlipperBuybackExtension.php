@@ -52,12 +52,12 @@ class KlipperBuybackExtension extends Extension
 
         $def = $container->getDefinition(AuditRequestSubscriber::class);
 
-        $def->replaceArgument(3, array_unique(array_merge($config['closed_statuses'], [
+        $def->replaceArgument(4, array_unique(array_merge($config['closed_statuses'], [
             'accepted',
             'refused',
             'canceled',
         ])));
-        $def->replaceArgument(4, array_unique(array_merge($config['validated_statuses'], [
+        $def->replaceArgument(5, array_unique(array_merge($config['validated_statuses'], [
             'accepted',
         ])));
     }
@@ -71,7 +71,7 @@ class KlipperBuybackExtension extends Extension
 
         $def = $container->getDefinition(AuditItemSubscriber::class);
 
-        $def->replaceArgument(2, array_unique(array_merge($config['closed_statuses'], [
+        $def->replaceArgument(3, array_unique(array_merge($config['closed_statuses'], [
             'valorised',
         ])));
     }
