@@ -69,7 +69,11 @@ trait AuditRepairableTrait
 
         $this->repair = $repair;
 
-        if (null !== $repair && $repair instanceof RepairAuditableInterface && $this instanceof AuditItemInterface) {
+        if (null !== $repair
+            && $repair instanceof RepairAuditableInterface
+            && $this instanceof AuditItemInterface
+            && $repair->getAuditItem() !== $this
+        ) {
             $repair->setAuditItem($this);
         }
 
