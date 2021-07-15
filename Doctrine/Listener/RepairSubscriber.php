@@ -13,8 +13,11 @@ namespace Klipper\Module\BuybackBundle\Doctrine\Listener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Klipper\Component\DoctrineExtensionsExtra\Util\ListenerUtil;
+use Klipper\Component\DoctrineExtra\Util\ClassUtils;
+use Klipper\Module\BuybackBundle\Model\Traits\AuditRepairableInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\RepairAuditableInterface;
 use Klipper\Module\RepairBundle\Model\RepairInterface;
@@ -38,6 +41,7 @@ class RepairSubscriber implements EventSubscriber
         return [
             Events::prePersist,
             Events::preUpdate,
+            Events::onFlush,
         ];
     }
 
@@ -70,6 +74,26 @@ class RepairSubscriber implements EventSubscriber
                     [],
                     'validators'
                 ), $object);
+            }
+        }
+    }
+
+    public function onFlush(OnFlushEventArgs $event): void
+    {
+        $em = $event->getEntityManager();
+        $uow = $em->getUnitOfWork();
+
+        foreach ($uow->getScheduledEntityDeletions() as $object) {
+            if ($object instanceof RepairInterface
+                && $object instanceof RepairAuditableInterface
+                && null !== ($audit = $object->getAuditItem())
+            ) {
+                if ($audit instanceof AuditRepairableInterface) {
+                    $audit->setRepairPrice(0.0);
+
+                    $meta = $em->getClassMetadata(ClassUtils::getClass($audit));
+                    $uow->computeChangeSet($meta, $audit);
+                }
             }
         }
     }
