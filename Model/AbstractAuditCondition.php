@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Klipper\Component\Model\Traits\EnableTrait;
 use Klipper\Component\Model\Traits\LabelableTrait;
+use Klipper\Component\Model\Traits\NameableTrait;
 use Klipper\Component\Model\Traits\OrganizationalRequiredTrait;
 use Klipper\Component\Model\Traits\SortableTrait;
 use Klipper\Component\Model\Traits\TimestampableTrait;
@@ -33,6 +34,7 @@ abstract class AbstractAuditCondition implements AuditConditionInterface
 {
     use EnableTrait;
     use LabelableTrait;
+    use NameableTrait;
     use OrganizationalRequiredTrait;
     use SortableTrait;
     use TimestampableTrait;
