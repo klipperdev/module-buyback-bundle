@@ -68,6 +68,7 @@ class KlipperBuybackExtension extends Extension
     protected function configAuditItem(ContainerBuilder $container, LoaderInterface $loader, array $config): void
     {
         $loader->load('doctrine_subscriber_audit_item.xml');
+        $loader->load('import_adapter_audit_item.xml');
 
         $def = $container->getDefinition(AuditItemSubscriber::class);
 

@@ -12,6 +12,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
+        "klipper/api-import-bundle": "^2.0.0",
         "klipper/module-device-bundle": "^2.0.0",
         "klipper/module-partner-bundle": "^2.0.0",
         "klipper/module-workcenter-bundle": "^2.0.0",
