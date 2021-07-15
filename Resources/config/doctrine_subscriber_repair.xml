@@ -10,5 +10,10 @@
             <tag name="doctrine.event_subscriber" priority="100" />
             <argument type="service" id="translator"/>
         </service>
+
+        <!-- Audit Repair Price Listener -->
+        <service id="Klipper\Module\BuybackBundle\Doctrine\Listener\AuditRepairPriceListener">
+            <tag name="klipper_module_repair.repair_price_listener" />
+        </service>
     </services>
 </container>
