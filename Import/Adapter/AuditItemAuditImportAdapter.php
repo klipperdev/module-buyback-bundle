@@ -50,7 +50,11 @@ class AuditItemAuditImportAdapter extends StandardImportAdapter
 
         foreach ($context->getMappingColumns() as $column => $colIndex) {
             if (\in_array($column, $validColumns, true)) {
-                $data[$column] = $sheet->getCellByColumnAndRow($colIndex, $rowIndex)->getValue();
+                $val = $sheet->getCellByColumnAndRow($colIndex, $rowIndex)->getValue();
+
+                if (null !== $val) {
+                    $data[$column] = $val;
+                }
             }
         }
 
@@ -72,14 +76,15 @@ class AuditItemAuditImportAdapter extends StandardImportAdapter
             ->createQueryBuilder('ai')
             ->where('ar.account = :account')
             ->andWhere('cs.value = :statusValue')
-            ->andWhere('ai.device = :device OR (ai.product = :product AND ai.productCombination = :productCombination)')
-            ->orderBy('ai.createdAt', 'asc')
+            ->andWhere('(d.imei = :device OR d.serialNumber = :device) OR (p.reference = :product AND pc.reference = :productCombination)')
+            ->orderBy('ai.device', 'desc')
+            ->addOrderBy('ai.createdAt', 'asc')
             ->setMaxResults(1)
             ->setParameter('account', $accountId)
             ->setParameter('statusValue', 'qualified')
-            ->setParameter('device', $data['device'] ?? null)
-            ->setParameter('product', $data['product'] ?? null)
-            ->setParameter('productCombination', $data['product_combination'] ?? null)
+            ->setParameter('device', $data['device_imei_or_sn'] ?? null)
+            ->setParameter('product', $data['product_reference'] ?? null)
+            ->setParameter('productCombination', $data['product_combination_reference'] ?? null)
             ->getQuery()
             ->getResult()
         ;
@@ -88,16 +93,16 @@ class AuditItemAuditImportAdapter extends StandardImportAdapter
             return $items[0];
         }
 
-        // Find empty audit item
+        // Find empty audit item but with a product
         $items = $domainTarget->getRepository()
             ->createQueryBuilder('ai')
             ->where('ar.account = :account')
             ->andWhere('cs.value = :statusValue')
-            ->andWhere('ai.device IS NULL AND ai.product IS NULL AND ai.productCombination IS NULL')
+            ->andWhere('ai.device IS NULL AND ai.product IS NOT NULL AND ai.productCombination IS NULL')
             ->orderBy('ai.createdAt', 'asc')
             ->setMaxResults(1)
             ->setParameter('account', $accountId)
-            ->setParameter('statusValue', 'confirmed')
+            ->setParameter('statusValue', 'qualified')
             ->getQuery()
             ->getResult()
         ;
