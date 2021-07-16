@@ -5,8 +5,8 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <!-- Audit Item Confirmation Import Adapter -->
-        <service id="Klipper\Module\BuybackBundle\Import\Adapter\AuditItemConfirmationImportAdapter">
+        <!-- Audit Item Qualification Import Adapter -->
+        <service id="Klipper\Module\BuybackBundle\Import\Adapter\AuditItemQualificationImportAdapter">
             <tag name="klipper_import.adapter" />
         </service>
     </services>

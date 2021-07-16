@@ -23,7 +23,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 /**
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-class AuditItemConfirmationType extends AbstractType
+class AuditItemQualificationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

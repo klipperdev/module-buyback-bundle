@@ -23,7 +23,7 @@ use Klipper\Component\Resource\Domain\DomainManagerInterface;
 use Klipper\Component\Resource\Object\ObjectFactoryInterface;
 use Klipper\Component\Security\Permission\PermVote;
 use Klipper\Component\SecurityOauth\Scope\ScopeVote;
-use Klipper\Module\BuybackBundle\Import\Adapter\AuditItemConfirmationImportAdapter;
+use Klipper\Module\BuybackBundle\Import\Adapter\AuditItemQualificationImportAdapter;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\RepairAuditableInterface;
@@ -45,13 +45,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ApiAuditItemController
 {
     /**
-     * Import the audit item for confirmation.
+     * Import the audit item for qualification.
      *
      * @Entity("id", class="App:Account")
      *
-     * @Route("/audit_items/accounts/{id}/import-confirmation.{ext}", methods={"GET"}, requirements={"ext": "csv|ods|xls|xlsx"})
+     * @Route("/audit_items/accounts/{id}/import-qualification.{ext}", methods={"GET"}, requirements={"ext": "csv|ods|xls|xlsx"})
      */
-    public function downloadImportModelAction(
+    public function downloadImportQualificationTemplateAction(
         ControllerHelper $helper,
         TranslatorInterface $translator,
         DomainManagerInterface $domainManager,
@@ -68,7 +68,7 @@ class ApiAuditItemController
         }
 
         try {
-            $filename = sprintf('Audit import confirmation template %s.%s', $id->getName(), $ext);
+            $filename = sprintf('Audit import qualification template %s.%s', $id->getName(), $ext);
             $spreadsheet = new Spreadsheet();
             $writer = IOFactory::createWriter($spreadsheet, ucfirst($ext));
             $sheet = $spreadsheet->getActiveSheet();
@@ -107,13 +107,13 @@ class ApiAuditItemController
     }
 
     /**
-     * Import the audit item for confirmation.
+     * Import the audit item for qualification.
      *
      * @Entity("id", class="App:Account")
      *
-     * @Route("/audit_items/accounts/{id}/import-confirmation", methods={"POST"})
+     * @Route("/audit_items/accounts/{id}/import-qualification", methods={"POST"})
      */
-    public function importAction(
+    public function importQualificationAction(
         ControllerHelper $helper,
         ContentManagerInterface $contentManager,
         MetadataManagerInterface $metadataManager,
@@ -133,7 +133,7 @@ class ApiAuditItemController
         /** @var ImportInterface $import */
         $import = $objectFactory->create('App:Import');
         $import->setStatus(current(ImportStatus::getValues()));
-        $import->setAdapter(AuditItemConfirmationImportAdapter::class);
+        $import->setAdapter(AuditItemQualificationImportAdapter::class);
         $import->setMetadata($metadataManager->get(AuditItemInterface::class)->getName());
         $import->setExtra([
             'qualification' => true,
