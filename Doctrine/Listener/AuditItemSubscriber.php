@@ -100,6 +100,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateValidated($em, $object, true);
             $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
+            $this->updateDevice($em, $object);
             $this->updateDeviceProduct($em, $object, true);
             $this->updateDeviceStatus($em, $object, true);
         }
@@ -111,6 +112,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateValidated($em, $object);
             $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
+            $this->updateDevice($em, $object);
             $this->updateDeviceProduct($em, $object);
             $this->updateDeviceStatus($em, $object);
         }
@@ -291,6 +293,30 @@ class AuditItemSubscriber implements EventSubscriber
                     $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
                     $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
                 }
+            }
+        }
+    }
+
+    private function updateDevice(EntityManagerInterface $em, object $object): void
+    {
+        if (!$object instanceof AuditItemInterface || null !== $object->getDevice()) {
+            return;
+        }
+
+        $uow = $em->getUnitOfWork();
+        $changeSet = $uow->getEntityChangeSet($object);
+
+        if (isset($changeSet['device']) && null === $object->getDevice()) {
+            $oldDevice = $changeSet['device'][0];
+
+            if ($oldDevice instanceof DeviceInterface
+                && $oldDevice instanceof DeviceAuditableInterface
+                && $object === $oldDevice->getLastAuditItem()
+            ) {
+                $oldDevice->setLastAuditItem(null);
+
+                $classMetadata = $em->getClassMetadata(ClassUtils::getClass($oldDevice));
+                $uow->recomputeSingleEntityChangeSet($classMetadata, $oldDevice);
             }
         }
     }
