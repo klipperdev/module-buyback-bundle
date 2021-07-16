@@ -23,6 +23,7 @@ use Klipper\Component\Resource\Domain\DomainManagerInterface;
 use Klipper\Component\Resource\Object\ObjectFactoryInterface;
 use Klipper\Component\Security\Permission\PermVote;
 use Klipper\Component\SecurityOauth\Scope\ScopeVote;
+use Klipper\Module\BuybackBundle\Import\Adapter\AuditItemAuditImportAdapter;
 use Klipper\Module\BuybackBundle\Import\Adapter\AuditItemQualificationImportAdapter;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
@@ -45,7 +46,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ApiAuditItemController
 {
     /**
-     * Import the audit item for qualification.
+     * Download the import template file for the qualification.
      *
      * @Entity("id", class="App:Account")
      *
@@ -58,52 +59,13 @@ class ApiAuditItemController
         AccountInterface $id,
         string $ext
     ): Response {
-        $auditItemClass = $domainManager->get(AuditItemInterface::class)->getClass();
-
-        if (!$helper->isGranted(new PermVote('create'), $auditItemClass)
-            || !$helper->isGranted(new PermVote('update'), $auditItemClass)
-            || !$helper->isGranted(new PermVote('import'))
-        ) {
-            throw $helper->createAccessDeniedException();
-        }
-
-        try {
-            $filename = sprintf('Audit import qualification template %s.%s', $id->getName(), $ext);
-            $spreadsheet = new Spreadsheet();
-            $writer = IOFactory::createWriter($spreadsheet, ucfirst($ext));
-            $sheet = $spreadsheet->getActiveSheet();
-            $sheet->setCellValueByColumnAndRow(1, 1, 'audit_request_reference');
-            $sheet->setCellValueByColumnAndRow(2, 1, 'device_imei');
-            $sheet->setCellValueByColumnAndRow(3, 1, 'product_reference');
-            $sheet->setCellValueByColumnAndRow(4, 1, 'product_combination_reference');
-            $sheet->setCellValueByColumnAndRow(5, 1, 'condition_name');
-
-            $sheet->getColumnDimensionByColumn(1)->setAutoSize(true);
-            $sheet->getColumnDimensionByColumn(2)->setAutoSize(true);
-            $sheet->getColumnDimensionByColumn(3)->setAutoSize(true);
-            $sheet->getColumnDimensionByColumn(4)->setAutoSize(true);
-            $sheet->getColumnDimensionByColumn(5)->setAutoSize(true);
-
-            $response = new StreamedResponse(
-                static function () use ($writer): void {
-                    $writer->save('php://output');
-                }
-            );
-
-            $response->setPrivate();
-            $response->headers->addCacheControlDirective('no-cache', true);
-            $response->headers->addCacheControlDirective('must-revalidate', true);
-            $response->headers->set('Content-Type', MimeTypes::getDefault()->getMimeTypes($ext));
-            $response->headers->set('Content-Disposition', 'attachment;filename="'.$filename.'"');
-
-            return $response;
-        } catch (InvalidFormatException $e) {
-            throw new BadRequestHttpException($translator->trans('klipper_api_export.invalid_format', [
-                'format' => $ext,
-            ], 'exceptions'), $e);
-        } catch (\Throwable $e) {
-            throw new BadRequestHttpException($translator->trans('klipper_api_export.error', [], 'exceptions'), $e);
-        }
+        return $this->downloadImportTemplateAction(
+            $helper,
+            $translator,
+            $domainManager,
+            $ext,
+            sprintf('Audit import qualification template %s.%s', $id->getName(), $ext)
+        );
     }
 
     /**
@@ -137,6 +99,68 @@ class ApiAuditItemController
         $import->setMetadata($metadataManager->get(AuditItemInterface::class)->getName());
         $import->setExtra([
             'qualification' => true,
+            'account_id' => $id->getId(),
+        ]);
+
+        $contentManager->upload('import', $import);
+
+        return $helper->view($import);
+    }
+
+    /**
+     * Download the import template file for the audit.
+     *
+     * @Entity("id", class="App:Account")
+     *
+     * @Route("/audit_items/accounts/{id}/import-audit.{ext}", methods={"GET"}, requirements={"ext": "csv|ods|xls|xlsx"})
+     */
+    public function downloadImportAuditTemplateAction(
+        ControllerHelper $helper,
+        TranslatorInterface $translator,
+        DomainManagerInterface $domainManager,
+        AccountInterface $id,
+        string $ext
+    ): Response {
+        return $this->downloadImportTemplateAction(
+            $helper,
+            $translator,
+            $domainManager,
+            $ext,
+            sprintf('Audit import audit template %s.%s', $id->getName(), $ext)
+        );
+    }
+
+    /**
+     * Import the audit item for audit.
+     *
+     * @Entity("id", class="App:Account")
+     *
+     * @Route("/audit_items/accounts/{id}/import-audit", methods={"POST"})
+     */
+    public function importAuditAction(
+        ControllerHelper $helper,
+        ContentManagerInterface $contentManager,
+        MetadataManagerInterface $metadataManager,
+        DomainManagerInterface $domainManager,
+        ObjectFactoryInterface $objectFactory,
+        AccountInterface $id
+    ): Response {
+        $auditItemClass = $domainManager->get(AuditItemInterface::class)->getClass();
+
+        if (!$helper->isGranted(new PermVote('create'), $auditItemClass)
+            || !$helper->isGranted(new PermVote('update'), $auditItemClass)
+            || !$helper->isGranted(new PermVote('import'))
+        ) {
+            throw $helper->createAccessDeniedException();
+        }
+
+        /** @var ImportInterface $import */
+        $import = $objectFactory->create('App:Import');
+        $import->setStatus(current(ImportStatus::getValues()));
+        $import->setAdapter(AuditItemAuditImportAdapter::class);
+        $import->setMetadata($metadataManager->get(AuditItemInterface::class)->getName());
+        $import->setExtra([
+            'audit' => true,
             'account_id' => $id->getId(),
         ]);
 
@@ -188,5 +212,59 @@ class ApiAuditItemController
         $action = Upsert::build('', $repair)->setProcessForm(false);
 
         return $helper->upsert($action);
+    }
+
+    public function downloadImportTemplateAction(
+        ControllerHelper $helper,
+        TranslatorInterface $translator,
+        DomainManagerInterface $domainManager,
+        string $ext,
+        string $filename
+    ): Response {
+        $auditItemClass = $domainManager->get(AuditItemInterface::class)->getClass();
+
+        if (!$helper->isGranted(new PermVote('create'), $auditItemClass)
+            || !$helper->isGranted(new PermVote('update'), $auditItemClass)
+            || !$helper->isGranted(new PermVote('import'))
+        ) {
+            throw $helper->createAccessDeniedException();
+        }
+
+        try {
+            $spreadsheet = new Spreadsheet();
+            $writer = IOFactory::createWriter($spreadsheet, ucfirst($ext));
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setCellValueByColumnAndRow(1, 1, 'audit_request_reference');
+            $sheet->setCellValueByColumnAndRow(2, 1, 'device_imei_or_sn');
+            $sheet->setCellValueByColumnAndRow(3, 1, 'product_reference');
+            $sheet->setCellValueByColumnAndRow(4, 1, 'product_combination_reference');
+            $sheet->setCellValueByColumnAndRow(5, 1, 'condition_name');
+
+            $sheet->getColumnDimensionByColumn(1)->setAutoSize(true);
+            $sheet->getColumnDimensionByColumn(2)->setAutoSize(true);
+            $sheet->getColumnDimensionByColumn(3)->setAutoSize(true);
+            $sheet->getColumnDimensionByColumn(4)->setAutoSize(true);
+            $sheet->getColumnDimensionByColumn(5)->setAutoSize(true);
+
+            $response = new StreamedResponse(
+                static function () use ($writer): void {
+                    $writer->save('php://output');
+                }
+            );
+
+            $response->setPrivate();
+            $response->headers->addCacheControlDirective('no-cache', true);
+            $response->headers->addCacheControlDirective('must-revalidate', true);
+            $response->headers->set('Content-Type', MimeTypes::getDefault()->getMimeTypes($ext));
+            $response->headers->set('Content-Disposition', 'attachment;filename="'.$filename.'"');
+
+            return $response;
+        } catch (InvalidFormatException $e) {
+            throw new BadRequestHttpException($translator->trans('klipper_api_export.invalid_format', [
+                'format' => $ext,
+            ], 'exceptions'), $e);
+        } catch (\Throwable $e) {
+            throw new BadRequestHttpException($translator->trans('klipper_api_export.error', [], 'exceptions'), $e);
+        }
     }
 }

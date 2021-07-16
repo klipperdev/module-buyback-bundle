@@ -9,5 +9,10 @@
         <service id="Klipper\Module\BuybackBundle\Import\Adapter\AuditItemQualificationImportAdapter">
             <tag name="klipper_import.adapter" />
         </service>
+
+        <!-- Audit Item Audit Import Adapter -->
+        <service id="Klipper\Module\BuybackBundle\Import\Adapter\AuditItemAuditImportAdapter">
+            <tag name="klipper_import.adapter" />
+        </service>
     </services>
 </container>
