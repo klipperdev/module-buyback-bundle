@@ -32,26 +32,31 @@ class AuditItemConfirmationType extends AbstractType
                 'class' => AuditRequestInterface::class,
                 'property_path' => 'auditRequest',
                 'choice_value' => 'reference',
+                'id_field' => 'reference',
             ])
             ->add('device_imei', EntityType::class, [
                 'class' => DeviceInterface::class,
                 'property_path' => 'device',
                 'choice_value' => 'imei',
+                'id_field' => 'imei',
             ])
             ->add('product_reference', EntityType::class, [
                 'class' => ProductInterface::class,
                 'property_path' => 'product',
                 'choice_value' => 'reference',
+                'id_field' => 'reference',
             ])
             ->add('product_combination_reference', EntityType::class, [
                 'class' => ProductCombinationInterface::class,
                 'property_path' => 'productCombination',
                 'choice_value' => 'reference',
+                'id_field' => 'reference',
             ])
             ->add('condition_name', EntityType::class, [
                 'class' => AuditConditionInterface::class,
                 'property_path' => 'auditCondition',
                 'choice_value' => 'name',
+                'id_field' => 'name',
             ])
         ;
     }
