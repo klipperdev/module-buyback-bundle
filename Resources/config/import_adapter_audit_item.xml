@@ -14,5 +14,18 @@
         <service id="Klipper\Module\BuybackBundle\Import\Adapter\AuditItemAuditImportAdapter">
             <tag name="klipper_import.adapter" />
         </service>
+
+        <!-- Form Type -->
+        <service id="Klipper\Module\BuybackBundle\Form\Type\AuditItemQualificationType">
+            <tag name="form.type" />
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="translator"/>
+        </service>
+
+        <service id="Klipper\Module\BuybackBundle\Form\Type\AuditItemAuditType">
+            <tag name="form.type" />
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="translator"/>
+        </service>
     </services>
 </container>

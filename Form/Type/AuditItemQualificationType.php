@@ -11,6 +11,7 @@
 
 namespace Klipper\Module\BuybackBundle\Form\Type;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
 use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
@@ -18,13 +19,30 @@ use Klipper\Module\ProductBundle\Model\ProductCombinationInterface;
 use Klipper\Module\ProductBundle\Model\ProductInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Event\PreSubmitEvent;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
 class AuditItemQualificationType extends AbstractType
 {
+    private EntityManagerInterface $em;
+
+    private TranslatorInterface $translator;
+
+    public function __construct(
+        EntityManagerInterface $em,
+        TranslatorInterface $translator
+    ) {
+        $this->em = $em;
+        $this->translator = $translator;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -34,11 +52,8 @@ class AuditItemQualificationType extends AbstractType
                 'choice_value' => 'reference',
                 'id_field' => 'reference',
             ])
-            ->add('device_imei', EntityType::class, [
-                'class' => DeviceInterface::class,
+            ->add('device_imei_or_sn', TextType::class, [
                 'property_path' => 'device',
-                'choice_value' => 'imei',
-                'id_field' => 'imei',
             ])
             ->add('product_reference', EntityType::class, [
                 'class' => ProductInterface::class,
@@ -59,5 +74,26 @@ class AuditItemQualificationType extends AbstractType
                 'id_field' => 'name',
             ])
         ;
+
+        $builder->get('device_imei_or_sn')->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
+            $res = $this->em->createQueryBuilder()
+                ->select('d')
+                ->from(DeviceInterface::class, 'd')
+                ->where('d.imei = :data')
+                ->orWhere('d.serialNumber = :data')
+                ->setMaxResults(1)
+                ->setParameter('data', $event->getData())
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+
+            $event->setData($res);
+
+            if (null === $event->getData()) {
+                $event->getForm()->addError(
+                    new FormError($this->translator->trans('This value is not valid.', [], 'validators'))
+                );
+            }
+        });
     }
 }

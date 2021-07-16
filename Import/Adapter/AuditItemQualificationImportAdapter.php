@@ -39,7 +39,7 @@ class AuditItemQualificationImportAdapter extends StandardImportAdapter
     {
         $validColumns = [
             'audit_request_reference',
-            'device_imei',
+            'device_imei_or_sn',
             'product_reference',
             'product_combination_reference',
             'condition_name',
