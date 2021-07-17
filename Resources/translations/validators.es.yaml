@@ -9,3 +9,4 @@ klipper_buyback.buyback_offer.shipping_address_required: Se requiere la direcci�
 klipper_buyback.buyback_offer.cannot_be_validated: La oferta de canje no se puede validar sin equipo
 klipper_buyback.buyback_offer.closed_offer_cannot_be_detached: La auditoría no puede separarse de una oferta de adquisición validada
 klipper_buyback.buyback_offer.closed_offer_cannot_be_attached: La auditoría no se puede adjuntar a una oferta de adquisición cerrada
+klipper_buyback.buyback_offer.create.no_audit_selected: No se selecciona ninguna auditoría para crear una oferta de intercambio

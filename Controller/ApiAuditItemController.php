@@ -350,6 +350,7 @@ class ApiAuditItemController
         ControllerHelper $helper,
         ObjectFactoryInterface $objectFactory,
         DomainManagerInterface $domainManager,
+        TranslatorInterface $translator,
         EntityManagerInterface $em,
         AccountInterface $id,
         BuybackOfferInterface $offerId
@@ -359,6 +360,7 @@ class ApiAuditItemController
             $helper,
             $objectFactory,
             $domainManager,
+            $translator,
             $em,
             $id,
             $offerId
@@ -377,6 +379,7 @@ class ApiAuditItemController
         ControllerHelper $helper,
         ObjectFactoryInterface $objectFactory,
         DomainManagerInterface $domainManager,
+        TranslatorInterface $translator,
         EntityManagerInterface $em,
         AccountInterface $id
     ): Response {
@@ -385,6 +388,7 @@ class ApiAuditItemController
             $helper,
             $objectFactory,
             $domainManager,
+            $translator,
             $em,
             $id
         );
@@ -580,6 +584,7 @@ class ApiAuditItemController
         ControllerHelper $helper,
         ObjectFactoryInterface $objectFactory,
         DomainManagerInterface $domainManager,
+        TranslatorInterface $translator,
         EntityManagerInterface $em,
         AccountInterface $id,
         ?BuybackOfferInterface $buybackOffer = null
@@ -611,7 +616,7 @@ class ApiAuditItemController
         $isCreate = null === $buybackOffer;
 
         if (empty($audits)) {
-            return $helper->view(null);
+            throw new BadRequestHttpException($translator->trans('klipper_buyback.buyback_offer.create.no_audit_selected', [], 'validators'));
         }
 
         if (null === $buybackOffer) {

@@ -9,3 +9,4 @@ klipper_buyback.buyback_offer.shipping_address_required: L'adresse d'expédition
 klipper_buyback.buyback_offer.cannot_be_validated: L'offre de reprise ne peut pas être validée sans équipement
 klipper_buyback.buyback_offer.closed_offer_cannot_be_detached: L'audit ne peut pas être détaché d'une offre de reprise validée
 klipper_buyback.buyback_offer.closed_offer_cannot_be_attached: L'audit ne peut pas être attaché à une offre de reprise close
+klipper_buyback.buyback_offer.create.no_audit_selected: Aucun audit n'est selectionné pour créer une offre de reprise
