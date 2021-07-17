@@ -12,6 +12,7 @@
 namespace Klipper\Module\BuybackBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Klipper\Bundle\ApiBundle\Action\Upsert;
 use Klipper\Bundle\ApiBundle\Controller\ControllerHelper;
 use Klipper\Component\Content\ContentManagerInterface;
@@ -255,34 +256,48 @@ class ApiAuditItemController
             ->setParameter('status', 'audited')
         ;
 
-        $products = $request->query->get('p', []);
-        $filterExpr = [];
+        $this->filterAvailableQueryByProducts($request, $qb);
 
-        if (!empty($products)) {
-            $qb
-                ->join('ai.product', 'p')
-                ->leftJoin('ai.productCombination', 'pc')
-            ;
-        }
+        return $helper->views($qb);
+    }
 
-        foreach ($products as $i => $product) {
-            $split = explode('@', $product);
-            $combinationId = $split[1] ?? null;
-            $productId = $split[0];
+    /**
+     * List the available audit conditions to create a buyback offer.
+     *
+     * @Entity("id", class="App:Account")
+     *
+     * @Route("/audit_items/accounts/{id}/buyback-offer/available-supplier-order-numbers", methods={"GET"})
+     */
+    public function listAuditSupplierOrderNumberAction(
+        Request $request,
+        ControllerHelper $helper,
+        EntityManagerInterface $em,
+        AccountInterface $id
+    ): Response {
+        $qb = $em->createQueryBuilder()
+            ->select('DISTINCT ar.supplierOrderNumber as id')
+            ->addSelect('ar.supplierOrderNumber as label')
 
-            if (null !== $combinationId) {
-                $filterExpr[] = 'p.id = :product_'.$i.' AND pc.id = :combination_'.$i;
-                $qb->setParameter('product_'.$i, $productId);
-                $qb->setParameter('combination_'.$i, $combinationId);
-            } else {
-                $filterExpr[] = 'p.id = :product_'.$i;
-                $qb->setParameter('product_'.$i, $productId);
-            }
-        }
+            ->from(AuditItemInterface::class, 'ai')
+            ->join('ai.auditRequest', 'ar')
+            ->join('ai.status', 'ais')
 
-        if (!empty($filterExpr)) {
-            $qb->andWhere($qb->expr()->orX(...$filterExpr));
-        }
+            ->where('ar.account = :account')
+            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
+            ->andWhere('ai.auditCondition IS NOT NULL')
+            ->andWhere('ai.buybackOffer IS NULL')
+            ->andWhere('ais.value = :status')
+
+            ->groupBy('ar.supplierOrderNumber')
+
+            ->orderBy('ar.supplierOrderNumber')
+
+            ->setParameter('account', $id)
+            ->setParameter('status', 'audited')
+        ;
+
+        $this->filterAvailableQueryByProducts($request, $qb);
+        $this->filterAvailableQueryByConditions($request, $qb);
 
         return $helper->views($qb);
     }
@@ -383,6 +398,59 @@ class ApiAuditItemController
             ], 'exceptions'), $e);
         } catch (\Throwable $e) {
             throw new BadRequestHttpException($translator->trans('klipper_api_export.error', [], 'exceptions'), $e);
+        }
+    }
+
+    private function filterAvailableQueryByProducts(Request $request, QueryBuilder $qb, bool $addJoins = true): void
+    {
+        $productIds = (array) $request->query->get('p', []);
+
+        if (!empty($productIds)) {
+            $filterExpr = [];
+
+            if ($addJoins) {
+                $qb
+                    ->join('ai.product', 'p')
+                    ->leftJoin('ai.productCombination', 'pc')
+                ;
+            }
+
+            foreach ($productIds as $i => $productId) {
+                $split = explode('@', $productId);
+                $combinationId = $split[1] ?? null;
+                $productId = $split[0];
+
+                if (null !== $combinationId) {
+                    $filterExpr[] = 'p.id = :product_'.$i.' AND pc.id = :combination_'.$i;
+                    $qb->setParameter('product_'.$i, $productId);
+                    $qb->setParameter('combination_'.$i, $combinationId);
+                } else {
+                    $filterExpr[] = 'p.id = :product_'.$i;
+                    $qb->setParameter('product_'.$i, $productId);
+                }
+            }
+
+            if (!empty($filterExpr)) {
+                $qb->andWhere($qb->expr()->orX(...$filterExpr));
+            }
+        }
+    }
+
+    private function filterAvailableQueryByConditions(Request $request, QueryBuilder $qb): void
+    {
+        $conditionIds = (array) $request->query->get('c', []);
+
+        if (!empty($conditionIds)) {
+            $filterExpr = [];
+
+            foreach ($conditionIds as $i => $conditionId) {
+                $filterExpr[] = 'ai.auditCondition = :condition_'.$i;
+                $qb->setParameter('condition_'.$i, $conditionId);
+            }
+
+            if (!empty($filterExpr)) {
+                $qb->andWhere($qb->expr()->orX(...$filterExpr));
+            }
         }
     }
 }
