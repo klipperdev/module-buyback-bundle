@@ -331,6 +331,7 @@ class ApiAuditItemController
         $this->filterAvailableQueryByProducts($request, $qb, false);
         $this->filterAvailableQueryByConditions($request, $qb);
         $this->filterAvailableQueryBySupplierOrderNumbers($request, $qb);
+        $this->filterAvailableQueryByAuditItems($request, $qb);
 
         return $helper->views($qb);
     }
@@ -502,6 +503,18 @@ class ApiAuditItemController
             if (!empty($filterExpr)) {
                 $qb->andWhere($qb->expr()->orX(...$filterExpr));
             }
+        }
+    }
+
+    private function filterAvailableQueryByAuditItems(Request $request, QueryBuilder $qb): void
+    {
+        $auditIds = (array) $request->query->get('aid', []);
+
+        if (!empty($auditIds)) {
+            $qb
+                ->andWhere('ai.id IN (:auditIds)')
+                ->setParameter('auditIds', $auditIds)
+            ;
         }
     }
 }
