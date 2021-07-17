@@ -11,6 +11,7 @@
 
 namespace Klipper\Module\BuybackBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Klipper\Bundle\ApiBundle\Action\Upsert;
 use Klipper\Bundle\ApiBundle\Controller\ControllerHelper;
 use Klipper\Component\Content\ContentManagerInterface;
@@ -167,6 +168,51 @@ class ApiAuditItemController
         $contentManager->upload('import', $import);
 
         return $helper->view($import);
+    }
+
+    /**
+     * List the available products to create a buyback offer.
+     *
+     * @Entity("id", class="App:Account")
+     *
+     * @Route("/audit_items/accounts/{id}/buyback-offer/available-products", methods={"GET"})
+     */
+    public function listProductAction(
+        ControllerHelper $helper,
+        EntityManagerInterface $em,
+        AccountInterface $id
+    ): Response {
+        $concatCombination = 'GROUP_CONCAT(DISTINCT CONCAT_WS(\' : \', pcaia.label, pcai.label) ORDER BY pcai.id ASC SEPARATOR \' • \')';
+
+        $qb = $em->createQueryBuilder()
+            ->select('p.id as product_id')
+            ->addSelect('pc.id as product_combination_id')
+            ->addSelect('b.name as product_brand_name')
+            ->addSelect('p.name as product_name')
+            ->addSelect('CASE WHEN ai.productCombination IS NOT NULL THEN '.$concatCombination.' ELSE :null END as product_combination_name')
+
+            ->from(AuditItemInterface::class, 'ai')
+            ->join('ai.auditRequest', 'ar')
+            ->join('ai.product', 'p')
+            ->leftJoin('ai.productCombination', 'pc')
+            ->leftJoin('p.brand', 'b')
+            ->leftJoin('pc.attributeItems', 'pcai')
+            ->leftJoin('pcai.attribute', 'pcaia')
+
+            ->where('ar.account = :account')
+            ->andWhere('ai.buybackOffer IS NULL')
+
+            ->groupBy('p.id')
+            ->addGroupBy('pc.id')
+
+            ->orderBy('b.name')
+            ->addOrderBy('p.name')
+
+            ->setParameter('account', $id)
+            ->setParameter('null', null)
+        ;
+
+        return $helper->views($qb);
     }
 
     /**
