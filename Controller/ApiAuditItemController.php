@@ -330,6 +330,7 @@ class ApiAuditItemController
 
         $this->filterAvailableQueryByProducts($request, $qb, false);
         $this->filterAvailableQueryByConditions($request, $qb);
+        $this->filterAvailableQueryBySupplierOrderNumbers($request, $qb);
 
         return $helper->views($qb);
     }
@@ -478,6 +479,24 @@ class ApiAuditItemController
             foreach ($conditionIds as $i => $conditionId) {
                 $filterExpr[] = 'ai.auditCondition = :condition_'.$i;
                 $qb->setParameter('condition_'.$i, $conditionId);
+            }
+
+            if (!empty($filterExpr)) {
+                $qb->andWhere($qb->expr()->orX(...$filterExpr));
+            }
+        }
+    }
+
+    private function filterAvailableQueryBySupplierOrderNumbers(Request $request, QueryBuilder $qb): void
+    {
+        $references = (array) $request->query->get('ref', []);
+
+        if (!empty($references)) {
+            $filterExpr = [];
+
+            foreach ($references as $i => $reference) {
+                $filterExpr[] = 'ar.supplierOrderNumber = :supplierOrderNumber_'.$i;
+                $qb->setParameter('supplierOrderNumber_'.$i, $reference);
             }
 
             if (!empty($filterExpr)) {
