@@ -15,6 +15,7 @@ use Klipper\Bundle\ApiBundle\Util\ControllerDefinitionUtil;
 use Klipper\Module\BuybackBundle\Controller\ApiAuditItemController;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditItemSubscriber;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditRequestSubscriber;
+use Klipper\Module\BuybackBundle\Doctrine\Listener\BuybackOfferSubscriber;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -38,6 +39,7 @@ class KlipperBuybackExtension extends Extension
 
         $this->configAuditRequest($container, $loader, $config['audit_request']);
         $this->configAuditItem($container, $loader, $config['audit_item']);
+        $this->configBuybackOffer($container, $loader, $config['buyback_offer']);
         $this->configRepair($loader);
 
         ControllerDefinitionUtil::set($container, ApiAuditItemController::class);
@@ -74,6 +76,25 @@ class KlipperBuybackExtension extends Extension
 
         $def->replaceArgument(3, array_unique(array_merge($config['closed_statuses'], [
             'valorised',
+        ])));
+    }
+
+    /**
+     * @throws
+     */
+    protected function configBuybackOffer(ContainerBuilder $container, LoaderInterface $loader, array $config): void
+    {
+        $loader->load('doctrine_subscriber_buyback_offer.xml');
+
+        $def = $container->getDefinition(BuybackOfferSubscriber::class);
+
+        $def->replaceArgument(3, array_unique(array_merge($config['closed_statuses'], [
+            'accepted',
+            'refused',
+            'canceled',
+        ])));
+        $def->replaceArgument(4, array_unique(array_merge($config['validated_statuses'], [
+            'accepted',
         ])));
     }
 

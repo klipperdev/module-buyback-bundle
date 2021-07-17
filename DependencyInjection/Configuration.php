@@ -34,6 +34,7 @@ class Configuration implements ConfigurationInterface
             ->children()
             ->append($this->getAuditRequestNode())
             ->append($this->getAuditItemNode())
+            ->append($this->getBuybackOfferNode())
             ->end()
         ;
 
@@ -61,6 +62,21 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
             ->arrayNode('closed_statuses')
+            ->scalarPrototype()->end()
+            ->end()
+            ->end()
+            ;
+    }
+
+    private function getBuybackOfferNode(): NodeDefinition
+    {
+        return NodeUtils::createArrayNode('buyback_offer')
+            ->addDefaultsIfNotSet()
+            ->children()
+            ->arrayNode('closed_statuses')
+            ->scalarPrototype()->end()
+            ->end()
+            ->arrayNode('validated_statuses')
             ->scalarPrototype()->end()
             ->end()
             ->end()

@@ -149,6 +149,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
     /**
      * @ORM\ManyToOne(
      *     targetEntity="Klipper\Module\BuybackBundle\Model\BuybackOfferInterface",
+     *     cascade={"persist"},
      *     fetch="EAGER"
      * )
      *

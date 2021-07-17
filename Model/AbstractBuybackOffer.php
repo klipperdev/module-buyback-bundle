@@ -139,6 +139,16 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
     protected ?string $calculationMethod = null;
 
     /**
+     * @ORM\Column(type="integer", options={"default": 0})
+     *
+     * @Assert\Type(type="integer")
+     *
+     * @Serializer\Expose
+     * @Serializer\ReadOnly
+     */
+    protected int $numberOfItems = 0;
+
+    /**
      * @ORM\Column(type="float", nullable=true)
      *
      * @Assert\Type(type="float")
@@ -303,6 +313,18 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
     public function getCalculationMethod(): ?string
     {
         return $this->calculationMethod;
+    }
+
+    public function setNumberOfItems(int $numberOfItems): self
+    {
+        $this->numberOfItems = $numberOfItems;
+
+        return $this;
+    }
+
+    public function getNumberOfItems(): int
+    {
+        return $this->numberOfItems;
     }
 
     public function setTotalConditionPrice(float $totalConditionPrice): self

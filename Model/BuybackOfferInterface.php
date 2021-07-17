@@ -86,6 +86,13 @@ interface BuybackOfferInterface extends
     /**
      * @return static
      */
+    public function setNumberOfItems(int $numberOfItems);
+
+    public function getNumberOfItems(): int;
+
+    /**
+     * @return static
+     */
     public function setTotalConditionPrice(float $totalConditionPrice);
 
     public function getTotalConditionPrice(): float;
