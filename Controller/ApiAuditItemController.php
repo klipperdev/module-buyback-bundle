@@ -195,6 +195,7 @@ class ApiAuditItemController
 
             ->from(AuditItemInterface::class, 'ai')
             ->join('ai.auditRequest', 'ar')
+            ->join('ai.status', 'ais')
             ->join('ai.product', 'p')
             ->leftJoin('ai.productCombination', 'pc')
             ->leftJoin('p.brand', 'b')
@@ -203,6 +204,7 @@ class ApiAuditItemController
 
             ->where('ar.account = :account')
             ->andWhere('ai.buybackOffer IS NULL')
+            ->andWhere('ais.value = :status')
 
             ->groupBy('p.id')
             ->addGroupBy('pc.id')
@@ -211,6 +213,7 @@ class ApiAuditItemController
             ->addOrderBy('p.name')
 
             ->setParameter('account', $id)
+            ->setParameter('status', 'audited')
             ->setParameter('null', null)
         ;
 
@@ -238,15 +241,18 @@ class ApiAuditItemController
             ->from(AuditItemInterface::class, 'ai')
             ->join('ai.auditRequest', 'ar')
             ->join('ai.auditCondition', 'ac')
+            ->join('ai.status', 'ais')
 
             ->where('ar.account = :account')
             ->andWhere('ai.buybackOffer IS NULL')
+            ->andWhere('ais.value = :status')
 
             ->groupBy('ac.id')
 
             ->orderBy('ac.label')
 
             ->setParameter('account', $id)
+            ->setParameter('status', 'audited')
         ;
 
         $products = $request->query->get('p', []);
