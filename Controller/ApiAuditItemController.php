@@ -303,6 +303,38 @@ class ApiAuditItemController
     }
 
     /**
+     * List the available audits to create a buyback offer.
+     *
+     * @Entity("id", class="App:Account")
+     *
+     * @Route("/audit_items/accounts/{id}/buyback-offer/available-audits", methods={"GET"})
+     */
+    public function listAvailableAuditForBuybackOfferAction(
+        Request $request,
+        ControllerHelper $helper,
+        EntityManagerInterface $em,
+        AccountInterface $id
+    ): Response {
+        $qb = $em->getRepository(AuditItemInterface::class)
+            ->createQueryBuilder('ai')
+
+            ->where('ar.account = :account')
+            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
+            ->andWhere('ai.auditCondition IS NOT NULL')
+            ->andWhere('ai.buybackOffer IS NULL')
+            ->andWhere('cs.value = :status')
+
+            ->setParameter('account', $id)
+            ->setParameter('status', 'audited')
+        ;
+
+        $this->filterAvailableQueryByProducts($request, $qb, false);
+        $this->filterAvailableQueryByConditions($request, $qb);
+
+        return $helper->views($qb);
+    }
+
+    /**
      * Create a repair for an audit item.
      *
      * @Entity("id", class="App:AuditItem")
