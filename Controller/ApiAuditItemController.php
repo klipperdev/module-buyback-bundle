@@ -34,6 +34,7 @@ use Klipper\Module\RepairBundle\Model\RepairInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -185,7 +186,8 @@ class ApiAuditItemController
         $concatCombination = 'GROUP_CONCAT(DISTINCT CONCAT_WS(\' : \', pcaia.label, pcai.label) ORDER BY pcai.id ASC SEPARATOR \' • \')';
 
         $qb = $em->createQueryBuilder()
-            ->select('p.id as product_id')
+            ->select('CONCAT_WS(\'@\', p.id, pc.id) as id')
+            ->addSelect('p.id as product_id')
             ->addSelect('pc.id as product_combination_id')
             ->addSelect('b.name as product_brand_name')
             ->addSelect('p.name as product_name')
@@ -211,6 +213,70 @@ class ApiAuditItemController
             ->setParameter('account', $id)
             ->setParameter('null', null)
         ;
+
+        return $helper->views($qb);
+    }
+
+    /**
+     * List the available audit conditions to create a buyback offer.
+     *
+     * @Entity("id", class="App:Account")
+     *
+     * @Route("/audit_items/accounts/{id}/buyback-offer/available-conditions", methods={"GET"})
+     */
+    public function listAuditConditionAction(
+        Request $request,
+        ControllerHelper $helper,
+        EntityManagerInterface $em,
+        AccountInterface $id
+    ): Response {
+        $qb = $em->createQueryBuilder()
+            ->select('ac.id as id')
+            ->addSelect('ac.label')
+            ->addSelect('ac.name')
+
+            ->from(AuditItemInterface::class, 'ai')
+            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditCondition', 'ac')
+
+            ->where('ar.account = :account')
+            ->andWhere('ai.buybackOffer IS NULL')
+
+            ->groupBy('ac.id')
+
+            ->orderBy('ac.label')
+
+            ->setParameter('account', $id)
+        ;
+
+        $products = $request->query->get('p', []);
+        $filterExpr = [];
+
+        if (!empty($products)) {
+            $qb
+                ->join('ai.product', 'p')
+                ->leftJoin('ai.productCombination', 'pc')
+            ;
+        }
+
+        foreach ($products as $i => $product) {
+            $split = explode('@', $product);
+            $combinationId = $split[1] ?? null;
+            $productId = $split[0];
+
+            if (null !== $combinationId) {
+                $filterExpr[] = 'p.id = :product_'.$i.' AND pc.id = :combination_'.$i;
+                $qb->setParameter('product_'.$i, $productId);
+                $qb->setParameter('combination_'.$i, $combinationId);
+            } else {
+                $filterExpr[] = 'p.id = :product_'.$i;
+                $qb->setParameter('product_'.$i, $productId);
+            }
+        }
+
+        if (!empty($filterExpr)) {
+            $qb->andWhere($qb->expr()->orX(...$filterExpr));
+        }
 
         return $helper->views($qb);
     }
