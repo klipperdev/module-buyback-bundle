@@ -28,6 +28,7 @@ use Klipper\Component\SecurityOauth\Scope\ScopeVote;
 use Klipper\Module\BuybackBundle\Import\Adapter\AuditItemAuditImportAdapter;
 use Klipper\Module\BuybackBundle\Import\Adapter\AuditItemQualificationImportAdapter;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
+use Klipper\Module\BuybackBundle\Model\BuybackOfferInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\RepairAuditableInterface;
 use Klipper\Module\PartnerBundle\Model\AccountInterface;
@@ -337,6 +338,59 @@ class ApiAuditItemController
     }
 
     /**
+     * Add selected audit items to an existing buyback offer.
+     *
+     * @Entity("id", class="App:Account")
+     * @Entity("offerId", class="App:BuybackOffer")
+     *
+     * @Route("/audit_items/accounts/{id}/buyback-offer/{offerId}", methods={"PATCH"})
+     */
+    public function addAuditsToExistingBuybackOfferAction(
+        Request $request,
+        ControllerHelper $helper,
+        ObjectFactoryInterface $objectFactory,
+        DomainManagerInterface $domainManager,
+        EntityManagerInterface $em,
+        AccountInterface $id,
+        BuybackOfferInterface $offerId
+    ): Response {
+        return $this->addAuditsToNewOrExistingBuybackOfferAction(
+            $request,
+            $helper,
+            $objectFactory,
+            $domainManager,
+            $em,
+            $id,
+            $offerId
+        );
+    }
+
+    /**
+     * Add selected audit items to a new buyback offer.
+     *
+     * @Entity("id", class="App:Account")
+     *
+     * @Route("/audit_items/accounts/{id}/buyback-offer", methods={"POST"})
+     */
+    public function addAuditsToNewBuybackOfferAction(
+        Request $request,
+        ControllerHelper $helper,
+        ObjectFactoryInterface $objectFactory,
+        DomainManagerInterface $domainManager,
+        EntityManagerInterface $em,
+        AccountInterface $id
+    ): Response {
+        return $this->addAuditsToNewOrExistingBuybackOfferAction(
+            $request,
+            $helper,
+            $objectFactory,
+            $domainManager,
+            $em,
+            $id
+        );
+    }
+
+    /**
      * Create a repair for an audit item.
      *
      * @Entity("id", class="App:AuditItem")
@@ -516,5 +570,79 @@ class ApiAuditItemController
                 ->setParameter('auditIds', $auditIds)
             ;
         }
+    }
+
+    /**
+     * Add selected audit items to an existing buyback offer or a new.
+     */
+    private function addAuditsToNewOrExistingBuybackOfferAction(
+        Request $request,
+        ControllerHelper $helper,
+        ObjectFactoryInterface $objectFactory,
+        DomainManagerInterface $domainManager,
+        EntityManagerInterface $em,
+        AccountInterface $id,
+        ?BuybackOfferInterface $buybackOffer = null
+    ): Response {
+        $qb = $em->createQueryBuilder()
+            ->select('ai')
+
+            ->from(AuditItemInterface::class, 'ai')
+            ->join('ai.auditRequest', 'ar')
+            ->join('ai.status', 'cs')
+
+            ->where('ar.account = :account')
+            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
+            ->andWhere('ai.auditCondition IS NOT NULL')
+            ->andWhere('ai.buybackOffer IS NULL')
+            ->andWhere('cs.value = :status')
+
+            ->setParameter('account', $id)
+            ->setParameter('status', 'audited')
+        ;
+
+        $this->filterAvailableQueryByProducts($request, $qb);
+        $this->filterAvailableQueryByConditions($request, $qb);
+        $this->filterAvailableQueryBySupplierOrderNumbers($request, $qb);
+        $this->filterAvailableQueryByAuditItems($request, $qb);
+
+        /** @var AuditItemInterface[] $audits */
+        $audits = $qb->getQuery()->getResult();
+        $isCreate = null === $buybackOffer;
+
+        if (empty($audits)) {
+            return $helper->view(null);
+        }
+
+        if (null === $buybackOffer) {
+            $firstAudit = $audits[0];
+            $firstAuditRequest = $firstAudit->getAuditRequest();
+
+            /** @var BuybackOfferInterface $buybackOffer */
+            $buybackOffer = $objectFactory->create(BuybackOfferInterface::class);
+            $buybackOffer->setShippingAddress($firstAuditRequest->getShippingAddress());
+            $buybackOffer->setInvoiceAddress($firstAuditRequest->getInvoiceAddress());
+            $buybackOffer->setAccount($firstAuditRequest->getAccount());
+            $buybackOffer->setSupplier($firstAuditRequest->getSupplier());
+            $buybackOffer->setExpirationDate((new \DateTime())->add(new \DateInterval('P14D')));
+            $buybackOffer->setContact($firstAuditRequest->getContact());
+        }
+
+        $domain = $domainManager->get(AuditItemInterface::class);
+
+        foreach ($audits as $audit) {
+            $audit->setBuybackOffer($buybackOffer);
+        }
+
+        $res = $domain->updates($audits);
+
+        if ($res->hasErrors()) {
+            $data = $helper->formatResultList($res, true);
+            $view = $helper->createView($data, Response::HTTP_BAD_REQUEST);
+        } else {
+            $view = $helper->createView($buybackOffer, $isCreate ? Response::HTTP_CREATED : Response::HTTP_OK);
+        }
+
+        return $helper->handleView($view);
     }
 }
