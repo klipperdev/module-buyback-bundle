@@ -71,6 +71,7 @@ buyback_offer.fields.reference: Reference
 buyback_offer.fields.date: Date
 buyback_offer.fields.expiration_date: Expiration date
 buyback_offer.fields.calculation_method: Calculation method
+buyback_offer.fields.number_of_items: Quantity
 buyback_offer.fields.total_condition_price: Total price per condition
 buyback_offer.fields.total_state_price: Total price per state
 buyback_offer.fields.total_price: Total price
