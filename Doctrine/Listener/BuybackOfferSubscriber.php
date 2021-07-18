@@ -24,6 +24,7 @@ use Klipper\Component\DoctrineExtra\Util\ClassUtils;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\BuybackOfferInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
+use Klipper\Module\DeviceBundle\Model\DeviceInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -45,6 +46,11 @@ class BuybackOfferSubscriber implements EventSubscriber
      * @var int[]|string[]
      */
     private array $updateQuantities = [];
+
+    /**
+     * @var int[]|string[]
+     */
+    private array $updateDeviceStatuses = [];
 
     public function __construct(
         ChoiceManagerInterface $choiceManager,
@@ -246,7 +252,23 @@ class BuybackOfferSubscriber implements EventSubscriber
             }
         }
 
+        if (\count($this->updateDeviceStatuses) > 0) {
+            $em = $args->getEntityManager();
+            $status = $this->choiceManager->getChoice('device_status', 'buybacked');
+
+            $em->createQueryBuilder()
+                ->update(DeviceInterface::class, 'd')
+                ->set('d.status', ':status')
+                ->where('d.lastAuditItem IN (SELECT ai.id FROM '.AuditItemInterface::class.' ai where ai.buybackOffer IN (:ids))')
+                ->setParameter('ids', $this->updateDeviceStatuses)
+                ->setParameter('status', $status)
+                ->getQuery()
+                ->execute()
+            ;
+        }
+
         $this->updateQuantities = [];
+        $this->updateDeviceStatuses = [];
     }
 
     private function validateModuleEnabled(object $object): void
@@ -310,6 +332,10 @@ class BuybackOfferSubscriber implements EventSubscriber
                 $object->setClosed($closed);
                 $object->setValidated(!$invalidated);
 
+                if ($object->isValidated()) {
+                    $this->reCalculateBuybackOfferDeviceStatuses($object);
+                }
+
                 $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
                 $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
             }
@@ -333,5 +359,11 @@ class BuybackOfferSubscriber implements EventSubscriber
     {
         $this->updateQuantities[] = $buybackOffer->getId();
         $this->updateQuantities = array_unique($this->updateQuantities);
+    }
+
+    private function reCalculateBuybackOfferDeviceStatuses(BuybackOfferInterface $buybackOffer): void
+    {
+        $this->updateDeviceStatuses[] = $buybackOffer->getId();
+        $this->updateDeviceStatuses = array_unique($this->updateDeviceStatuses);
     }
 }
