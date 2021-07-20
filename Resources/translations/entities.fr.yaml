@@ -58,6 +58,7 @@ audit_item.fields.comment: Commentaire
 audit_item.fields.closed: Clôturée
 audit_item.fields.validated: Validée
 audit_item.fields.repair_price: Prix de la maintenance
+audit_item.fields.included_repair_price: Inclure la maintenance
 audit_item.associations.auditor: Auditeur
 audit_item.associations.status: Statut
 audit_item.associations.audit_condition: Condition

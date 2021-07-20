@@ -56,8 +56,9 @@ audit_item.fields.condition_price: Condition price
 audit_item.fields.state_price: State price
 audit_item.fields.comment: Comment
 audit_item.fields.closed: Closed
-audit_item.fields.repair_price: Repair price
 audit_item.fields.validated: Validated
+audit_item.fields.repair_price: Repair price
+audit_item.fields.included_repair_price: Include the repair
 audit_item.associations.auditor: Auditor
 audit_item.associations.status: Status
 audit_item.associations.audit_condition: Condition

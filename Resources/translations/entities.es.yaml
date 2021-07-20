@@ -56,8 +56,9 @@ audit_item.fields.condition_price: Precio por condición
 audit_item.fields.state_price: Precio por estado
 audit_item.fields.comment: Comentario
 audit_item.fields.closed: Cerrado
-audit_item.fields.repair_price: Precio de mantenimiento
 audit_item.fields.validated: Validado
+audit_item.fields.repair_price: Precio de mantenimiento
+audit_item.fields.included_repair_price: Incluir mantenimiento
 audit_item.associations.auditor: Auditor
 audit_item.associations.status: Estado
 audit_item.associations.audit_condition: Condición
