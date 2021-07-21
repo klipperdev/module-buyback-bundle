@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Form Type -->
+        <service id="Klipper\Module\BuybackBundle\Form\Type\BuybackOfferPriceRuleConfigType">
+            <tag name="form.type" />
+            <argument type="service" id="klipper_metadata.manager"/>
+        </service>
+
+        <service id="Klipper\Module\BuybackBundle\Form\Type\BuybackOfferPriceRuleConfigConditionPriceType">
+            <tag name="form.type" />
+            <argument type="service" id="klipper_metadata.manager"/>
+        </service>
+    </services>
+</container>

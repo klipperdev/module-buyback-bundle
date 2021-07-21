@@ -10,3 +10,4 @@ klipper_buyback.buyback_offer.cannot_be_validated: La oferta de canje no se pued
 klipper_buyback.buyback_offer.closed_offer_cannot_be_detached: La auditoría no puede separarse de una oferta de adquisición validada
 klipper_buyback.buyback_offer.closed_offer_cannot_be_attached: La auditoría no se puede adjuntar a una oferta de adquisición cerrada
 klipper_buyback.buyback_offer.create.no_audit_selected: No se selecciona ninguna auditoría para crear una oferta de intercambio
+klipper_buyback.buyback_offer.apply_price_rule.no_audit_selected: No se selecciona ninguna auditoría para aplicar una regla de precio en la oferta de intercambio

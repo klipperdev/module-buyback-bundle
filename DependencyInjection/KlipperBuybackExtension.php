@@ -13,6 +13,7 @@ namespace Klipper\Module\BuybackBundle\DependencyInjection;
 
 use Klipper\Bundle\ApiBundle\Util\ControllerDefinitionUtil;
 use Klipper\Module\BuybackBundle\Controller\ApiAuditItemController;
+use Klipper\Module\BuybackBundle\Controller\ApiBuybackOfferController;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditItemSubscriber;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditRequestSubscriber;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\BuybackOfferSubscriber;
@@ -42,7 +43,10 @@ class KlipperBuybackExtension extends Extension
         $this->configBuybackOffer($container, $loader, $config['buyback_offer']);
         $this->configRepair($loader);
 
+        $loader->load('api_form.xml');
+
         ControllerDefinitionUtil::set($container, ApiAuditItemController::class);
+        ControllerDefinitionUtil::set($container, ApiBuybackOfferController::class);
     }
 
     /**

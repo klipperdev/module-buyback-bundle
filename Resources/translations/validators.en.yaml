@@ -10,3 +10,4 @@ klipper_buyback.buyback_offer.cannot_be_validated: The buyback offer cannot be v
 klipper_buyback.buyback_offer.closed_offer_cannot_be_detached: The audit cannot be detached from a validated buyback offer
 klipper_buyback.buyback_offer.closed_offer_cannot_be_attached: The audit cannot be attached to a closed buyback offer
 klipper_buyback.buyback_offer.create.no_audit_selected: No audit is selected to create a buyback offer
+klipper_buyback.buyback_offer.apply_price_rule.no_audit_selected: No audit is selected to apply a price rule on the buyback offer
