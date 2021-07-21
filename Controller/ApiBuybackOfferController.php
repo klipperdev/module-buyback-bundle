@@ -232,9 +232,9 @@ class ApiBuybackOfferController
         }
 
         return $helper->view($helper->createView(
-                $helper->formatFormErrors($form),
-                Response::HTTP_BAD_REQUEST
-            ));
+            $helper->formatFormErrors($form),
+            Response::HTTP_BAD_REQUEST
+        ));
     }
 
     private function filterAvailableQueryByEmptyPrice(QueryBuilder $qb): void
