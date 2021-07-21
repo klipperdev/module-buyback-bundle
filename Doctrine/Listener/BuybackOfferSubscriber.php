@@ -141,6 +141,14 @@ class BuybackOfferSubscriber implements EventSubscriber
                     ), $object, 'shippingAddress');
                 }
             }
+
+            if (isset($changeSet['calculationMethod'])) {
+                $price = 'by_condition' === $object->getCalculationMethod()
+                    ? $object->getTotalConditionPrice()
+                    : $object->getTotalStatePrice();
+
+                $object->setTotalPrice($price);
+            }
         } elseif ($object instanceof AuditItemInterface) {
             if (isset($changeSet['buybackOffer'])) {
                 /** @var null|BuybackOfferInterface $oldOffer */
