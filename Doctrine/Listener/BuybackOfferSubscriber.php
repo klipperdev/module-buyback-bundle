@@ -217,6 +217,22 @@ class BuybackOfferSubscriber implements EventSubscriber
                 ->getResult()
             ;
 
+            $findBuybackOfferIds = array_map(static function ($item) {
+                return $item['buybackOfferId'];
+            }, $res);
+
+            foreach ($this->updateQuantities as $id) {
+                if (!\in_array($id, $findBuybackOfferIds, true)) {
+                    $res[] = [
+                        'buybackOfferId' => $id,
+                        'total' => 0,
+                        'statePrice' => 0,
+                        'conditionPrice' => 0,
+                        'repairPrice' => 0,
+                    ];
+                }
+            }
+
             foreach ($res as $resItem) {
                 // Do not the persist/flush in postFlush event
                 if ((float) $resItem['statePrice'] <= (float) $resItem['conditionPrice']) {
