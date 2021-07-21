@@ -57,6 +57,7 @@ class ApiBuybackOfferController
 
             ->from(AuditItemInterface::class, 'ai')
             ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditCondition', 'ac')
             ->join('ai.status', 'ais')
             ->join('ai.product', 'p')
             ->leftJoin('ai.productCombination', 'pc')
@@ -77,6 +78,8 @@ class ApiBuybackOfferController
             ->setParameter('status', 'valorised')
             ->setParameter('null', null)
         ;
+
+        $this->filterAvailableQueryByEmptyPrice($qb);
 
         return $helper->views($qb);
     }
@@ -115,6 +118,7 @@ class ApiBuybackOfferController
             ->setParameter('status', 'valorised')
         ;
 
+        $this->filterAvailableQueryByEmptyPrice($qb);
         $this->filterAvailableQueryByProducts($request, $qb);
 
         return $helper->views($qb);
@@ -145,6 +149,7 @@ class ApiBuybackOfferController
             ->setParameter('status', 'valorised')
         ;
 
+        $this->filterAvailableQueryByEmptyPrice($qb);
         $this->filterAvailableQueryByProducts($request, $qb, false);
         $this->filterAvailableQueryByConditions($request, $qb);
         $this->filterAvailableQueryByRepairs($request, $qb);
@@ -186,6 +191,7 @@ class ApiBuybackOfferController
             ->setParameter('status', 'valorised')
         ;
 
+        $this->filterAvailableQueryByEmptyPrice($qb);
         $this->filterAvailableQueryByProducts($request, $qb);
         $this->filterAvailableQueryByConditions($request, $qb);
         $this->filterAvailableQueryByRepairs($request, $qb);
@@ -229,6 +235,13 @@ class ApiBuybackOfferController
                 $helper->formatFormErrors($form),
                 Response::HTTP_BAD_REQUEST
             ));
+    }
+
+    private function filterAvailableQueryByEmptyPrice(QueryBuilder $qb): void
+    {
+        $qb
+            ->andWhere('(ai.conditionPrice IS NULL OR ai.conditionPrice = 0) AND (ai.statePrice IS NULL OR ai.statePrice = 0)')
+        ;
     }
 
     private function filterAvailableQueryByProducts(Request $request, QueryBuilder $qb, bool $addJoins = true): void
