@@ -197,6 +197,10 @@ class AuditRequestSubscriber implements EventSubscriber
                 $object->setClosed($closed);
                 $object->setValidated(!$invalidated);
 
+                if (null === $object->getReceiptedAt() && $object->isClosed()) {
+                    $object->setReceiptedAt(new \DateTime());
+                }
+
                 $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
                 $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
             }
