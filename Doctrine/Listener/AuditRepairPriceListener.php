@@ -38,7 +38,7 @@ class AuditRepairPriceListener implements RepairPriceListenerInterface
 
             foreach ($audits as $audit) {
                 if ($audit instanceof AuditRepairableInterface) {
-                    $price = $repairPrices[$audit->getRepairId()] ?? 0.0;
+                    $price = -1 * ($repairPrices[$audit->getRepairId()] ?? 0.0);
 
                     if ($price !== $audit->getRepairPrice()) {
                         $audit->setRepairPrice($price);

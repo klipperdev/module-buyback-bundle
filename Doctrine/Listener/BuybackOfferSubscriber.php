@@ -147,7 +147,7 @@ class BuybackOfferSubscriber implements EventSubscriber
                     ? $object->getTotalConditionPrice()
                     : $object->getTotalStatePrice();
 
-                $object->setTotalPrice($price);
+                $object->setTotalPrice($price + (float) $object->getTotalRepairPrice());
             }
         } elseif ($object instanceof AuditItemInterface) {
             if (isset($changeSet['buybackOffer'])) {
@@ -250,6 +250,8 @@ class BuybackOfferSubscriber implements EventSubscriber
                     $calculationMethod = 'by_condition';
                     $totalPrice = (float) $resItem['conditionPrice'];
                 }
+
+                $totalPrice = $totalPrice + (float) $resItem['repairPrice'];
 
                 $em->createQueryBuilder()
                     ->update(BuybackOfferInterface::class, 'bo')
