@@ -80,6 +80,7 @@ buyback_offer.fields.total_price: Importe de intercambio
 buyback_offer.fields.comment: Comentario
 buyback_offer.fields.closed: Cerrado
 buyback_offer.fields.validated: Validado
+buyback_offer.fields.validated_at: Validado el
 buyback_offer.associations.shipping_address: Dirección de envío
 buyback_offer.associations.supplier: Proveedor
 buyback_offer.associations.invoice_address: Dirección de facturación

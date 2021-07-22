@@ -80,6 +80,7 @@ buyback_offer.fields.total_price: Montant de la reprise
 buyback_offer.fields.comment: Commentaire
 buyback_offer.fields.closed: Clôturée
 buyback_offer.fields.validated: Validée
+buyback_offer.fields.validated_at: Validée le
 buyback_offer.associations.shipping_address: Adresse d'expédition
 buyback_offer.associations.supplier: Fournisseur
 buyback_offer.associations.invoice_address: Adresse de facturation

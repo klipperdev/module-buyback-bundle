@@ -231,6 +231,17 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      */
     protected bool $validated = false;
 
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     *
+     * @Assert\Type(type="datetime")
+     * @Assert\NotBlank
+     *
+     * @Serializer\Expose
+     * @Serializer\ReadOnly
+     */
+    protected ?\DateTime $validatedAt = null;
+
     public function setReference(?string $reference): self
     {
         $this->reference = $reference;
@@ -421,5 +432,17 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
     public function isValidated(): bool
     {
         return $this->validated;
+    }
+
+    public function setValidatedAt(?\DateTime $validatedAt): self
+    {
+        $this->validatedAt = $validatedAt;
+
+        return $this;
+    }
+
+    public function getValidatedAt(): ?\DateTime
+    {
+        return $this->validatedAt;
     }
 }

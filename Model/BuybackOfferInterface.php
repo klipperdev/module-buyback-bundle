@@ -145,4 +145,11 @@ interface BuybackOfferInterface extends
     public function setValidated(bool $validated);
 
     public function isValidated(): bool;
+
+    /**
+     * @return static
+     */
+    public function setValidatedAt(?\DateTime $validatedAt);
+
+    public function getValidatedAt(): ?\DateTime;
 }

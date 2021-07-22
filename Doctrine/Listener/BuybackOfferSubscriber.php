@@ -357,8 +357,10 @@ class BuybackOfferSubscriber implements EventSubscriber
                 $invalidated = null === $object->getStatus() || !\in_array($object->getStatus()->getValue(), $this->validatedStatues, true);
                 $object->setClosed($closed);
                 $object->setValidated(!$invalidated);
+                $object->setValidatedAt(null);
 
                 if ($object->isValidated()) {
+                    $object->setValidatedAt(new \DateTime());
                     $this->reCalculateBuybackOfferDeviceStatuses($object);
                 }
 
