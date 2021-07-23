@@ -235,7 +235,6 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @ORM\Column(type="date", nullable=true)
      *
      * @Assert\Type(type="datetime")
-     * @Assert\NotBlank
      *
      * @Serializer\Expose
      * @Serializer\ReadOnly
