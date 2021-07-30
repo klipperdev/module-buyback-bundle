@@ -34,8 +34,8 @@ trait RepairAuditableTrait
      *     nullable=true
      * )
      *
-     * @Serializer\Type("AssociationId")
      * @Serializer\Expose
+     * @Serializer\MaxDepth(2)
      * @Serializer\ReadOnly
      */
     protected ?AuditItemInterface $auditItem = null;
