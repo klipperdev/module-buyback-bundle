@@ -26,12 +26,12 @@ audit_request_status:
         icon: fa-fw fa-comment-medical
         translations:
             fr: { label: Demande enregistrée }
-    -   value: waiting_treatment
-        label: Received - Waiting for treatment
+    -   value: waiting_counting
+        label: Received - Waiting for counting
         icon: fa-fw fa-box
         color: '#40c1b8'
         translations:
-            fr: { label: Réceptionné - En attente de traitement }
+            fr: { label: Réceptionné - En attente de comptage }
     -   value: waiting_customer_feedback
         label: Waiting for customer feedback
         icon: fa-fw fa-user
