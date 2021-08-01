@@ -52,6 +52,16 @@ abstract class AbstractAuditCondition implements AuditConditionInterface
      */
     protected ?string $state = null;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\Type(type="string")
+     * @Assert\Length(min=0, max=65535)
+     *
+     * @Serializer\Expose
+     */
+    protected ?string $description = null;
+
     public function setState(?string $state): self
     {
         $this->state = $state;
@@ -62,5 +72,17 @@ abstract class AbstractAuditCondition implements AuditConditionInterface
     public function getState(): ?string
     {
         return $this->state;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
     }
 }

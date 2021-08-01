@@ -41,4 +41,11 @@ interface AuditConditionInterface extends
     public function setState(?string $state);
 
     public function getState(): ?string;
+
+    /**
+     * @return static
+     */
+    public function setDescription(?string $description);
+
+    public function getDescription(): ?string;
 }
