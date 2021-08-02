@@ -18,8 +18,10 @@ use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
+use Klipper\Module\ProductBundle\Exception\ProductCombinationCreatorException;
 use Klipper\Module\ProductBundle\Model\ProductCombinationInterface;
 use Klipper\Module\ProductBundle\Model\ProductInterface;
+use Klipper\Module\ProductBundle\Product\ProductManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
@@ -41,17 +43,21 @@ class AuditItemQualificationType extends AbstractType
 
     private AuditManagerInterface $auditManager;
 
+    private ProductManagerInterface $productManager;
+
     private TranslatorInterface $translator;
 
     public function __construct(
         EntityManagerInterface $em,
         ObjectFactoryInterface $objectFactory,
         AuditManagerInterface $auditManager,
+        ProductManagerInterface $productManager,
         TranslatorInterface $translator
     ) {
         $this->em = $em;
         $this->objectFactory = $objectFactory;
         $this->auditManager = $auditManager;
+        $this->productManager = $productManager;
         $this->translator = $translator;
     }
 
@@ -73,11 +79,8 @@ class AuditItemQualificationType extends AbstractType
                 'choice_value' => 'reference',
                 'id_field' => 'reference',
             ])
-            ->add('product_combination_reference', EntityType::class, [
-                'class' => ProductCombinationInterface::class,
+            ->add('product_combination_reference', TextType::class, [
                 'property_path' => 'productCombination',
-                'choice_value' => 'reference',
-                'id_field' => 'reference',
             ])
             ->add('condition_name', EntityType::class, [
                 'class' => AuditConditionInterface::class,
@@ -126,6 +129,39 @@ class AuditItemQualificationType extends AbstractType
                         );
                     }
                 }
+            }
+        });
+
+        $builder->get('product_combination_reference')->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
+            $data = $event->getData();
+
+            if (!empty($data) && \is_string($data)) {
+                /** @var null|ProductCombinationInterface $res */
+                $res = $this->em->getRepository(ProductCombinationInterface::class)->findOneBy([
+                    'reference' => $data,
+                ]);
+
+                if (null !== $res) {
+                    $event->setData($res);
+                } else {
+                    try {
+                        $productCombination = $this->productManager->createProductCombinationFromReference($data);
+
+                        $this->em->persist($productCombination);
+                        $this->em->flush();
+                    } catch (ProductCombinationCreatorException $e) {
+                        $event->getForm()->addError(
+                            new FormError($e->getMessage(), $e->getMessage(), [], null, $e)
+                        );
+                    } catch (\Throwable $e) {
+                        $event->setData(null);
+                        $event->getForm()->addError(
+                            new FormError($this->translator->trans('domain.database_error', [], 'KlipperResource'))
+                        );
+                    }
+                }
+            } else {
+                $event->setData(null);
             }
         });
 
