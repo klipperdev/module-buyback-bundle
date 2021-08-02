@@ -13,13 +13,16 @@ namespace Klipper\Module\BuybackBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Klipper\Component\Resource\Object\ObjectFactoryInterface;
+use Klipper\Module\BuybackBundle\Audit\AuditManagerInterface;
 use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
+use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
 use Klipper\Module\ProductBundle\Model\ProductCombinationInterface;
 use Klipper\Module\ProductBundle\Model\ProductInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Event\PostSubmitEvent;
 use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -36,15 +39,19 @@ class AuditItemQualificationType extends AbstractType
 
     private ObjectFactoryInterface $objectFactory;
 
+    private AuditManagerInterface $auditManager;
+
     private TranslatorInterface $translator;
 
     public function __construct(
         EntityManagerInterface $em,
         ObjectFactoryInterface $objectFactory,
+        AuditManagerInterface $auditManager,
         TranslatorInterface $translator
     ) {
         $this->em = $em;
         $this->objectFactory = $objectFactory;
+        $this->auditManager = $auditManager;
         $this->translator = $translator;
     }
 
@@ -77,6 +84,9 @@ class AuditItemQualificationType extends AbstractType
                 'property_path' => 'auditCondition',
                 'choice_value' => 'name',
                 'id_field' => 'name',
+            ])
+            ->add('repair_declared_breakdown_by_customer', TextType::class, [
+                'mapped' => false,
             ])
         ;
 
@@ -115,6 +125,36 @@ class AuditItemQualificationType extends AbstractType
                             new FormError($this->translator->trans('This value is not valid.', [], 'validators'))
                         );
                     }
+                }
+            }
+        });
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
+            $data = $event->getData();
+
+            if (!empty($data['repair_declared_breakdown_by_customer']) && empty($data['device_imei_or_sn'])) {
+                $event->getForm()->addError(
+                    new FormError($this->translator->trans('klipper_buyback.audit_item.repair.device_required', [], 'validators'))
+                );
+            }
+        });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (PostSubmitEvent $event): void {
+            /** @var AuditItemInterface $data */
+            $data = $event->getData();
+            $declaredBreakdownByCustomer = $event->getForm()->get('repair_declared_breakdown_by_customer')->getData();
+
+            if (!empty($declaredBreakdownByCustomer)) {
+                $repair = $this->auditManager->transferToRepair($data);
+                $repair->setDeclaredBreakdownByCustomer($declaredBreakdownByCustomer);
+
+                try {
+                    $this->em->persist($repair);
+                    $this->em->flush();
+                } catch (\Throwable $e) {
+                    $event->getForm()->addError(
+                        new FormError($this->translator->trans('domain.database_error', [], 'KlipperResource'))
+                    );
                 }
             }
         });

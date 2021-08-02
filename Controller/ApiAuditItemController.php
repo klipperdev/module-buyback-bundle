@@ -439,12 +439,14 @@ class ApiAuditItemController
             $sheet->setCellValueByColumnAndRow(3, 1, 'product_reference');
             $sheet->setCellValueByColumnAndRow(4, 1, 'product_combination_reference');
             $sheet->setCellValueByColumnAndRow(5, 1, 'condition_name');
+            $sheet->setCellValueByColumnAndRow(6, 1, 'repair_declared_breakdown_by_customer');
 
             $sheet->getColumnDimensionByColumn(1)->setAutoSize(true);
             $sheet->getColumnDimensionByColumn(2)->setAutoSize(true);
             $sheet->getColumnDimensionByColumn(3)->setAutoSize(true);
             $sheet->getColumnDimensionByColumn(4)->setAutoSize(true);
             $sheet->getColumnDimensionByColumn(5)->setAutoSize(true);
+            $sheet->getColumnDimensionByColumn(6)->setAutoSize(true);
 
             $response = new StreamedResponse(
                 static function () use ($writer): void {
