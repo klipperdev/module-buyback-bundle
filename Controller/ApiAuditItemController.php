@@ -16,7 +16,6 @@ use Doctrine\ORM\QueryBuilder;
 use Klipper\Bundle\ApiBundle\Action\Upsert;
 use Klipper\Bundle\ApiBundle\Controller\ControllerHelper;
 use Klipper\Component\Content\ContentManagerInterface;
-use Klipper\Component\DoctrineChoice\ChoiceManagerInterface;
 use Klipper\Component\Export\Exception\InvalidFormatException;
 use Klipper\Component\Import\Choice\ImportStatus;
 use Klipper\Component\Import\Model\ImportInterface;
@@ -25,14 +24,12 @@ use Klipper\Component\Resource\Domain\DomainManagerInterface;
 use Klipper\Component\Resource\Object\ObjectFactoryInterface;
 use Klipper\Component\Security\Permission\PermVote;
 use Klipper\Component\SecurityOauth\Scope\ScopeVote;
+use Klipper\Module\BuybackBundle\Audit\AuditManagerInterface;
 use Klipper\Module\BuybackBundle\Import\Adapter\AuditItemAuditImportAdapter;
 use Klipper\Module\BuybackBundle\Import\Adapter\AuditItemQualificationImportAdapter;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\BuybackOfferInterface;
-use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
-use Klipper\Module\BuybackBundle\Model\Traits\RepairAuditableInterface;
 use Klipper\Module\PartnerBundle\Model\AccountInterface;
-use Klipper\Module\RepairBundle\Model\RepairInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -403,38 +400,16 @@ class ApiAuditItemController
      */
     public function transferRepair(
         ControllerHelper $helper,
-        ObjectFactoryInterface $objectFactory,
-        ChoiceManagerInterface $choiceManager,
+        AuditManagerInterface $auditManager,
         AuditItemInterface $id
     ): Response {
         if (class_exists(ScopeVote::class)) {
             $helper->denyAccessUnlessGranted(new ScopeVote('meta/audit_item'));
         }
 
-        /** @var RepairInterface $repair */
-        $repair = $objectFactory->create(RepairInterface::class);
-        $account = $id->getAuditRequest()->getAccount();
-        $repair->setAccount($account);
-        $repair->setContact($id->getAuditRequest()->getContact());
-        $repair->setWorkcenter($id->getAuditRequest()->getWorkcenter());
-        $repair->setInvoiceAddress($id->getAuditRequest()->getInvoiceAddress());
-        $repair->setShippingAddress($id->getAuditRequest()->getShippingAddress());
-        $repair->setProduct($id->getProduct());
-        $repair->setProductCombination($id->getProductCombination());
-        $repair->setRepairer($id->getAuditor());
-        $repair->setOwner($id->getAuditRequest()->getAccount()->getOwner());
-        $repair->setDevice($id->getDevice());
-        $repair->setStatus($choiceManager->getChoice('repair_status', 'received'));
-
-        if ($repair instanceof RepairAuditableInterface) {
-            $repair->setAuditItem($id);
-        }
-
-        if ($account instanceof BuybackModuleableInterface && null !== ($module = $account->getBuybackModule())) {
-            $repair->setPriceList($module->getRepairPriceList());
-        }
-
-        $action = Upsert::build('', $repair)->setProcessForm(false);
+        $action = Upsert::build('', $auditManager->transferToRepair($id))
+            ->setProcessForm(false)
+        ;
 
         return $helper->upsert($action);
     }

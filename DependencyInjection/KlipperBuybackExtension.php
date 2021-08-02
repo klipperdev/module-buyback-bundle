@@ -43,6 +43,7 @@ class KlipperBuybackExtension extends Extension
         $this->configBuybackOffer($container, $loader, $config['buyback_offer']);
         $this->configRepair($loader);
 
+        $loader->load('manager.xml');
         $loader->load('api_form.xml');
 
         ControllerDefinitionUtil::set($container, ApiAuditItemController::class);

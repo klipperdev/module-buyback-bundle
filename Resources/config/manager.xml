@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Audit Manager -->
+        <service id="klipper_module_buyback.audit_manager"
+                 class="Klipper\Module\BuybackBundle\Audit\AuditManager"
+                 public="true"
+        >
+            <argument type="service" id="klipper_resource.object_factory"/>
+            <argument type="service" id="klipper_doctrine_choice.manager"/>
+        </service>
+
+        <service id="Klipper\Module\BuybackBundle\Audit\AuditManagerInterface"
+                 alias="klipper_module_buyback.audit_manager"
+                 public="true"
+        />
+    </services>
+</container>
