@@ -19,12 +19,14 @@
         <service id="Klipper\Module\BuybackBundle\Form\Type\AuditItemQualificationType">
             <tag name="form.type" />
             <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="klipper_resource.object_factory"/>
             <argument type="service" id="translator"/>
         </service>
 
         <service id="Klipper\Module\BuybackBundle\Form\Type\AuditItemAuditType">
             <tag name="form.type" />
             <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="klipper_resource.object_factory"/>
             <argument type="service" id="translator"/>
         </service>
     </services>

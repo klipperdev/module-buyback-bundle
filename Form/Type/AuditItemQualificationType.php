@@ -12,6 +12,7 @@
 namespace Klipper\Module\BuybackBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Klipper\Component\Resource\Object\ObjectFactoryInterface;
 use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
 use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
@@ -33,13 +34,17 @@ class AuditItemQualificationType extends AbstractType
 {
     private EntityManagerInterface $em;
 
+    private ObjectFactoryInterface $objectFactory;
+
     private TranslatorInterface $translator;
 
     public function __construct(
         EntityManagerInterface $em,
+        ObjectFactoryInterface $objectFactory,
         TranslatorInterface $translator
     ) {
         $this->em = $em;
+        $this->objectFactory = $objectFactory;
         $this->translator = $translator;
     }
 
@@ -76,23 +81,41 @@ class AuditItemQualificationType extends AbstractType
         ;
 
         $builder->get('device_imei_or_sn')->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
-            $res = $this->em->createQueryBuilder()
-                ->select('d')
-                ->from(DeviceInterface::class, 'd')
-                ->where('d.imei = :data')
-                ->orWhere('d.serialNumber = :data')
-                ->setMaxResults(1)
-                ->setParameter('data', $event->getData())
-                ->getQuery()
-                ->getOneOrNullResult()
-            ;
+            $data = $event->getData();
 
-            $event->setData($res);
+            if (\is_string($data)) {
+                /** @var null|DeviceInterface $res */
+                $res = $this->em->createQueryBuilder()
+                    ->select('d')
+                    ->from(DeviceInterface::class, 'd')
+                    ->where('d.imei = :data')
+                    ->orWhere('d.imei2 = :data')
+                    ->orWhere('d.serialNumber = :data')
+                    ->setMaxResults(1)
+                    ->setParameter('data', $event->getData())
+                    ->getQuery()
+                    ->getOneOrNullResult()
+                ;
 
-            if (null === $event->getData()) {
-                $event->getForm()->addError(
-                    new FormError($this->translator->trans('This value is not valid.', [], 'validators'))
-                );
+                if (null !== $res) {
+                    $event->setData($res);
+                } else {
+                    /** @var DeviceInterface $device */
+                    $device = $this->objectFactory->create(DeviceInterface::class);
+                    $device->setImei($data);
+
+                    try {
+                        $this->em->persist($device);
+                        $this->em->flush();
+
+                        $event->setData($device);
+                    } catch (\Throwable $e) {
+                        $event->setData(null);
+                        $event->getForm()->addError(
+                            new FormError($this->translator->trans('This value is not valid.', [], 'validators'))
+                        );
+                    }
+                }
             }
         });
     }
