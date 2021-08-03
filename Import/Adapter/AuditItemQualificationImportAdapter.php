@@ -13,7 +13,7 @@ namespace Klipper\Module\BuybackBundle\Import\Adapter;
 
 use Klipper\Component\Import\Adapter\StandardImportAdapter;
 use Klipper\Component\Import\ImportContextInterface;
-use Klipper\Module\BuybackBundle\Form\Type\AuditItemQualificationType;
+use Klipper\Module\BuybackBundle\Form\Type\ImportAuditItemQualificationType;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 use Symfony\Component\Form\FormInterface;
@@ -120,7 +120,7 @@ class AuditItemQualificationImportAdapter extends StandardImportAdapter
     {
         $metaTarget = $context->getMetadataTarget();
         $formFactory = $context->getFormFactory();
-        $formType = AuditItemQualificationType::class;
+        $formType = ImportAuditItemQualificationType::class;
         $formOptions = [
             'csrf_protection' => false,
             'data_class' => $metaTarget->getClass(),

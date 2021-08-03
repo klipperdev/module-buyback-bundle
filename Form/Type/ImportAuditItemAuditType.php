@@ -14,6 +14,6 @@ namespace Klipper\Module\BuybackBundle\Form\Type;
 /**
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-class AuditItemAuditType extends AuditItemQualificationType
+class ImportAuditItemAuditType extends ImportAuditItemQualificationType
 {
 }

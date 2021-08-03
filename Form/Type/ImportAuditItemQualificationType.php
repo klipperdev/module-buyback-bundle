@@ -35,7 +35,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-class AuditItemQualificationType extends AbstractType
+class ImportAuditItemQualificationType extends AbstractType
 {
     private EntityManagerInterface $em;
 
