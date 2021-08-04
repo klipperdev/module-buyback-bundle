@@ -13,9 +13,13 @@ namespace Klipper\Module\BuybackBundle\Import\Adapter;
 
 use Klipper\Component\Import\Adapter\StandardImportAdapter;
 use Klipper\Component\Import\ImportContextInterface;
+use Klipper\Component\Resource\ResourceInterface;
+use Klipper\Module\BuybackBundle\Audit\AuditManagerInterface;
 use Klipper\Module\BuybackBundle\Form\Type\ImportAuditItemQualificationType;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
+use Klipper\Module\RepairBundle\Model\RepairInterface;
 use PhpOffice\PhpSpreadsheet\Worksheet\Row;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -23,6 +27,13 @@ use Symfony\Component\Form\FormInterface;
  */
 class AuditItemQualificationImportAdapter extends StandardImportAdapter
 {
+    private AuditManagerInterface $auditManager;
+
+    public function __construct(AuditManagerInterface $auditManager)
+    {
+        $this->auditManager = $auditManager;
+    }
+
     public function validate(ImportContextInterface $context): bool
     {
         $class = $context->getDomainTarget()->getClass();
@@ -127,5 +138,33 @@ class AuditItemQualificationImportAdapter extends StandardImportAdapter
         ];
 
         return $formFactory->create($formType, $object, $formOptions);
+    }
+
+    protected function hookAfterUpsert(ImportContextInterface $context, ResourceInterface $result): void
+    {
+        if (!$result->isValid()
+            || !$result->isForm()
+            || null === $result->getData()->get('repair_declared_breakdown_by_customer')
+        ) {
+            return;
+        }
+
+        $translator = $context->getTranslator();
+        $em = $context->getDomainManager()->get(RepairInterface::class)->getObjectManager();
+        $form = $result->getData();
+        $data = $form->getData();
+        $declaredBreakdownByCustomer = $result->getData()->get('repair_declared_breakdown_by_customer')->getData();
+
+        $repair = $this->auditManager->transferToRepair($data);
+        $repair->setDeclaredBreakdownByCustomer($declaredBreakdownByCustomer);
+
+        try {
+            $em->persist($repair);
+            $em->flush();
+        } catch (\Throwable $e) {
+            $form->addError(
+                new FormError($translator->trans('domain.database_error', [], 'KlipperResource'))
+            );
+        }
     }
 }

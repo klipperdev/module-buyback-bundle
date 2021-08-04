@@ -8,11 +8,13 @@
         <!-- Audit Item Qualification Import Adapter -->
         <service id="Klipper\Module\BuybackBundle\Import\Adapter\AuditItemQualificationImportAdapter">
             <tag name="klipper_import.adapter" />
+            <argument type="service" id="klipper_module_buyback.audit_manager"/>
         </service>
 
         <!-- Audit Item Audit Import Adapter -->
         <service id="Klipper\Module\BuybackBundle\Import\Adapter\AuditItemAuditImportAdapter">
             <tag name="klipper_import.adapter" />
+            <argument type="service" id="klipper_module_buyback.audit_manager"/>
         </service>
 
         <!-- Form Type -->
@@ -20,7 +22,6 @@
             <tag name="form.type" />
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="service" id="klipper_resource.object_factory"/>
-            <argument type="service" id="klipper_module_buyback.audit_manager"/>
             <argument type="service" id="klipper_module_product.product_manager"/>
             <argument type="service" id="translator"/>
         </service>
@@ -29,7 +30,6 @@
             <tag name="form.type" />
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="service" id="klipper_resource.object_factory"/>
-            <argument type="service" id="klipper_module_buyback.audit_manager"/>
             <argument type="service" id="klipper_module_product.product_manager"/>
             <argument type="service" id="translator"/>
         </service>

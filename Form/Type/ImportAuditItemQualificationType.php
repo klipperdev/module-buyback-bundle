@@ -13,9 +13,7 @@ namespace Klipper\Module\BuybackBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Klipper\Component\Resource\Object\ObjectFactoryInterface;
-use Klipper\Module\BuybackBundle\Audit\AuditManagerInterface;
 use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
-use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
 use Klipper\Module\ProductBundle\Exception\ProductCombinationCreatorException;
@@ -24,7 +22,6 @@ use Klipper\Module\ProductBundle\Model\ProductInterface;
 use Klipper\Module\ProductBundle\Product\ProductManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Event\PostSubmitEvent;
 use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,8 +38,6 @@ class ImportAuditItemQualificationType extends AbstractType
 
     private ObjectFactoryInterface $objectFactory;
 
-    private AuditManagerInterface $auditManager;
-
     private ProductManagerInterface $productManager;
 
     private TranslatorInterface $translator;
@@ -50,13 +45,11 @@ class ImportAuditItemQualificationType extends AbstractType
     public function __construct(
         EntityManagerInterface $em,
         ObjectFactoryInterface $objectFactory,
-        AuditManagerInterface $auditManager,
         ProductManagerInterface $productManager,
         TranslatorInterface $translator
     ) {
         $this->em = $em;
         $this->objectFactory = $objectFactory;
-        $this->auditManager = $auditManager;
         $this->productManager = $productManager;
         $this->translator = $translator;
     }
@@ -172,26 +165,6 @@ class ImportAuditItemQualificationType extends AbstractType
                 $event->getForm()->addError(
                     new FormError($this->translator->trans('klipper_buyback.audit_item.repair.device_required', [], 'validators'))
                 );
-            }
-        });
-
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (PostSubmitEvent $event): void {
-            /** @var AuditItemInterface $data */
-            $data = $event->getData();
-            $declaredBreakdownByCustomer = $event->getForm()->get('repair_declared_breakdown_by_customer')->getData();
-
-            if (!empty($declaredBreakdownByCustomer)) {
-                $repair = $this->auditManager->transferToRepair($data);
-                $repair->setDeclaredBreakdownByCustomer($declaredBreakdownByCustomer);
-
-                try {
-                    $this->em->persist($repair);
-                    $this->em->flush();
-                } catch (\Throwable $e) {
-                    $event->getForm()->addError(
-                        new FormError($this->translator->trans('domain.database_error', [], 'KlipperResource'))
-                    );
-                }
             }
         });
     }

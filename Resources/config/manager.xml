@@ -16,7 +16,6 @@
 
         <service id="Klipper\Module\BuybackBundle\Audit\AuditManagerInterface"
                  alias="klipper_module_buyback.audit_manager"
-                 public="true"
         />
     </services>
 </container>
