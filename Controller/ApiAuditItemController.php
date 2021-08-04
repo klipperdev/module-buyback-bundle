@@ -20,19 +20,29 @@ use Klipper\Component\Export\Exception\InvalidFormatException;
 use Klipper\Component\Import\Choice\ImportStatus;
 use Klipper\Component\Import\Model\ImportInterface;
 use Klipper\Component\Metadata\MetadataManagerInterface;
+use Klipper\Component\Resource\Converter\ConverterRegistryInterface;
+use Klipper\Component\Resource\Domain\DomainInterface;
 use Klipper\Component\Resource\Domain\DomainManagerInterface;
 use Klipper\Component\Resource\Object\ObjectFactoryInterface;
 use Klipper\Component\Security\Permission\PermVote;
 use Klipper\Component\SecurityOauth\Scope\ScopeVote;
 use Klipper\Module\BuybackBundle\Audit\AuditManagerInterface;
+use Klipper\Module\BuybackBundle\Form\Type\AuditItemAuditType;
+use Klipper\Module\BuybackBundle\Form\Type\AuditItemQualificationType;
 use Klipper\Module\BuybackBundle\Import\Adapter\AuditItemAuditImportAdapter;
 use Klipper\Module\BuybackBundle\Import\Adapter\AuditItemQualificationImportAdapter;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\BuybackOfferInterface;
+use Klipper\Module\BuybackBundle\Model\Traits\AuditRepairableInterface;
+use Klipper\Module\BuybackBundle\Representation\AuditItemAudit;
+use Klipper\Module\BuybackBundle\Representation\AuditItemQualification;
 use Klipper\Module\PartnerBundle\Model\AccountInterface;
+use Klipper\Module\RepairBundle\Model\RepairInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -46,6 +56,66 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ApiAuditItemController
 {
+    /**
+     * Upsert the audit item for qualification.
+     *
+     * @Entity("id", class="App:Account")
+     *
+     * @Route("/audit_items/accounts/{id}/qualification", methods={"POST"})
+     */
+    public function singleQualificationAction(
+        Request $request,
+        TranslatorInterface $translator,
+        ConverterRegistryInterface $converterRegistry,
+        FormFactoryInterface $formFactory,
+        DomainManagerInterface $domainManager,
+        AuditManagerInterface $auditManager,
+        ControllerHelper $helper,
+        AccountInterface $id
+    ): Response {
+        return $this->findAndUpsertAudit(
+            $request,
+            $translator,
+            $converterRegistry,
+            $formFactory,
+            $domainManager,
+            $auditManager,
+            $helper,
+            $id,
+            true
+        );
+    }
+
+    /**
+     * Upsert the audit item for audit.
+     *
+     * @Entity("id", class="App:Account")
+     *
+     * @Route("/audit_items/accounts/{id}/audit", methods={"POST"})
+     */
+    public function singleAuditAction(
+        Request $request,
+        TranslatorInterface $translator,
+        ConverterRegistryInterface $converterRegistry,
+        FormFactoryInterface $formFactory,
+        DomainManagerInterface $domainManager,
+        AuditManagerInterface $auditManager,
+        ControllerHelper $helper,
+        AccountInterface $id
+    ): Response {
+        return $this->findAndUpsertAudit(
+            $request,
+            $translator,
+            $converterRegistry,
+            $formFactory,
+            $domainManager,
+            $auditManager,
+            $helper,
+            $id,
+            false
+        );
+    }
+
     /**
      * Download the import template file for the qualification.
      *
@@ -626,5 +696,165 @@ class ApiAuditItemController
         }
 
         return $helper->handleView($view);
+    }
+
+    private function findAndUpsertAudit(
+        Request $request,
+        TranslatorInterface $translator,
+        ConverterRegistryInterface $converterRegistry,
+        FormFactoryInterface $formFactory,
+        DomainManagerInterface $domainManager,
+        AuditManagerInterface $auditManager,
+        ControllerHelper $helper,
+        AccountInterface $id,
+        bool $isQualification
+    ): Response {
+        $domain = $domainManager->get(AuditItemInterface::class);
+        $domainRepair = $domainManager->get(RepairInterface::class);
+        $formType = $isQualification ? AuditItemQualificationType::class : AuditItemAuditType::class;
+        $form = $formFactory->create($formType);
+        $data = $converterRegistry->get('json')->convert((string) $request->getContent());
+
+        $form->submit($data, false);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var AuditItemQualification $formData */
+            $formData = $form->getData();
+            $audit = $this->findObjectForAudit($domain, $id, $formData);
+
+            if (null === $audit) {
+                $form->addError(new FormError(
+                    $translator->trans('domain.resource_does_not_exist', [], 'KlipperResource')
+                ));
+
+                return $helper->view($helper->createView(
+                    $helper->formatFormErrors($form),
+                    Response::HTTP_BAD_REQUEST
+                ));
+            }
+
+            if (null !== $formData->getAuditRequest() && $formData->getAuditRequest() !== $audit->getAuditRequest()) {
+                $audit->setAuditRequest($formData->getAuditRequest());
+            }
+
+            if (null !== $formData->getAuditCondition() && $formData->getAuditCondition() !== $audit->getAuditCondition()) {
+                $audit->setAuditCondition($formData->getAuditCondition());
+            }
+
+            if (null !== $formData->getComment() && $formData->getComment() !== $audit->getComment()) {
+                $audit->setComment($formData->getComment());
+            }
+
+            if (null !== $formData->getDevice() && $formData->getDevice() !== $audit->getDevice()) {
+                $audit->setDevice($formData->getDevice());
+            }
+
+            if (null !== $formData->getProduct() && $formData->getProduct() !== $audit->getProduct()) {
+                $audit->setProduct($formData->getProduct());
+            }
+
+            if (null !== $formData->getProductCombination() && $formData->getProductCombination() !== $audit->getProductCombination()) {
+                $audit->setProductCombination($formData->getProductCombination());
+            }
+
+            // Save the upsert
+            $res = $domain->upsert($audit);
+
+            if (!$res->isValid()) {
+                return $helper->view($helper->createView(
+                    $helper->mergeAllErrors($res),
+                    Response::HTTP_BAD_REQUEST
+                ));
+            }
+
+            // Transfer to repair
+            if (null !== $formData->getRepairDeclaredBreakdownByCustomer()
+                && $audit instanceof AuditRepairableInterface
+                && null === $audit->getRepair()
+                && null !== $audit->getDevice()
+            ) {
+                $repair = $auditManager->transferToRepair($audit);
+                $repair->setDeclaredBreakdownByCustomer($formData->getRepairDeclaredBreakdownByCustomer());
+                $resRepair = $domainRepair->upsert($repair);
+
+                if ($resRepair->isValid()) {
+                    return $helper->view($audit);
+                }
+
+                return $helper->view($helper->createView(
+                        $helper->mergeAllErrors($resRepair),
+                        Response::HTTP_BAD_REQUEST
+                    ));
+            }
+
+            return $helper->view($audit);
+        }
+
+        return $helper->view($helper->createView(
+            $helper->formatFormErrors($form),
+            Response::HTTP_BAD_REQUEST
+        ));
+    }
+
+    private function findObjectForAudit(DomainInterface $domainTarget, ?AccountInterface $account, AuditItemQualification $data): ?AuditItemInterface
+    {
+        // Find audit item with the identifier
+        if (null !== $data->getId()) {
+            return $domainTarget->getRepository()->find($data->getId());
+        }
+
+        // Find audit item with the same value
+        /** @var AuditItemInterface[] $items */
+        $items = $domainTarget->getRepository()
+            ->createQueryBuilder('ai')
+            ->where('ar.account = :account')
+            ->andWhere('cs.value = :statusValue')
+            ->andWhere('d.id = :device OR (p.id = :product AND pc.id = :productCombination)')
+            ->andWhere('ai.auditRequest = :auditRequest')
+            ->orderBy('ai.createdAt', 'asc')
+            ->setMaxResults(1)
+            ->setParameter('account', $account)
+            ->setParameter('statusValue', 'confirmed')
+            ->setParameter('device', $data->getDevice())
+            ->setParameter('product', $data->getProduct())
+            ->setParameter('productCombination', $data->getProductCombination())
+            ->setParameter('auditRequest', $data->getAuditRequest())
+            ->getQuery()
+            ->getResult()
+        ;
+
+        if (\count($items) > 0) {
+            return $items[0];
+        }
+
+        // Find empty audit item
+        $items = $domainTarget->getRepository()
+            ->createQueryBuilder('ai')
+            ->where('ar.account = :account')
+            ->andWhere('cs.value = :statusValue')
+            ->andWhere('ai.device IS NULL AND ai.product IS NULL AND ai.productCombination IS NULL')
+            ->andWhere('ai.auditRequest = :auditRequest')
+            ->orderBy('ai.createdAt', 'asc')
+            ->setMaxResults(1)
+            ->setParameter('account', $account)
+            ->setParameter('statusValue', $data instanceof AuditItemAudit ? 'qualified' : 'confirmed')
+            ->setParameter('auditRequest', $data->getAuditRequest())
+            ->getQuery()
+            ->getResult()
+        ;
+
+        if (\count($items) > 0) {
+            return $items[0];
+        }
+
+        // Return null or create new audit item
+        if ($data instanceof AuditItemAudit) {
+            $item = null;
+        } else {
+            /** @var AuditItemInterface $item */
+            $item = $domainTarget->newInstance();
+        }
+
+        return $item;
     }
 }
