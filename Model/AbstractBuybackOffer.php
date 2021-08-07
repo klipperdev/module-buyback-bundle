@@ -63,7 +63,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @Assert\Length(min=0, max=80)
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected ?string $reference = null;
 
@@ -144,7 +144,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @Assert\Type(type="integer")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected int $numberOfItems = 0;
 
@@ -154,7 +154,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @Assert\Type(type="float")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected float $totalConditionPrice = 0.0;
 
@@ -164,7 +164,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @Assert\Type(type="float")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected float $totalStatePrice = 0.0;
 
@@ -174,7 +174,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @Assert\Type(type="float")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected float $totalRepairPrice = 0.0;
 
@@ -184,7 +184,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @Assert\Type(type="float")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected float $totalPrice = 0.0;
 
@@ -217,7 +217,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @Assert\Type(type="boolean")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected bool $closed = false;
 
@@ -227,7 +227,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @Assert\Type(type="boolean")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected bool $validated = false;
 
@@ -237,7 +237,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @Assert\Type(type="datetime")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected ?\DateTime $validatedAt = null;
 

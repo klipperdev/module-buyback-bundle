@@ -34,7 +34,7 @@ trait BuybackModuleableTrait
      * )
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      * @Serializer\MaxDepth(3)
      * @Serializer\Groups({"View", "ViewsDetails"})
      */

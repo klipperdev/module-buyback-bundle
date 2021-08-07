@@ -69,7 +69,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @Assert\Length(min=0, max=80)
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected ?string $reference = null;
 
@@ -213,7 +213,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @Assert\Type(type="integer")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected int $numberOfItems = 0;
 
@@ -223,7 +223,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @Assert\Type(type="integer")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected int $expectedQuantity = 0;
 
@@ -233,7 +233,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @Assert\Type(type="integer")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected int $receivedQuantity = 0;
 
@@ -253,7 +253,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @Assert\Type(type="boolean")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected bool $completed = false;
 
@@ -263,7 +263,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @Assert\Type(type="boolean")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected bool $closed = false;
 
@@ -273,7 +273,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @Assert\Type(type="boolean")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected bool $validated = false;
 
@@ -283,7 +283,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * @Assert\Type(type="boolean")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected bool $converted = false;
 

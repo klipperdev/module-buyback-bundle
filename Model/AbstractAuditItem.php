@@ -216,7 +216,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
      * @Assert\Type(type="boolean")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected bool $closed = false;
 
@@ -226,7 +226,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
      * @Assert\Type(type="boolean")
      *
      * @Serializer\Expose
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      */
     protected bool $validated = false;
 

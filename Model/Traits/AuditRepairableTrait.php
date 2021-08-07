@@ -38,7 +38,7 @@ trait AuditRepairableTrait
      *
      * @Serializer\Expose
      * @Serializer\MaxDepth(1)
-     * @Serializer\ReadOnly
+     * @Serializer\ReadOnlyProperty
      * @Serializer\Groups({"ViewsDetails", "View"})
      */
     protected ?RepairInterface $repair = null;
