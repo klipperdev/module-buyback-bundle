@@ -782,9 +782,9 @@ class ApiAuditItemController
                 }
 
                 return $helper->view($helper->createView(
-                        $helper->mergeAllErrors($resRepair),
-                        Response::HTTP_BAD_REQUEST
-                    ));
+                    $helper->mergeAllErrors($resRepair),
+                    Response::HTTP_BAD_REQUEST
+                ));
             }
 
             return $helper->view($audit);
