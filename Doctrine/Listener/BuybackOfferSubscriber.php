@@ -243,7 +243,7 @@ class BuybackOfferSubscriber implements EventSubscriber
 
             foreach ($res as $resItem) {
                 // Do not the persist/flush in postFlush event
-                if ((float) $resItem['statePrice'] <= (float) $resItem['conditionPrice']) {
+                if ((float) $resItem['statePrice'] >= (float) $resItem['conditionPrice']) {
                     $calculationMethod = 'by_state';
                     $totalPrice = (float) $resItem['statePrice'];
                 } else {
