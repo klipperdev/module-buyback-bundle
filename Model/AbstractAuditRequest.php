@@ -80,7 +80,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      * )
      *
      * @Assert\Expression(
-     *     expression="!(!value && !(!this.getAccount() || !this.getAccount().getBuybackModule() || !this.getAccount().getBuybackModule().getShippingAddress()))",
+     *     expression="!(!value && (!this.getAccount() || !this.getAccount().getBuybackModule() || !this.getAccount().getBuybackModule().getShippingAddress()))",
      *     message="This value should not be blank."
      * )
      *
