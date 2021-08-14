@@ -109,7 +109,7 @@ class BuybackOfferSubscriber implements EventSubscriber
                 || null === $status
                 || null === $calculationMethod
             ) {
-                if (null !== $account && $account instanceof BuybackModuleableInterface && null !== ($module = $account->getBuybackModule())) {
+                if ($account instanceof BuybackModuleableInterface && null !== ($module = $account->getBuybackModule())) {
                     if (null === $shippingAddress) {
                         $object->setShippingAddress($module->getShippingAddress());
                     }
@@ -301,7 +301,7 @@ class BuybackOfferSubscriber implements EventSubscriber
     {
         if ($object instanceof BuybackOfferInterface) {
             $account = $object->getAccount();
-            $module = null !== $account && $account instanceof BuybackModuleableInterface
+            $module = $account instanceof BuybackModuleableInterface
                 ? $account->getBuybackModule()
                 : null;
 
