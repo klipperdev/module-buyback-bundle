@@ -44,8 +44,7 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
     /**
      * @ORM\OneToOne(
      *     targetEntity="Klipper\Module\PartnerBundle\Model\AccountInterface",
-     *     inversedBy="buybackModule",
-     *     fetch="EAGER"
+     *     inversedBy="buybackModule"
      * )
      *
      * @Assert\NotNull
@@ -57,8 +56,7 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface"
      * )
      *
      * @Serializer\Expose
@@ -68,8 +66,7 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\PartnerBundle\Model\AccountInterface",
-     *     fetch="EAGER"
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\AccountInterface"
      * )
      *
      * @Assert\NotNull
@@ -85,8 +82,7 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface"
      * )
      *
      * @Serializer\Expose
@@ -96,8 +92,7 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface",
-     *     fetch="EAGER"
+     *     targetEntity="Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface"
      * )
      *
      * @Assert\NotBlank
@@ -121,8 +116,7 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\ProductBundle\Model\PriceListInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Module\ProductBundle\Model\PriceListInterface"
      * )
      *
      * @Serializer\Expose
@@ -132,8 +126,7 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface"
      * )
      *
      * @EntityDoctrineChoice("audit_request_status")

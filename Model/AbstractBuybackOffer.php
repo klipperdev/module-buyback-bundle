@@ -69,8 +69,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface"
      * )
      *
      * @Serializer\Expose
@@ -80,8 +79,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\PartnerBundle\Model\AccountInterface",
-     *     fetch="EAGER"
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\AccountInterface"
      * )
      *
      * @Assert\NotNull
@@ -97,8 +95,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface"
      * )
      *
      * @Serializer\Expose
@@ -190,8 +187,7 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface"
      * )
      *
      * @EntityDoctrineChoice("buyback_offer_status")

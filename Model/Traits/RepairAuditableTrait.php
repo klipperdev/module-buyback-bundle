@@ -24,8 +24,7 @@ trait RepairAuditableTrait
     /**
      * @ORM\OneToOne(
      *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface",
-     *     mappedBy="repair",
-     *     fetch="EAGER"
+     *     mappedBy="repair"
      * )
      * @ORM\JoinColumn(
      *     name="audit_item_id",

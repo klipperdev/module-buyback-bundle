@@ -48,8 +48,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditRequestInterface",
-     *     fetch="EAGER"
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditRequestInterface"
      * )
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      *
@@ -61,8 +60,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface"
      * )
      *
      * @EntityDoctrineChoice("audit_item_status")
@@ -110,8 +108,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\DeviceBundle\Model\DeviceInterface",
-     *     fetch="EAGER"
+     *     targetEntity="Klipper\Module\DeviceBundle\Model\DeviceInterface"
      * )
      *
      * @Serializer\Expose
@@ -120,8 +117,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditConditionInterface",
-     *     fetch="EAGER"
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditConditionInterface"
      * )
      *
      * @Serializer\Expose
@@ -149,8 +145,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
     /**
      * @ORM\ManyToOne(
      *     targetEntity="Klipper\Module\BuybackBundle\Model\BuybackOfferInterface",
-     *     cascade={"persist"},
-     *     fetch="EAGER"
+     *     cascade={"persist"}
      * )
      *
      * @Serializer\Expose
@@ -159,8 +154,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Component\Security\Model\UserInterface",
-     *     fetch="EAGER"
+     *     targetEntity="Klipper\Component\Security\Model\UserInterface"
      * )
      *
      * @Serializer\Expose
@@ -171,8 +165,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
      * @ORM\OneToOne(
      *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface",
      *     inversedBy="nextAuditItem",
-     *     cascade={"persist"},
-     *     fetch="EXTRA_LAZY"
+     *     cascade={"persist"}
      * )
      * @ORM\JoinColumn(
      *     name="previous_audit_item_id",
@@ -190,8 +183,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
     /**
      * @ORM\OneToOne(
      *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface",
-     *     mappedBy="previousAuditItem",
-     *     fetch="EXTRA_LAZY"
+     *     mappedBy="previousAuditItem"
      * )
      *
      * @Serializer\Expose

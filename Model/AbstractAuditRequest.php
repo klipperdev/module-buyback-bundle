@@ -75,8 +75,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface"
      * )
      *
      * @Assert\Expression(
@@ -91,8 +90,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\PartnerBundle\Model\AccountInterface",
-     *     fetch="EAGER"
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\AccountInterface"
      * )
      *
      * @Assert\Expression(
@@ -107,8 +105,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Module\PartnerBundle\Model\PartnerAddressInterface"
      * )
      *
      * @Serializer\Expose
@@ -118,8 +115,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface",
-     *     fetch="EAGER"
+     *     targetEntity="Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface"
      * )
      *
      * @Serializer\Expose
@@ -140,8 +136,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface",
-     *     fetch="EXTRA_LAZY"
+     *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface"
      * )
      *
      * @EntityDoctrineChoice("audit_request_status")
@@ -292,8 +287,8 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      *
      * @ORM\OneToMany(
      *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditRequestItemInterface",
-     *     mappedBy="auditRequest",
      *     fetch="EXTRA_LAZY",
+     *     mappedBy="auditRequest",
      *     cascade={"persist", "remove"}
      * )
      */

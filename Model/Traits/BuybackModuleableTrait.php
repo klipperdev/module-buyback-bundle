@@ -23,8 +23,7 @@ trait BuybackModuleableTrait
     /**
      * @ORM\OneToOne(
      *     targetEntity="Klipper\Module\BuybackBundle\Model\BuybackModuleInterface",
-     *     mappedBy="account",
-     *     fetch="EXTRA_LAZY"
+     *     mappedBy="account"
      * )
      * @ORM\JoinColumn(
      *     name="buyback_module_id",

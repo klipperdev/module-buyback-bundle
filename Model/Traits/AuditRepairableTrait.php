@@ -26,8 +26,7 @@ trait AuditRepairableTrait
      * @ORM\OneToOne(
      *     targetEntity="Klipper\Module\RepairBundle\Model\RepairInterface",
      *     inversedBy="auditItem",
-     *     cascade={"persist", "remove"},
-     *     fetch="EAGER"
+     *     cascade={"persist", "remove"}
      * )
      * @ORM\JoinColumn(
      *     name="repair_id",

@@ -22,8 +22,7 @@ trait DeviceAuditableTrait
 {
     /**
      * @ORM\OneToOne(
-     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface",
-     *     fetch="EAGER"
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface"
      * )
      * @ORM\JoinColumn(
      *     name="last_audit_item_id",
