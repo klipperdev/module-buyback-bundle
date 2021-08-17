@@ -385,6 +385,8 @@ class ApiAuditItemController
     ): Response {
         $qb = $em->getRepository(AuditItemInterface::class)
             ->createQueryBuilder('ai')
+            ->join('ai.auditRequest', 'ar')
+            ->join('ai.status', 'cs')
 
             ->where('ar.account = :account')
             ->andWhere('ar.supplierOrderNumber IS NOT NULL')
@@ -807,6 +809,11 @@ class ApiAuditItemController
         /** @var AuditItemInterface[] $items */
         $items = $domainTarget->getRepository()
             ->createQueryBuilder('ai')
+            ->join('ai.auditRequest', 'ar')
+            ->join('ai.status', 'cs')
+            ->leftJoin('ai.device', 'd')
+            ->leftJoin('ai.product', 'p')
+            ->leftJoin('ai.productCombination', 'pc')
             ->where('ar.account = :account')
             ->andWhere('cs.value = :statusValue')
             ->andWhere('d.id = :device OR (p.id = :product AND pc.id = :productCombination)')
@@ -830,6 +837,8 @@ class ApiAuditItemController
         // Find empty audit item
         $items = $domainTarget->getRepository()
             ->createQueryBuilder('ai')
+            ->join('ai.auditRequest', 'ar')
+            ->join('ai.status', 'cs')
             ->where('ar.account = :account')
             ->andWhere('cs.value = :statusValue')
             ->andWhere('ai.device IS NULL AND ai.product IS NULL AND ai.productCombination IS NULL')

@@ -141,6 +141,8 @@ class ApiBuybackOfferController
             ->createQueryBuilder('ai')
 
             ->where('ai.buybackOffer = :buybackOffer')
+            ->join('ai.auditRequest', 'ar')
+            ->join('ai.status', 'cs')
             ->andWhere('ar.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('cs.value = :status')
