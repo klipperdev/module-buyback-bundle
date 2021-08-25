@@ -155,7 +155,7 @@ class AuditItemQualificationImportAdapter extends StandardImportAdapter
     {
         if (!$result->isValid()
             || !$result->isForm()
-            || null === $result->getData()->get('repair_declared_breakdown_by_customer')
+            || null === $result->getData()->get('repair_declared_breakdown_by_customer')->getData()
         ) {
             return;
         }
@@ -173,8 +173,9 @@ class AuditItemQualificationImportAdapter extends StandardImportAdapter
             $em->persist($repair);
             $em->flush();
         } catch (\Throwable $e) {
+            $errMess = $translator->trans('domain.database_error', [], 'KlipperResource');
             $form->addError(
-                new FormError($translator->trans('domain.database_error', [], 'KlipperResource'))
+                new FormError($errMess, $errMess, [], null, $e)
             );
         }
     }
