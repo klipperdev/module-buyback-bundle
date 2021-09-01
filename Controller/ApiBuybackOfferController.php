@@ -152,7 +152,7 @@ class ApiBuybackOfferController
         ;
 
         $this->filterAvailableQueryByEmptyPrice($qb);
-        $this->filterAvailableQueryByProducts($request, $qb, false);
+        $this->filterAvailableQueryByProducts($request, $qb);
         $this->filterAvailableQueryByConditions($request, $qb);
         $this->filterAvailableQueryByRepairs($request, $qb);
         $this->filterAvailableQueryByAuditItems($request, $qb);
@@ -246,19 +246,17 @@ class ApiBuybackOfferController
         ;
     }
 
-    private function filterAvailableQueryByProducts(Request $request, QueryBuilder $qb, bool $addJoins = true): void
+    private function filterAvailableQueryByProducts(Request $request, QueryBuilder $qb): void
     {
         $productIds = (array) $request->query->get('p', []);
 
         if (!empty($productIds)) {
             $filterExpr = [];
 
-            if ($addJoins) {
-                $qb
-                    ->join('ai.product', 'p')
-                    ->leftJoin('ai.productCombination', 'pc')
-                ;
-            }
+            $qb
+                ->join('ai.product', 'p')
+                ->leftJoin('ai.productCombination', 'pc')
+            ;
 
             foreach ($productIds as $i => $productId) {
                 $split = explode('@', $productId);
