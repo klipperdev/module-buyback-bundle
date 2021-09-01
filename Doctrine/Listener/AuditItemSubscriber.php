@@ -70,14 +70,6 @@ class AuditItemSubscriber implements EventSubscriber
         $object = $event->getObject();
 
         if ($object instanceof AuditItemInterface) {
-            if (null === $object->getConditionPrice()) {
-                $object->setConditionPrice(0.0);
-            }
-
-            if (null === $object->getStatePrice()) {
-                $object->setStatePrice(0.0);
-            }
-
             if (null === $object->getReceiptedAt()) {
                 if (null !== $object->getAuditRequest() && null !== $object->getAuditRequest()->getReceiptedAt()) {
                     $object->setReceiptedAt($object->getAuditRequest()->getReceiptedAt());

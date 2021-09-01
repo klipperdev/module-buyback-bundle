@@ -242,7 +242,7 @@ class ApiBuybackOfferController
     private function filterAvailableQueryByEmptyPrice(QueryBuilder $qb): void
     {
         $qb
-            ->andWhere('(ai.conditionPrice IS NULL OR ai.conditionPrice = 0) AND (ai.statePrice IS NULL OR ai.statePrice = 0)')
+            ->andWhere('ai.conditionPrice IS NULL OR ai.statePrice IS NULL')
         ;
     }
 
