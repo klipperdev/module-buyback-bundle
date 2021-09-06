@@ -168,7 +168,6 @@ class AuditItemSubscriber implements EventSubscriber
         $newStatusValue = 'confirmed';
 
         if (null !== $object->getAuditRequest()
-            && null !== $object->getAuditRequest()->getSupplierOrderNumber()
             && null !== $object->getProduct()
         ) {
             $newStatusValue = 'qualified';
