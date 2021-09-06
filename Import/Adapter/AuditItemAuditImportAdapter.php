@@ -94,7 +94,7 @@ class AuditItemAuditImportAdapter extends StandardImportAdapter
             ->where('ar.account = :account')
             ->andWhere('ar.reference = :auditRequestReference')
             ->andWhere('cs.value = :statusValue')
-            ->andWhere('(d.imei = :device OR d.serialNumber = :device) OR (p.reference = :product AND pc.reference = :productCombination)')
+            ->andWhere('(d.imei = :device OR d.serialNumber = :device) OR (ai.device is null AND p.reference = :product AND pc.reference = :productCombination)')
             ->orderBy('ai.device', 'desc')
             ->addOrderBy('ai.createdAt', 'asc')
             ->setMaxResults(1)

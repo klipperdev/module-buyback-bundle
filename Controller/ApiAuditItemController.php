@@ -816,7 +816,7 @@ class ApiAuditItemController
             ->leftJoin('ai.productCombination', 'pc')
             ->where('ar.account = :account')
             ->andWhere('cs.value = :statusValue')
-            ->andWhere('d.id = :device OR (p.id = :product AND pc.id = :productCombination)')
+            ->andWhere('d.id = :device OR (ai.device is null AND p.id = :product AND pc.id = :productCombination)')
             ->andWhere('ai.auditRequest = :auditRequest')
             ->orderBy('ai.createdAt', 'asc')
             ->setMaxResults(1)
