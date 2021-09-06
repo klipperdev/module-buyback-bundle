@@ -272,6 +272,7 @@ class ApiAuditItemController
             ->leftJoin('pcai.attribute', 'pcaia')
 
             ->where('ar.account = :account')
+            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('ais.value = :status')
 
@@ -313,6 +314,7 @@ class ApiAuditItemController
             ->join('ai.status', 'ais')
 
             ->where('ar.account = :account')
+            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('ais.value = :status')
 
