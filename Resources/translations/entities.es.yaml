@@ -6,7 +6,7 @@ buyback_module.fields.excluded_scope: Perímetro excluido
 buyback_module.fields.identifier_type: Tipo de identificación
 buyback_module.associations.invoice_address: Dirección de facturación del proveedor
 buyback_module.associations.default_audit_request_status: Estado predeterminado de las solicitudes de auditoría
-buyback_module.associations.shipping_address: Dirección de envío
+buyback_module.associations.shipping_address: Dirección de facturación del emisor
 buyback_module.associations.supplier: Proveedor
 buyback_module.associations.repair_price_list: Lista de precios de mantenimiento
 
@@ -34,7 +34,7 @@ audit_request.fields.completed: Terminado
 audit_request.fields.closed: Cerrado
 audit_request.fields.validated: Validado
 audit_request.fields.converted: Convertido
-audit_request.associations.shipping_address: Dirección de envío
+audit_request.associations.shipping_address: Dirección de facturación del emisor
 audit_request.associations.supplier: Proveedor
 audit_request.associations.invoice_address: Dirección de facturación
 audit_request.associations.status: Estado
@@ -81,7 +81,7 @@ buyback_offer.fields.comment: Comentario
 buyback_offer.fields.closed: Cerrado
 buyback_offer.fields.validated: Validado
 buyback_offer.fields.validated_at: Validado el
-buyback_offer.associations.shipping_address: Dirección de envío
+buyback_offer.associations.shipping_address: Dirección de facturación del emisor
 buyback_offer.associations.supplier: Proveedor
 buyback_offer.associations.invoice_address: Dirección de facturación
 buyback_offer.associations.status: Estado

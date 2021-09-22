@@ -6,7 +6,7 @@ buyback_module.fields.excluded_scope: Excluded scope
 buyback_module.fields.identifier_type: Identifier type
 buyback_module.associations.invoice_address: Supplier invoice address
 buyback_module.associations.default_audit_request_status: Default audit request status
-buyback_module.associations.shipping_address: Shipping address
+buyback_module.associations.shipping_address: Issuer invoicing address
 buyback_module.associations.supplier: Provider
 buyback_module.associations.repair_price_list: Repair price list
 
@@ -34,7 +34,7 @@ audit_request.fields.completed: Completed
 audit_request.fields.closed: Closed
 audit_request.fields.validated: Validated
 audit_request.fields.converted: Converted
-audit_request.associations.shipping_address: Shipping address
+audit_request.associations.shipping_address: Issuer invoicing address
 audit_request.associations.supplier: Provider
 audit_request.associations.invoice_address: Invoice address
 audit_request.associations.status: Status
@@ -81,7 +81,7 @@ buyback_offer.fields.comment: Comment
 buyback_offer.fields.closed: Closed
 buyback_offer.fields.validated: Validated
 buyback_offer.fields.validated_at: Validated at
-buyback_offer.associations.shipping_address: Shipping address
+buyback_offer.associations.shipping_address: Issuer invoicing address
 buyback_offer.associations.supplier: Provider
 buyback_offer.associations.invoice_address: Invoice address
 buyback_offer.associations.status: Status
