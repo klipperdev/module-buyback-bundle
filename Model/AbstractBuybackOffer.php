@@ -246,6 +246,8 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * )
      *
      * @Serializer\Expose
+     * @Serializer\MaxDepth(1)
+     * @Serializer\Groups({"ViewsDetails", "View"})
      */
     protected ?Collection $auditItems = null;
 
