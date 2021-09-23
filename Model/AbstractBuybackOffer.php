@@ -11,6 +11,8 @@
 
 namespace Klipper\Module\BuybackBundle\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Klipper\Component\DoctrineChoice\Model\ChoiceInterface;
@@ -237,6 +239,16 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      */
     protected ?\DateTime $validatedAt = null;
 
+    /**
+     * @ORM\OneToMany(
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface",
+     *     mappedBy="buybackOffer"
+     * )
+     *
+     * @Serializer\Expose
+     */
+    protected ?Collection $auditItems = null;
+
     public function setReference(?string $reference): self
     {
         $this->reference = $reference;
@@ -439,5 +451,10 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
     public function getValidatedAt(): ?\DateTime
     {
         return $this->validatedAt;
+    }
+
+    public function getItems(): Collection
+    {
+        return $this->auditItems ?: $this->auditItems = new ArrayCollection();
     }
 }

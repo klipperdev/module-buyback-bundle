@@ -11,6 +11,7 @@
 
 namespace Klipper\Module\BuybackBundle\Model;
 
+use Doctrine\Common\Collections\Collection;
 use Klipper\Component\DoctrineChoice\Model\ChoiceInterface;
 use Klipper\Component\Model\Traits\IdInterface;
 use Klipper\Component\Model\Traits\OrganizationalRequiredInterface;
@@ -152,4 +153,9 @@ interface BuybackOfferInterface extends
     public function setValidatedAt(?\DateTime $validatedAt);
 
     public function getValidatedAt(): ?\DateTime;
+
+    /**
+     * @return AuditItemInterface[]
+     */
+    public function getItems(): Collection;
 }
