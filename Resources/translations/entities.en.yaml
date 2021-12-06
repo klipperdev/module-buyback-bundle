@@ -87,4 +87,5 @@ buyback_offer.associations.invoice_address: Invoice address
 buyback_offer.associations.status: Status
 
 # Device
+device.associations.audit_condition: Condition
 device.associations.last_audit_item: Last audit

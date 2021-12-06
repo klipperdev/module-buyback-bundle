@@ -11,6 +11,7 @@
 
 namespace Klipper\Module\BuybackBundle\Model\Traits;
 
+use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 
 /**
@@ -18,6 +19,13 @@ use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
  */
 interface DeviceAuditableInterface
 {
+    /**
+     * @return static
+     */
+    public function setAuditCondition(?AuditConditionInterface $auditCondition);
+
+    public function getAuditCondition(): ?AuditConditionInterface;
+
     /**
      * @return static
      */

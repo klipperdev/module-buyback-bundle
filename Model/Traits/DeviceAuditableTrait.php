@@ -13,6 +13,7 @@ namespace Klipper\Module\BuybackBundle\Model\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 
 /**
@@ -20,6 +21,15 @@ use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
  */
 trait DeviceAuditableTrait
 {
+    /**
+     * @ORM\ManyToOne(
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditConditionInterface"
+     * )
+     *
+     * @Serializer\Expose
+     */
+    protected ?AuditConditionInterface $auditCondition = null;
+
     /**
      * @ORM\OneToOne(
      *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface"
@@ -36,6 +46,18 @@ trait DeviceAuditableTrait
      * @Serializer\ReadOnlyProperty
      */
     protected ?AuditItemInterface $lastAuditItem = null;
+
+    public function setAuditCondition(?AuditConditionInterface $auditCondition): self
+    {
+        $this->auditCondition = $auditCondition;
+
+        return $this;
+    }
+
+    public function getAuditCondition(): ?AuditConditionInterface
+    {
+        return $this->auditCondition;
+    }
 
     public function setLastAuditItem(?AuditItemInterface $lastAuditItem): self
     {

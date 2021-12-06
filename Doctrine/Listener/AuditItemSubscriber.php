@@ -95,6 +95,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateDevice($em, $object);
             $this->updateDeviceAccount($em, $object);
             $this->updateDeviceProduct($em, $object, true);
+            $this->updateDeviceCondition($em, $object, true);
             $this->updateDeviceStatus($em, $object, true);
         }
 
@@ -108,6 +109,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateDevice($em, $object);
             $this->updateDeviceAccount($em, $object);
             $this->updateDeviceProduct($em, $object);
+            $this->updateDeviceCondition($em, $object, true);
             $this->updateDeviceStatus($em, $object);
         }
     }
@@ -353,6 +355,37 @@ class AuditItemSubscriber implements EventSubscriber
 
             if (null !== $object->getProductCombination() && $object->getProductCombination() !== $device->getProductCombination()) {
                 $device->setProductCombination($object->getProductCombination());
+                $edit = true;
+            }
+
+            if ($edit) {
+                $classMetadata = $em->getClassMetadata(ClassUtils::getClass($device));
+                $uow->recomputeSingleEntityChangeSet($classMetadata, $device);
+            }
+        }
+    }
+
+    private function updateDeviceCondition(EntityManagerInterface $em, object $object, bool $create = false): void
+    {
+        if (!$object instanceof AuditItemInterface || null === $object->getDevice()) {
+            return;
+        }
+
+        $uow = $em->getUnitOfWork();
+        $changeSet = $uow->getEntityChangeSet($object);
+        $device = $object->getDevice();
+
+        if (!$device instanceof DeviceAuditableInterface) {
+            return;
+        }
+
+        if (($create && ($object->getAuditCondition() !== $device->getAuditCondition()))
+            || (!$create && (isset($changeSet['auditCondition']) || isset($changeSet['device'])))
+        ) {
+            $edit = false;
+
+            if (null !== $object->getAuditCondition() && $object->getAuditCondition() !== $device->getAuditCondition()) {
+                $device->setAuditCondition($object->getAuditCondition());
                 $edit = true;
             }
 
