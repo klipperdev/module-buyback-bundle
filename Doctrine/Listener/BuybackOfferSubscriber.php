@@ -153,6 +153,7 @@ class BuybackOfferSubscriber implements EventSubscriber
             if (isset($changeSet['buybackOffer'])) {
                 /** @var null|BuybackOfferInterface $oldOffer */
                 $oldOffer = $changeSet['buybackOffer'][0];
+
                 /** @var null|BuybackOfferInterface $newOffer */
                 $newOffer = $changeSet['buybackOffer'][1];
 
@@ -324,6 +325,7 @@ class BuybackOfferSubscriber implements EventSubscriber
             if (isset($changeSet['buybackOffer'])) {
                 /** @var null|BuybackOfferInterface $oldOffer */
                 $oldOffer = $changeSet['buybackOffer'][0];
+
                 /** @var null|BuybackOfferInterface $newOffer */
                 $newOffer = $changeSet['buybackOffer'][1];
 

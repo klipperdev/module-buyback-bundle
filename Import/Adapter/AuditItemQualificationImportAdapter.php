@@ -49,7 +49,7 @@ class AuditItemQualificationImportAdapter extends StandardImportAdapter
     protected function buildData(ImportContextInterface $context, Row $row): array
     {
         $validColumns = [
-            'audit_request_reference',
+            'audit_batch_reference',
             'device_imei_or_sn',
             'product_reference',
             'product_combination_reference',
@@ -86,19 +86,19 @@ class AuditItemQualificationImportAdapter extends StandardImportAdapter
         // Find audit item with the same value
         $items = $domainTarget->getRepository()
             ->createQueryBuilder('ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'cs')
             ->leftJoin('ai.device', 'd')
             ->leftJoin('ai.product', 'p')
             ->leftJoin('ai.productCombination', 'pc')
-            ->where('ar.account = :account')
-            ->andWhere('ar.reference = :auditRequestReference')
+            ->where('ab.account = :account')
+            ->andWhere('ab.reference = :auditBatchReference')
             ->andWhere('cs.value = :statusValue')
             ->andWhere('(d.imei = :device OR d.serialNumber = :device) OR (ai.device is null AND p.reference = :product AND pc.reference = :productCombination)')
             ->orderBy('ai.createdAt', 'asc')
             ->setMaxResults(1)
             ->setParameter('account', $accountId)
-            ->setParameter('auditRequestReference', $data['audit_request_reference'] ?? null)
+            ->setParameter('auditBatchReference', $data['audit_batch_reference'] ?? null)
             ->setParameter('statusValue', 'confirmed')
             ->setParameter('device', $data['device_imei_or_sn'] ?? null)
             ->setParameter('product', $data['product_reference'] ?? null)
@@ -114,16 +114,16 @@ class AuditItemQualificationImportAdapter extends StandardImportAdapter
         // Find empty audit item
         $items = $domainTarget->getRepository()
             ->createQueryBuilder('ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'cs')
-            ->where('ar.account = :account')
-            ->andWhere('ar.reference = :auditRequestReference')
+            ->where('ab.account = :account')
+            ->andWhere('ab.reference = :auditBatchReference')
             ->andWhere('cs.value = :statusValue')
             ->andWhere('ai.device IS NULL AND ai.product IS NULL AND ai.productCombination IS NULL')
             ->orderBy('ai.createdAt', 'asc')
             ->setMaxResults(1)
             ->setParameter('account', $accountId)
-            ->setParameter('auditRequestReference', $data['audit_request_reference'] ?? null)
+            ->setParameter('auditBatchReference', $data['audit_batch_reference'] ?? null)
             ->setParameter('statusValue', 'confirmed')
             ->getQuery()
             ->getResult()

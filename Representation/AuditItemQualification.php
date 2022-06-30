@@ -11,8 +11,8 @@
 
 namespace Klipper\Module\BuybackBundle\Representation;
 
+use Klipper\Module\BuybackBundle\Model\AuditBatchInterface;
 use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
-use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
 use Klipper\Module\ProductBundle\Model\ProductCombinationInterface;
 use Klipper\Module\ProductBundle\Model\ProductInterface;
@@ -28,7 +28,7 @@ class AuditItemQualification
     /**
      * @Assert\NotBlank
      */
-    private ?AuditRequestInterface $auditRequest = null;
+    private ?AuditBatchInterface $auditBatch = null;
 
     private ?DeviceInterface $device = null;
 
@@ -54,16 +54,16 @@ class AuditItemQualification
         return $this->id;
     }
 
-    public function setAuditRequest(?AuditRequestInterface $auditRequest): self
+    public function setAuditBatch(?AuditBatchInterface $auditBatch): self
     {
-        $this->auditRequest = $auditRequest;
+        $this->auditBatch = $auditBatch;
 
         return $this;
     }
 
-    public function getAuditRequest(): ?AuditRequestInterface
+    public function getAuditBatch(): ?AuditBatchInterface
     {
-        return $this->auditRequest;
+        return $this->auditBatch;
     }
 
     public function setDevice(?DeviceInterface $device): self

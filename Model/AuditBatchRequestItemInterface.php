@@ -19,11 +19,11 @@ use Klipper\Module\ProductBundle\Model\Traits\ProductableOptionalInterface;
 use Klipper\Module\ProductBundle\Model\Traits\ProductCombinationableOptionalInterface;
 
 /**
- * Audit Request Item interface.
+ * Audit Batch Request Item interface.
  *
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-interface AuditRequestItemInterface extends
+interface AuditBatchRequestItemInterface extends
     IdInterface,
     OrganizationalRequiredInterface,
     ProductableOptionalInterface,
@@ -34,9 +34,9 @@ interface AuditRequestItemInterface extends
     /**
      * @return static
      */
-    public function setAuditRequest(?AuditRequestInterface $auditRequest);
+    public function setAuditBatch(?AuditBatchInterface $auditBatch);
 
-    public function getAuditRequest(): ?AuditRequestInterface;
+    public function getAuditBatch(): ?AuditBatchInterface;
 
     /**
      * @return static

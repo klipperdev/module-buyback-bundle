@@ -22,21 +22,21 @@ use Klipper\Module\ProductBundle\Model\Traits\ProductCombinationableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Audit Request Item model.
+ * Audit Batch Request Item model.
  *
  * @author François Pluchino <francois.pluchino@klipper.dev>
  *
  * @ORM\Table(
  *     indexes={
- *         @ORM\Index(name="idx_audit_request_item_created_at", columns={"created_at"}),
- *         @ORM\Index(name="idx_audit_request_item_updated_at", columns={"updated_at"}),
- *         @ORM\Index(name="idx_audit_request_item_expected_quantity", columns={"expected_quantity"}),
- *         @ORM\Index(name="idx_audit_request_item_received_quantity", columns={"received_quantity"})
+ *         @ORM\Index(name="idx_audit_batch_request_item_created_at", columns={"created_at"}),
+ *         @ORM\Index(name="idx_audit_batch_request_item_updated_at", columns={"updated_at"}),
+ *         @ORM\Index(name="idx_audit_batch_request_item_expected_quantity", columns={"expected_quantity"}),
+ *         @ORM\Index(name="idx_audit_batch_request_item_received_quantity", columns={"received_quantity"})
  *     }
  * )
  *
  * @KlipperSecurityDoctrineAssert\OrganizationalUniqueEntity(
- *     fields={"organization", "auditRequest", "product", "productCombination"},
+ *     fields={"organization", "auditBatch", "product", "productCombination"},
  *     errorPath="product",
  *     repositoryMethod="findBy",
  *     ignoreNull=false,
@@ -45,7 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Serializer\ExclusionPolicy("all")
  */
-abstract class AbstractAuditRequestItem implements AuditRequestItemInterface
+abstract class AbstractAuditBatchRequestItem implements AuditBatchRequestItemInterface
 {
     use OrganizationalRequiredTrait;
     use ProductableTrait;
@@ -55,7 +55,7 @@ abstract class AbstractAuditRequestItem implements AuditRequestItemInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditRequestInterface",
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditBatchInterface",
      *     inversedBy="items"
      * )
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
@@ -64,7 +64,7 @@ abstract class AbstractAuditRequestItem implements AuditRequestItemInterface
      *
      * @Serializer\Expose
      */
-    protected ?AuditRequestInterface $auditRequest = null;
+    protected ?AuditBatchInterface $auditBatch = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -84,16 +84,16 @@ abstract class AbstractAuditRequestItem implements AuditRequestItemInterface
      */
     protected ?int $receivedQuantity = null;
 
-    public function setAuditRequest(?AuditRequestInterface $auditRequest): self
+    public function setAuditBatch(?AuditBatchInterface $auditBatch): self
     {
-        $this->auditRequest = $auditRequest;
+        $this->auditBatch = $auditBatch;
 
         return $this;
     }
 
-    public function getAuditRequest(): ?AuditRequestInterface
+    public function getAuditBatch(): ?AuditBatchInterface
     {
-        return $this->auditRequest;
+        return $this->auditBatch;
     }
 
     public function setExpectedQuantity(?int $expectedQuantity): self

@@ -39,18 +39,18 @@ class AuditManager implements AuditManagerInterface
     {
         /** @var RepairInterface $repair */
         $repair = $this->objectFactory->create(RepairInterface::class);
-        $auditRequest = $audit->getAuditRequest();
+        $auditBatch = $audit->getAuditBatch();
 
-        $account = $auditRequest->getAccount();
+        $account = $auditBatch->getAccount();
         $repair->setAccount($account);
-        $repair->setContact($auditRequest->getContact());
-        $repair->setWorkcenter($auditRequest->getWorkcenter());
-        $repair->setInvoiceAddress($auditRequest->getInvoiceAddress());
-        $repair->setShippingAddress($auditRequest->getShippingAddress());
+        $repair->setContact($auditBatch->getContact());
+        $repair->setWorkcenter($auditBatch->getWorkcenter());
+        $repair->setInvoiceAddress($auditBatch->getInvoiceAddress());
+        $repair->setShippingAddress($auditBatch->getShippingAddress());
         $repair->setProduct($audit->getProduct());
         $repair->setProductCombination($audit->getProductCombination());
         $repair->setRepairer($audit->getAuditor());
-        $repair->setOwner($auditRequest->getAccount()->getOwner());
+        $repair->setOwner($auditBatch->getAccount()->getOwner());
         $repair->setDevice($audit->getDevice());
         $repair->setStatus($this->choiceManager->getChoice('repair_status', 'received'));
 

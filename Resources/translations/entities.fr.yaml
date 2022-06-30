@@ -5,7 +5,7 @@ buyback_module.fields.comment: Commentaire
 buyback_module.fields.excluded_scope: Périmètre exclus
 buyback_module.fields.identifier_type: Type d'identification
 buyback_module.associations.invoice_address: Adresse de facturation du prestataire
-buyback_module.associations.default_audit_request_status: Statut par défaut des demandes d'audit
+buyback_module.associations.default_audit_batch_status: Statut par défaut des demandes d'audit
 buyback_module.associations.shipping_address: Adresse de facturation de l'émetteur
 buyback_module.associations.supplier: Prestataire
 buyback_module.associations.repair_price_list: Liste de prix de la maintenance
@@ -15,35 +15,35 @@ audit_condition.name: Condition d'audit
 audit_condition.name.plural: Conditions d'audit
 audit_condition.fields.state: Etat
 
-# Audit Request
-audit_request.name: Demande d'audit
-audit_request.name.plural: Demandes d'audit
-audit_request.fields.reference: Réference
-audit_request.fields.identifier_type: Type d'identification
-audit_request.fields.supplier_order_number: Numéro de Commande Fournisseur
-audit_request.fields.customer_reference: Référence client
-audit_request.fields.date: Date
-audit_request.fields.estimated_delivery_date: Date de livraison estimée
-audit_request.fields.estimated_processing_date: Date de traitement estimée
-audit_request.fields.receipted_at: Reçu le
-audit_request.fields.number_of_items: Nombre d'équipements
-audit_request.fields.expected_quantity: Quantité attendue
-audit_request.fields.received_quantity: Quantité reçue
-audit_request.fields.comment: Commentaire
-audit_request.fields.completed: Complétée
-audit_request.fields.closed: Clôturée
-audit_request.fields.validated: Validée
-audit_request.fields.converted: Convertie
-audit_request.associations.shipping_address: Adresse de facturation de l'émetteur
-audit_request.associations.supplier: Fournisseur
-audit_request.associations.invoice_address: Adresse de facturation
-audit_request.associations.status: Statut
+# Audit Batch
+audit_batch.name: Lot d'audit
+audit_batch.name.plural: Lots d'audit
+audit_batch.fields.reference: Réference
+audit_batch.fields.identifier_type: Type d'identification
+audit_batch.fields.supplier_order_number: Numéro de Commande Fournisseur
+audit_batch.fields.customer_reference: Référence client
+audit_batch.fields.date: Date
+audit_batch.fields.estimated_delivery_date: Date de livraison estimée
+audit_batch.fields.estimated_processing_date: Date de traitement estimée
+audit_batch.fields.receipted_at: Reçu le
+audit_batch.fields.number_of_items: Nombre d'équipements
+audit_batch.fields.expected_quantity: Quantité attendue
+audit_batch.fields.received_quantity: Quantité reçue
+audit_batch.fields.comment: Commentaire
+audit_batch.fields.completed: Complétée
+audit_batch.fields.closed: Clôturée
+audit_batch.fields.validated: Validée
+audit_batch.fields.converted: Convertie
+audit_batch.associations.shipping_address: Adresse de facturation de l'émetteur
+audit_batch.associations.supplier: Fournisseur
+audit_batch.associations.invoice_address: Adresse de facturation
+audit_batch.associations.status: Statut
 
-# Audit Request Item
-audit_request_item.name: Equipement de l'audit
-audit_request_item.name.plural: Equipements de l'audit
-audit_request_item.fields.expected_quantity: Quantité attendue
-audit_request_item.fields.received_quantity: Quantité reçue
+# Audit Batch Request Item
+audit_batch_request_item.name: Equipement de l'audit
+audit_batch_request_item.name.plural: Equipements de l'audit
+audit_batch_request_item.fields.expected_quantity: Quantité attendue
+audit_batch_request_item.fields.received_quantity: Quantité reçue
 
 # Audit Item
 audit_item.name: Audit

@@ -15,7 +15,7 @@ device_status:
         translations:
             fr: { label: Repris }
 
-audit_request_status:
+audit_batch_status:
     -   value: draft
         label: Brouillon
         icon: fa-fw fa-sticky-note

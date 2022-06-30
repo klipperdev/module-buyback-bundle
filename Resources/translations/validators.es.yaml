@@ -1,7 +1,7 @@
 klipper_buyback.account.invalid_supplier: El módulo de intercambio debe estar habilitado para esta cuenta
-klipper_buyback.audit_request.module_must_be_enabled: El módulo de intercambio debe estar habilitado para esta cuenta
-klipper_buyback.audit_request.shipping_address_required: Se requiere la dirección de envío
-klipper_buyback.audit_request.cannot_be_validated: La solicitud de auditoría no se puede validar sin equipo
+klipper_buyback.audit_batch.module_must_be_enabled: El módulo de intercambio debe estar habilitado para esta cuenta
+klipper_buyback.audit_batch.shipping_address_required: Se requiere la dirección de envío
+klipper_buyback.audit_batch.cannot_be_validated: La solicitud de auditoría no se puede validar sin equipo
 klipper_buyback.audit_item.previous_audit_already_open: Ya está abierta una auditoría anterior
 klipper_buyback.audit_item.repair.device_required: El equipo debe completarse antes de crear un mantenimiento para una auditoría.
 klipper_buyback.buyback_offer.module_must_be_enabled: El módulo de intercambio debe estar habilitado para esta cuenta

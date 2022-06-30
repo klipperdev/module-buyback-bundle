@@ -27,12 +27,13 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('klipper_buyback');
+
         /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
-            ->append($this->getAuditRequestNode())
+            ->append($this->getAuditBatchNode())
             ->append($this->getAuditItemNode())
             ->append($this->getBuybackOfferNode())
             ->end()
@@ -41,9 +42,9 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function getAuditRequestNode(): NodeDefinition
+    private function getAuditBatchNode(): NodeDefinition
     {
-        return NodeUtils::createArrayNode('audit_request')
+        return NodeUtils::createArrayNode('audit_batch')
             ->addDefaultsIfNotSet()
             ->children()
             ->arrayNode('closed_statuses')

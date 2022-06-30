@@ -56,7 +56,7 @@ class ApiBuybackOfferController
             ->addSelect('CASE WHEN ai.productCombination IS NOT NULL THEN '.$concatCombination.' ELSE :null END as product_combination_name')
 
             ->from(AuditItemInterface::class, 'ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.auditCondition', 'ac')
             ->join('ai.status', 'ais')
             ->join('ai.product', 'p')
@@ -103,7 +103,7 @@ class ApiBuybackOfferController
             ->addSelect('ac.name')
 
             ->from(AuditItemInterface::class, 'ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.auditCondition', 'ac')
             ->join('ai.status', 'ais')
 
@@ -141,9 +141,9 @@ class ApiBuybackOfferController
             ->createQueryBuilder('ai')
 
             ->where('ai.buybackOffer = :buybackOffer')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'cs')
-            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
+            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('cs.value = :status')
 
@@ -181,11 +181,11 @@ class ApiBuybackOfferController
             ->select('ai')
 
             ->from(AuditItemInterface::class, 'ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'cs')
 
             ->where('ai.buybackOffer = :buybackOffer')
-            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
+            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('cs.value = :status')
 

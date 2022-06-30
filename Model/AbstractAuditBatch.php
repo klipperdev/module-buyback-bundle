@@ -29,32 +29,32 @@ use Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Audit Request model.
+ * Audit Batch model.
  *
  * @author François Pluchino <francois.pluchino@klipper.dev>
  *
  * @ORM\Table(
  *     indexes={
- *         @ORM\Index(name="idx_audit_request_created_at", columns={"created_at"}),
- *         @ORM\Index(name="idx_audit_request_updated_at", columns={"updated_at"}),
- *         @ORM\Index(name="idx_audit_request_reference", columns={"reference"}),
- *         @ORM\Index(name="idx_audit_request_identifier_type", columns={"identifier_type"}),
- *         @ORM\Index(name="idx_audit_request_supplier_order_number", columns={"supplier_order_number"}),
- *         @ORM\Index(name="idx_audit_request_customer_reference", columns={"customer_reference"}),
- *         @ORM\Index(name="idx_audit_request_date", columns={"date"}),
- *         @ORM\Index(name="idx_audit_request_estimated_delivery_date", columns={"estimated_delivery_date"}),
- *         @ORM\Index(name="idx_audit_request_estimated_processing_date", columns={"estimated_processing_date"}),
- *         @ORM\Index(name="idx_audit_request_receipted_at", columns={"receipted_at"}),
- *         @ORM\Index(name="idx_audit_request_expected_quantity", columns={"expected_quantity"}),
- *         @ORM\Index(name="idx_audit_request_received_quantity", columns={"received_quantity"}),
- *         @ORM\Index(name="idx_audit_request_closed", columns={"closed"}),
- *         @ORM\Index(name="idx_audit_request_validated", columns={"validated"})
+ *         @ORM\Index(name="idx_audit_batch_created_at", columns={"created_at"}),
+ *         @ORM\Index(name="idx_audit_batch_updated_at", columns={"updated_at"}),
+ *         @ORM\Index(name="idx_audit_batch_reference", columns={"reference"}),
+ *         @ORM\Index(name="idx_audit_batch_identifier_type", columns={"identifier_type"}),
+ *         @ORM\Index(name="idx_audit_batch_supplier_order_number", columns={"supplier_order_number"}),
+ *         @ORM\Index(name="idx_audit_batch_customer_reference", columns={"customer_reference"}),
+ *         @ORM\Index(name="idx_audit_batch_date", columns={"date"}),
+ *         @ORM\Index(name="idx_audit_batch_estimated_delivery_date", columns={"estimated_delivery_date"}),
+ *         @ORM\Index(name="idx_audit_batch_estimated_processing_date", columns={"estimated_processing_date"}),
+ *         @ORM\Index(name="idx_audit_batch_receipted_at", columns={"receipted_at"}),
+ *         @ORM\Index(name="idx_audit_batch_expected_quantity", columns={"expected_quantity"}),
+ *         @ORM\Index(name="idx_audit_batch_received_quantity", columns={"received_quantity"}),
+ *         @ORM\Index(name="idx_audit_batch_closed", columns={"closed"}),
+ *         @ORM\Index(name="idx_audit_batch_validated", columns={"validated"})
  *     }
  * )
  *
  * @Serializer\ExclusionPolicy("all")
  */
-abstract class AbstractAuditRequest implements AuditRequestInterface
+abstract class AbstractAuditBatch implements AuditBatchInterface
 {
     use AccountableRequiredTrait;
     use ContactableRequiredTrait;
@@ -139,7 +139,7 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
      *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface"
      * )
      *
-     * @EntityDoctrineChoice("audit_request_status")
+     * @EntityDoctrineChoice("audit_batch_status")
      *
      * @Serializer\Expose
      * @Serializer\MaxDepth(1)
@@ -283,12 +283,12 @@ abstract class AbstractAuditRequest implements AuditRequestInterface
     protected bool $converted = false;
 
     /**
-     * @var null|AuditRequestItemInterface[]|Collection
+     * @var null|AuditBatchRequestItemInterface[]|Collection
      *
      * @ORM\OneToMany(
-     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditRequestItemInterface",
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditBatchRequestItemInterface",
      *     fetch="EXTRA_LAZY",
-     *     mappedBy="auditRequest",
+     *     mappedBy="auditBatch",
      *     cascade={"persist", "remove"}
      * )
      */

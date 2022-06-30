@@ -21,15 +21,15 @@ use Klipper\Component\DoctrineChoice\ChoiceManagerInterface;
 use Klipper\Component\DoctrineExtensionsExtra\Util\ListenerUtil;
 use Klipper\Component\DoctrineExtra\Util\ClassUtils;
 use Klipper\Component\Resource\Object\ObjectFactoryInterface;
+use Klipper\Module\BuybackBundle\Model\AuditBatchInterface;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
-use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-class AuditRequestSubscriber implements EventSubscriber
+class AuditBatchSubscriber implements EventSubscriber
 {
     private ChoiceManagerInterface $choiceManager;
 
@@ -77,7 +77,7 @@ class AuditRequestSubscriber implements EventSubscriber
     {
         $object = $event->getObject();
 
-        if ($object instanceof AuditRequestInterface) {
+        if ($object instanceof AuditBatchInterface) {
             if (null === $object->getReference()) {
                 $object->setReference($this->generator->generate());
             }
@@ -125,14 +125,14 @@ class AuditRequestSubscriber implements EventSubscriber
                     }
 
                     if (null === $status) {
-                        $status = $module->getDefaultAuditRequestStatus() ?? $this->choiceManager->getChoice('audit_request_status', null);
+                        $status = $module->getDefaultAuditBatchStatus() ?? $this->choiceManager->getChoice('audit_batch_status', null);
                         $object->setStatus($status);
                     }
                 }
 
                 if (null === $object->getShippingAddress()) {
                     ListenerUtil::thrownError($this->translator->trans(
-                        'klipper_buyback.audit_request.shipping_address_required',
+                        'klipper_buyback.audit_batch.shipping_address_required',
                         [],
                         'validators'
                     ), $object, 'shippingAddress');
@@ -169,7 +169,7 @@ class AuditRequestSubscriber implements EventSubscriber
 
     private function validateModuleEnabled(object $object): void
     {
-        if ($object instanceof AuditRequestInterface) {
+        if ($object instanceof AuditBatchInterface) {
             $account = $object->getAccount();
             $module = null !== $account && $account instanceof BuybackModuleableInterface
                 ? $account->getBuybackModule()
@@ -177,7 +177,7 @@ class AuditRequestSubscriber implements EventSubscriber
 
             if (null === $module || !$module->isEnabled()) {
                 ListenerUtil::thrownError($this->translator->trans(
-                    'klipper_buyback.audit_request.module_must_be_enabled',
+                    'klipper_buyback.audit_batch.module_must_be_enabled',
                     [],
                     'validators'
                 ));
@@ -187,7 +187,7 @@ class AuditRequestSubscriber implements EventSubscriber
 
     private function updateClosed(EntityManagerInterface $em, object $object, bool $create = false): void
     {
-        if ($object instanceof AuditRequestInterface) {
+        if ($object instanceof AuditBatchInterface) {
             $uow = $em->getUnitOfWork();
             $changeSet = $uow->getEntityChangeSet($object);
 
@@ -209,10 +209,10 @@ class AuditRequestSubscriber implements EventSubscriber
 
     private function validateClosedEmptyItems(object $object): void
     {
-        if ($object instanceof AuditRequestInterface) {
+        if ($object instanceof AuditBatchInterface) {
             if ($object->isClosed() && $object->isValidated() && 0 === $object->getNumberOfItems()) {
                 ListenerUtil::thrownError($this->translator->trans(
-                    'klipper_buyback.audit_request.cannot_be_validated',
+                    'klipper_buyback.audit_batch.cannot_be_validated',
                     [],
                     'validators'
                 ));
@@ -222,7 +222,7 @@ class AuditRequestSubscriber implements EventSubscriber
 
     private function convertToAuditItems(EntityManagerInterface $em, object $object, bool $create = false): void
     {
-        if ($object instanceof AuditRequestInterface) {
+        if ($object instanceof AuditBatchInterface) {
             $uow = $em->getUnitOfWork();
             $changeSet = $uow->getEntityChangeSet($object);
 
@@ -242,7 +242,7 @@ class AuditRequestSubscriber implements EventSubscriber
         }
     }
 
-    private function createAuditItems(EntityManagerInterface $em, AuditRequestInterface $object): void
+    private function createAuditItems(EntityManagerInterface $em, AuditBatchInterface $object): void
     {
         $uow = $em->getUnitOfWork();
 
@@ -250,7 +250,7 @@ class AuditRequestSubscriber implements EventSubscriber
             for ($i = 0; $i < (int) $item->getReceivedQuantity(); ++$i) {
                 /** @var AuditItemInterface $auditItem */
                 $auditItem = $this->objectFactory->create(AuditItemInterface::class);
-                $auditItem->setAuditRequest($object);
+                $auditItem->setAuditBatch($object);
                 $auditItem->setProduct($item->getProduct());
                 $auditItem->setProductCombination($item->getProductCombination());
                 $auditItem->setReceiptedAt($object->getReceiptedAt() ?? new \DateTime());

@@ -263,7 +263,7 @@ class ApiAuditItemController
             ->addSelect('CASE WHEN ai.productCombination IS NOT NULL THEN '.$concatCombination.' ELSE :null END as product_combination_name')
 
             ->from(AuditItemInterface::class, 'ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'ais')
             ->join('ai.product', 'p')
             ->leftJoin('ai.productCombination', 'pc')
@@ -271,8 +271,8 @@ class ApiAuditItemController
             ->leftJoin('pc.attributeItems', 'pcai')
             ->leftJoin('pcai.attribute', 'pcaia')
 
-            ->where('ar.account = :account')
-            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
+            ->where('ab.account = :account')
+            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('ais.value = :status')
 
@@ -309,12 +309,12 @@ class ApiAuditItemController
             ->addSelect('ac.name')
 
             ->from(AuditItemInterface::class, 'ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.auditCondition', 'ac')
             ->join('ai.status', 'ais')
 
-            ->where('ar.account = :account')
-            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
+            ->where('ab.account = :account')
+            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('ais.value = :status')
 
@@ -345,22 +345,22 @@ class ApiAuditItemController
         AccountInterface $id
     ): Response {
         $qb = $em->createQueryBuilder()
-            ->select('DISTINCT ar.supplierOrderNumber as id')
-            ->addSelect('ar.supplierOrderNumber as label')
+            ->select('DISTINCT ab.supplierOrderNumber as id')
+            ->addSelect('ab.supplierOrderNumber as label')
 
             ->from(AuditItemInterface::class, 'ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'ais')
 
-            ->where('ar.account = :account')
-            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
+            ->where('ab.account = :account')
+            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('ais.value = :status')
 
-            ->groupBy('ar.supplierOrderNumber')
+            ->groupBy('ab.supplierOrderNumber')
 
-            ->orderBy('ar.supplierOrderNumber')
+            ->orderBy('ab.supplierOrderNumber')
 
             ->setParameter('account', $id)
             ->setParameter('status', 'audited')
@@ -387,11 +387,11 @@ class ApiAuditItemController
     ): Response {
         $qb = $em->getRepository(AuditItemInterface::class)
             ->createQueryBuilder('ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'cs')
 
-            ->where('ar.account = :account')
-            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
+            ->where('ab.account = :account')
+            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('cs.value = :status')
@@ -508,7 +508,7 @@ class ApiAuditItemController
             $spreadsheet = new Spreadsheet();
             $writer = IOFactory::createWriter($spreadsheet, ucfirst($ext));
             $sheet = $spreadsheet->getActiveSheet();
-            $sheet->setCellValueByColumnAndRow(1, 1, 'audit_request_reference');
+            $sheet->setCellValueByColumnAndRow(1, 1, 'audit_batch_reference');
             $sheet->setCellValueByColumnAndRow(2, 1, 'device_imei_or_sn');
             $sheet->setCellValueByColumnAndRow(3, 1, 'product_reference');
             $sheet->setCellValueByColumnAndRow(4, 1, 'product_combination_reference');
@@ -605,7 +605,7 @@ class ApiAuditItemController
             $filterExpr = [];
 
             foreach ($references as $i => $reference) {
-                $filterExpr[] = 'ar.supplierOrderNumber = :supplierOrderNumber_'.$i;
+                $filterExpr[] = 'ab.supplierOrderNumber = :supplierOrderNumber_'.$i;
                 $qb->setParameter('supplierOrderNumber_'.$i, $reference);
             }
 
@@ -644,11 +644,11 @@ class ApiAuditItemController
             ->select('ai')
 
             ->from(AuditItemInterface::class, 'ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'cs')
 
-            ->where('ar.account = :account')
-            ->andWhere('ar.supplierOrderNumber IS NOT NULL')
+            ->where('ab.account = :account')
+            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('cs.value = :status')
@@ -672,16 +672,16 @@ class ApiAuditItemController
 
         if (null === $buybackOffer) {
             $firstAudit = $audits[0];
-            $firstAuditRequest = $firstAudit->getAuditRequest();
+            $firstAuditBatch = $firstAudit->getAuditBatch();
 
             /** @var BuybackOfferInterface $buybackOffer */
             $buybackOffer = $objectFactory->create(BuybackOfferInterface::class);
-            $buybackOffer->setShippingAddress($firstAuditRequest->getShippingAddress());
-            $buybackOffer->setInvoiceAddress($firstAuditRequest->getInvoiceAddress());
-            $buybackOffer->setAccount($firstAuditRequest->getAccount());
-            $buybackOffer->setSupplier($firstAuditRequest->getSupplier());
+            $buybackOffer->setShippingAddress($firstAuditBatch->getShippingAddress());
+            $buybackOffer->setInvoiceAddress($firstAuditBatch->getInvoiceAddress());
+            $buybackOffer->setAccount($firstAuditBatch->getAccount());
+            $buybackOffer->setSupplier($firstAuditBatch->getSupplier());
             $buybackOffer->setExpirationDate((new \DateTime())->add(new \DateInterval('P14D')));
-            $buybackOffer->setContact($firstAuditRequest->getContact());
+            $buybackOffer->setContact($firstAuditBatch->getContact());
         }
 
         $domain = $domainManager->get(AuditItemInterface::class);
@@ -737,8 +737,8 @@ class ApiAuditItemController
                 ));
             }
 
-            if (null !== $formData->getAuditRequest() && $formData->getAuditRequest() !== $audit->getAuditRequest()) {
-                $audit->setAuditRequest($formData->getAuditRequest());
+            if (null !== $formData->getAuditBatch() && $formData->getAuditBatch() !== $audit->getAuditBatch()) {
+                $audit->setAuditBatch($formData->getAuditBatch());
             }
 
             if (null !== $formData->getAuditCondition() && $formData->getAuditCondition() !== $audit->getAuditCondition()) {
@@ -811,15 +811,15 @@ class ApiAuditItemController
         /** @var AuditItemInterface[] $items */
         $items = $domainTarget->getRepository()
             ->createQueryBuilder('ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'cs')
             ->leftJoin('ai.device', 'd')
             ->leftJoin('ai.product', 'p')
             ->leftJoin('ai.productCombination', 'pc')
-            ->where('ar.account = :account')
+            ->where('ab.account = :account')
             ->andWhere('cs.value = :statusValue')
             ->andWhere('d.id = :device OR (ai.device is null AND p.id = :product AND pc.id = :productCombination)')
-            ->andWhere('ai.auditRequest = :auditRequest')
+            ->andWhere('ai.auditBatch = :auditBatch')
             ->orderBy('ai.createdAt', 'asc')
             ->setMaxResults(1)
             ->setParameter('account', $account)
@@ -827,7 +827,7 @@ class ApiAuditItemController
             ->setParameter('device', $data->getDevice())
             ->setParameter('product', $data->getProduct())
             ->setParameter('productCombination', $data->getProductCombination())
-            ->setParameter('auditRequest', $data->getAuditRequest())
+            ->setParameter('auditBatch', $data->getAuditBatch())
             ->getQuery()
             ->getResult()
         ;
@@ -839,17 +839,17 @@ class ApiAuditItemController
         // Find empty audit item
         $items = $domainTarget->getRepository()
             ->createQueryBuilder('ai')
-            ->join('ai.auditRequest', 'ar')
+            ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'cs')
-            ->where('ar.account = :account')
+            ->where('ab.account = :account')
             ->andWhere('cs.value = :statusValue')
             ->andWhere('ai.device IS NULL AND ai.product IS NULL AND ai.productCombination IS NULL')
-            ->andWhere('ai.auditRequest = :auditRequest')
+            ->andWhere('ai.auditBatch = :auditBatch')
             ->orderBy('ai.createdAt', 'asc')
             ->setMaxResults(1)
             ->setParameter('account', $account)
             ->setParameter('statusValue', $data instanceof AuditItemAudit ? 'qualified' : 'confirmed')
-            ->setParameter('auditRequest', $data->getAuditRequest())
+            ->setParameter('auditBatch', $data->getAuditBatch())
             ->getQuery()
             ->getResult()
         ;

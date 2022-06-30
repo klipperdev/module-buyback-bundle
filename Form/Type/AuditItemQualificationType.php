@@ -11,8 +11,8 @@
 
 namespace Klipper\Module\BuybackBundle\Form\Type;
 
+use Klipper\Module\BuybackBundle\Model\AuditBatchInterface;
 use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
-use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
 use Klipper\Module\BuybackBundle\Representation\AuditItemQualification;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
 use Klipper\Module\ProductBundle\Model\ProductCombinationInterface;
@@ -48,9 +48,9 @@ class AuditItemQualificationType extends AbstractType
                 'property_path' => 'id',
                 'scale' => 0,
             ])
-            ->add('audit_request', EntityType::class, [
-                'class' => AuditRequestInterface::class,
-                'property_path' => 'auditRequest',
+            ->add('audit_batch', EntityType::class, [
+                'class' => AuditBatchInterface::class,
+                'property_path' => 'auditBatch',
             ])
             ->add('device', EntityType::class, [
                 'class' => DeviceInterface::class,

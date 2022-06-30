@@ -84,9 +84,9 @@ interface BuybackModuleInterface extends
     /**
      * @return static
      */
-    public function setDefaultAuditRequestStatus(?ChoiceInterface $defaultAuditRequestStatus);
+    public function setDefaultAuditBatchStatus(?ChoiceInterface $defaultAuditBatchStatus);
 
-    public function getDefaultAuditRequestStatus(): ?ChoiceInterface;
+    public function getDefaultAuditBatchStatus(): ?ChoiceInterface;
 
     /**
      * @return static

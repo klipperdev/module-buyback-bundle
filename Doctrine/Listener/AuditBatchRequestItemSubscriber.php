@@ -16,13 +16,13 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
-use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
-use Klipper\Module\BuybackBundle\Model\AuditRequestItemInterface;
+use Klipper\Module\BuybackBundle\Model\AuditBatchInterface;
+use Klipper\Module\BuybackBundle\Model\AuditBatchRequestItemInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-class AuditRequestItemSubscriber implements EventSubscriber
+class AuditBatchRequestItemSubscriber implements EventSubscriber
 {
     /**
      * @var int[]|string[]
@@ -50,12 +50,12 @@ class AuditRequestItemSubscriber implements EventSubscriber
         $uow = $event->getEntityManager()->getUnitOfWork();
         $changeSet = $uow->getEntityChangeSet($object);
 
-        if ($object instanceof AuditRequestItemInterface) {
+        if ($object instanceof AuditBatchRequestItemInterface) {
             if (isset($changeSet['expectedQuantity'])
                 || isset($changeSet['receivedQuantity'])
                 || null === $object->getId()
             ) {
-                $this->reCalculateAuditRequestQuantities($object->getAuditRequest());
+                $this->reCalculateAuditBatchRequestQuantities($object->getAuditBatch());
             }
         }
     }
@@ -66,8 +66,8 @@ class AuditRequestItemSubscriber implements EventSubscriber
         $uow = $em->getUnitOfWork();
 
         foreach ($uow->getScheduledEntityDeletions() as $object) {
-            if ($object instanceof AuditRequestItemInterface && null !== ($auditRequest = $object->getAuditRequest())) {
-                $this->reCalculateAuditRequestQuantities($auditRequest);
+            if ($object instanceof AuditBatchRequestItemInterface && null !== ($auditBatch = $object->getAuditBatch())) {
+                $this->reCalculateAuditBatchRequestQuantities($auditBatch);
             }
         }
     }
@@ -78,15 +78,15 @@ class AuditRequestItemSubscriber implements EventSubscriber
 
         if (\count($this->updateQuantities) > 0) {
             $res = $em->createQueryBuilder()
-                ->addSelect('ar.id as auditRequestId')
-                ->addSelect('COUNT(ari.id) as total')
-                ->addSelect('SUM(CASE WHEN ari.receivedQuantity is null THEN 1 ELSE 0 END) as emptyReceivedItem')
-                ->addSelect('SUM(ari.expectedQuantity) as expectedQuantity')
-                ->addSelect('SUM(ari.receivedQuantity) as receivedQuantity')
-                ->from(AuditRequestItemInterface::class, 'ari')
-                ->leftJoin('ari.auditRequest', 'ar')
-                ->groupBy('ar.id')
-                ->where('ar.id in (:ids)')
+                ->addSelect('ab.id as auditBatchId')
+                ->addSelect('COUNT(abri.id) as total')
+                ->addSelect('SUM(CASE WHEN abri.receivedQuantity is null THEN 1 ELSE 0 END) as emptyReceivedItem')
+                ->addSelect('SUM(abri.expectedQuantity) as expectedQuantity')
+                ->addSelect('SUM(abri.receivedQuantity) as receivedQuantity')
+                ->from(AuditBatchRequestItemInterface::class, 'abri')
+                ->leftJoin('abri.auditBatch', 'ab')
+                ->groupBy('ab.id')
+                ->where('ab.id in (:ids)')
                 ->setParameter('ids', $this->updateQuantities)
                 ->getQuery()
                 ->getResult()
@@ -95,13 +95,13 @@ class AuditRequestItemSubscriber implements EventSubscriber
             foreach ($res as $resItem) {
                 // Do not the persist/flush in postFlush event
                 $em->createQueryBuilder()
-                    ->update(AuditRequestInterface::class, 'ar')
-                    ->set('ar.numberOfItems', ':numberOfItems')
-                    ->set('ar.expectedQuantity', ':expectedQuantity')
-                    ->set('ar.receivedQuantity', ':receivedQuantity')
-                    ->set('ar.completed', ':completed')
-                    ->where('ar.id = :id')
-                    ->setParameter('id', $resItem['auditRequestId'])
+                    ->update(AuditBatchInterface::class, 'ab')
+                    ->set('ab.numberOfItems', ':numberOfItems')
+                    ->set('ab.expectedQuantity', ':expectedQuantity')
+                    ->set('ab.receivedQuantity', ':receivedQuantity')
+                    ->set('ab.completed', ':completed')
+                    ->where('ab.id = :id')
+                    ->setParameter('id', $resItem['auditBatchId'])
                     ->setParameter('numberOfItems', $resItem['total'])
                     ->setParameter('expectedQuantity', (int) $resItem['expectedQuantity'])
                     ->setParameter('receivedQuantity', (int) $resItem['receivedQuantity'])
@@ -115,9 +115,9 @@ class AuditRequestItemSubscriber implements EventSubscriber
         $this->updateQuantities = [];
     }
 
-    private function reCalculateAuditRequestQuantities(AuditRequestInterface $auditRequest): void
+    private function reCalculateAuditBatchRequestQuantities(AuditBatchInterface $auditBatch): void
     {
-        $this->updateQuantities[] = $auditRequest->getId();
+        $this->updateQuantities[] = $auditBatch->getId();
         $this->updateQuantities = array_unique($this->updateQuantities);
     }
 }

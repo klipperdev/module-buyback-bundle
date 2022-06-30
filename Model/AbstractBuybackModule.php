@@ -129,12 +129,12 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
      *     targetEntity="Klipper\Component\DoctrineChoice\Model\ChoiceInterface"
      * )
      *
-     * @EntityDoctrineChoice("audit_request_status")
+     * @EntityDoctrineChoice("audit_batch_status")
      *
      * @Serializer\Expose
      * @Serializer\MaxDepth(1)
      */
-    protected ?ChoiceInterface $defaultAuditRequestStatus = null;
+    protected ?ChoiceInterface $defaultAuditBatchStatus = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -246,16 +246,16 @@ abstract class AbstractBuybackModule implements BuybackModuleInterface
             : null;
     }
 
-    public function setDefaultAuditRequestStatus(?ChoiceInterface $defaultAuditRequestStatus): self
+    public function setDefaultAuditBatchStatus(?ChoiceInterface $defaultAuditBatchStatus): self
     {
-        $this->defaultAuditRequestStatus = $defaultAuditRequestStatus;
+        $this->defaultAuditBatchStatus = $defaultAuditBatchStatus;
 
         return $this;
     }
 
-    public function getDefaultAuditRequestStatus(): ?ChoiceInterface
+    public function getDefaultAuditBatchStatus(): ?ChoiceInterface
     {
-        return $this->defaultAuditRequestStatus;
+        return $this->defaultAuditBatchStatus;
     }
 
     public function setComment(?string $comment): self

@@ -14,8 +14,8 @@ namespace Klipper\Module\BuybackBundle\DependencyInjection;
 use Klipper\Bundle\ApiBundle\Util\ControllerDefinitionUtil;
 use Klipper\Module\BuybackBundle\Controller\ApiAuditItemController;
 use Klipper\Module\BuybackBundle\Controller\ApiBuybackOfferController;
+use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditBatchSubscriber;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditItemSubscriber;
-use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditRequestSubscriber;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\BuybackOfferSubscriber;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -38,7 +38,7 @@ class KlipperBuybackExtension extends Extension
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        $this->configAuditRequest($container, $loader, $config['audit_request']);
+        $this->configAuditBatch($container, $loader, $config['audit_batch']);
         $this->configAuditItem($container, $loader, $config['audit_item']);
         $this->configBuybackOffer($container, $loader, $config['buyback_offer']);
         $this->configRepair($loader);
@@ -53,11 +53,11 @@ class KlipperBuybackExtension extends Extension
     /**
      * @throws
      */
-    protected function configAuditRequest(ContainerBuilder $container, LoaderInterface $loader, array $config): void
+    protected function configAuditBatch(ContainerBuilder $container, LoaderInterface $loader, array $config): void
     {
-        $loader->load('doctrine_subscriber_audit_request.xml');
+        $loader->load('doctrine_subscriber_audit_batch.xml');
 
-        $def = $container->getDefinition(AuditRequestSubscriber::class);
+        $def = $container->getDefinition(AuditBatchSubscriber::class);
 
         $def->replaceArgument(4, array_unique(array_merge($config['closed_statuses'], [
             'accepted',

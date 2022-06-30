@@ -13,8 +13,8 @@ namespace Klipper\Module\BuybackBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Klipper\Component\Resource\Object\ObjectFactoryInterface;
+use Klipper\Module\BuybackBundle\Model\AuditBatchInterface;
 use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
-use Klipper\Module\BuybackBundle\Model\AuditRequestInterface;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
 use Klipper\Module\ProductBundle\Exception\ProductCombinationCreatorException;
 use Klipper\Module\ProductBundle\Model\ProductCombinationInterface;
@@ -57,9 +57,9 @@ class ImportAuditItemQualificationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('audit_request_reference', EntityType::class, [
-                'class' => AuditRequestInterface::class,
-                'property_path' => 'auditRequest',
+            ->add('audit_batch_reference', EntityType::class, [
+                'class' => AuditBatchInterface::class,
+                'property_path' => 'auditBatch',
                 'choice_value' => 'reference',
                 'id_field' => 'reference',
             ])

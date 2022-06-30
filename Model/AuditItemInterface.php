@@ -37,9 +37,9 @@ interface AuditItemInterface extends
     /**
      * @return static
      */
-    public function setAuditRequest(?AuditRequestInterface $auditRequest);
+    public function setAuditBatch(?AuditBatchInterface $auditBatch);
 
-    public function getAuditRequest(): ?AuditRequestInterface;
+    public function getAuditBatch(): ?AuditBatchInterface;
 
     /**
      * @return static

@@ -48,7 +48,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditRequestInterface"
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditBatchInterface"
      * )
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      *
@@ -56,7 +56,7 @@ abstract class AbstractAuditItem implements AuditItemInterface
      *
      * @Serializer\Expose
      */
-    protected ?AuditRequestInterface $auditRequest = null;
+    protected ?AuditBatchInterface $auditBatch = null;
 
     /**
      * @ORM\ManyToOne(
@@ -223,16 +223,16 @@ abstract class AbstractAuditItem implements AuditItemInterface
      */
     protected bool $validated = false;
 
-    public function setAuditRequest(?AuditRequestInterface $auditRequest): self
+    public function setAuditBatch(?AuditBatchInterface $auditBatch): self
     {
-        $this->auditRequest = $auditRequest;
+        $this->auditBatch = $auditBatch;
 
         return $this;
     }
 
-    public function getAuditRequest(): ?AuditRequestInterface
+    public function getAuditBatch(): ?AuditBatchInterface
     {
-        return $this->auditRequest;
+        return $this->auditBatch;
     }
 
     public function setStatus(?ChoiceInterface $status): self

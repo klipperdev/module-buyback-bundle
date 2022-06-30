@@ -71,8 +71,8 @@ class AuditItemSubscriber implements EventSubscriber
 
         if ($object instanceof AuditItemInterface) {
             if (null === $object->getReceiptedAt()) {
-                if (null !== $object->getAuditRequest() && null !== $object->getAuditRequest()->getReceiptedAt()) {
-                    $object->setReceiptedAt($object->getAuditRequest()->getReceiptedAt());
+                if (null !== $object->getAuditBatch() && null !== $object->getAuditBatch()->getReceiptedAt()) {
+                    $object->setReceiptedAt($object->getAuditBatch()->getReceiptedAt());
                 } else {
                     $object->setReceiptedAt(new \DateTime());
                 }
@@ -169,7 +169,7 @@ class AuditItemSubscriber implements EventSubscriber
     {
         $newStatusValue = 'confirmed';
 
-        if (null !== $object->getAuditRequest()
+        if (null !== $object->getAuditBatch()
             && null !== $object->getProduct()
         ) {
             $newStatusValue = 'qualified';
@@ -318,15 +318,15 @@ class AuditItemSubscriber implements EventSubscriber
 
     private function updateDeviceAccount(EntityManagerInterface $em, object $object): void
     {
-        if (!$object instanceof AuditItemInterface || null === $object->getAuditRequest() || null === $object->getDevice()) {
+        if (!$object instanceof AuditItemInterface || null === $object->getAuditBatch() || null === $object->getDevice()) {
             return;
         }
 
         $uow = $em->getUnitOfWork();
         $device = $object->getDevice();
 
-        if ($object->getAuditRequest()->getAccount() !== $device->getAccount()) {
-            $device->setAccount($object->getAuditRequest()->getAccount());
+        if ($object->getAuditBatch()->getAccount() !== $device->getAccount()) {
+            $device->setAccount($object->getAuditBatch()->getAccount());
 
             $classMetadata = $em->getClassMetadata(ClassUtils::getClass($device));
             $uow->recomputeSingleEntityChangeSet($classMetadata, $device);

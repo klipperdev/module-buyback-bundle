@@ -24,11 +24,11 @@ use Klipper\Module\PartnerBundle\Model\Traits\ContactableRequiredInterface;
 use Klipper\Module\WorkcenterBundle\Model\WorkcenterInterface;
 
 /**
- * Audit Request interface.
+ * Audit Batch interface.
  *
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-interface AuditRequestInterface extends
+interface AuditBatchInterface extends
     AccountableRequiredInterface,
     ContactableRequiredInterface,
     IdInterface,
@@ -184,7 +184,7 @@ interface AuditRequestInterface extends
     public function isConverted(): bool;
 
     /**
-     * @return AuditRequestItemInterface[]
+     * @return AuditBatchRequestItemInterface[]
      */
     public function getItems(): Collection;
 }
