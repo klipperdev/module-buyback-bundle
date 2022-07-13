@@ -233,6 +233,16 @@ abstract class AbstractAuditBatch implements AuditBatchInterface
     protected int $receivedQuantity = 0;
 
     /**
+     * @ORM\ManyToOne(
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\BuybackOfferInterface"
+     * )
+     *
+     * @Serializer\Expose
+     * @Serializer\MaxDepth(2)
+     */
+    protected ?BuybackOfferInterface $buybackOffer = null;
+
+    /**
      * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\Type(type="string")
@@ -484,6 +494,18 @@ abstract class AbstractAuditBatch implements AuditBatchInterface
     public function getReceivedQuantity(): int
     {
         return $this->receivedQuantity;
+    }
+
+    public function setBuybackOffer(?BuybackOfferInterface $buybackOffer): self
+    {
+        $this->buybackOffer = $buybackOffer;
+
+        return $this;
+    }
+
+    public function getBuybackOffer(): ?BuybackOfferInterface
+    {
+        return $this->buybackOffer;
     }
 
     public function setComment(?string $comment): self
