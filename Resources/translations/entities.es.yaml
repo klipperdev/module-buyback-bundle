@@ -79,6 +79,7 @@ buyback_offer.fields.total_repair_price: Total de reparaciones
 buyback_offer.fields.total_price: Importe de intercambio
 buyback_offer.fields.comment: Comentario
 buyback_offer.fields.closed: Cerrado
+buyback_offer.fields.supplier_order_number: Número de pedido del proveedor
 buyback_offer.fields.validated: Validado
 buyback_offer.fields.validated_at: Validado el
 buyback_offer.associations.shipping_address: Dirección de facturación del emisor
