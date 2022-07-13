@@ -15,12 +15,15 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Klipper\Component\CodeGenerator\CodeGenerator;
 use Klipper\Component\DoctrineChoice\ChoiceManagerInterface;
 use Klipper\Component\DoctrineExtensionsExtra\Util\ListenerUtil;
 use Klipper\Component\DoctrineExtra\Util\ClassUtils;
 use Klipper\Module\BuybackBundle\Model\AuditBatchInterface;
+use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
+use Klipper\Module\BuybackBundle\Model\BuybackOfferInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -38,6 +41,11 @@ class AuditBatchSubscriber implements EventSubscriber
     private array $closedStatues;
 
     private array $validatedStatues;
+
+    /**
+     * @var array<int|string, null|BuybackOfferInterface>
+     */
+    private array $updateBuybackOfferIds = [];
 
     public function __construct(
         ChoiceManagerInterface $choiceManager,
@@ -59,6 +67,7 @@ class AuditBatchSubscriber implements EventSubscriber
             Events::prePersist,
             Events::preUpdate,
             Events::onFlush,
+            Events::postFlush,
         ];
     }
 
@@ -153,8 +162,31 @@ class AuditBatchSubscriber implements EventSubscriber
         }
 
         foreach ($uow->getScheduledEntityUpdates() as $object) {
+            $this->updateAuditItemBuybackOffer($em, $object);
             $this->updateClosed($em, $object);
         }
+    }
+
+    public function postFlush(PostFlushEventArgs $args): void
+    {
+        $em = $args->getEntityManager();
+
+        if (\count($this->updateBuybackOfferIds) > 0) {
+            foreach ($this->updateBuybackOfferIds as $auditBatchId => $buybackOffer) {
+                // Do not the persist/flush in postFlush event
+                $em->createQueryBuilder()
+                    ->update(AuditItemInterface::class, 'ai')
+                    ->set('ai.buybackOffer', ':buybackOffer')
+                    ->where('ai.auditBatch = :auditBatchId')
+                    ->setParameter('auditBatchId', $auditBatchId)
+                    ->setParameter('buybackOffer', $buybackOffer)
+                    ->getQuery()
+                    ->execute()
+                ;
+            }
+        }
+
+        $this->updateBuybackOfferIds = [];
     }
 
     private function validateModuleEnabled(object $object): void
@@ -171,6 +203,18 @@ class AuditBatchSubscriber implements EventSubscriber
                     [],
                     'validators'
                 ));
+            }
+        }
+    }
+
+    private function updateAuditItemBuybackOffer(EntityManagerInterface $em, object $object): void
+    {
+        if ($object instanceof AuditBatchInterface) {
+            $uow = $em->getUnitOfWork();
+            $changeSet = $uow->getEntityChangeSet($object);
+
+            if (isset($changeSet['buybackOffer'])) {
+                $this->updateBuybackOfferIds[$object->getId()] = $changeSet['buybackOffer'];
             }
         }
     }

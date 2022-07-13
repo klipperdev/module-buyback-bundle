@@ -92,6 +92,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateValidated($em, $object, true);
             $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
+            $this->updateBuybackOffer($em, $object);
             $this->updateDevice($em, $object);
             $this->updateDeviceAccount($em, $object);
             $this->updateDeviceProduct($em, $object, true);
@@ -289,6 +290,24 @@ class AuditItemSubscriber implements EventSubscriber
                     $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
                 }
             }
+        }
+    }
+
+    private function updateBuybackOffer(EntityManagerInterface $em, object $object): void
+    {
+        if (!$object instanceof AuditItemInterface || null === $object->getAuditBatch()) {
+            return;
+        }
+
+        $uow = $em->getUnitOfWork();
+
+        $validBuybackOffer = $object->getAuditBatch()->getBuybackOffer();
+
+        if ($validBuybackOffer !== $object->getBuybackOffer()) {
+            $object->setBuybackOffer($validBuybackOffer);
+
+            $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
+            $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
         }
     }
 
