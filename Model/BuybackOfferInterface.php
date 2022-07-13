@@ -87,6 +87,13 @@ interface BuybackOfferInterface extends
     /**
      * @return static
      */
+    public function setSupplierOrderNumber(?string $supplierOrderNumber);
+
+    public function getSupplierOrderNumber(): ?string;
+
+    /**
+     * @return static
+     */
     public function setNumberOfItems(int $numberOfItems);
 
     public function getNumberOfItems(): int;

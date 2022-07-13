@@ -138,6 +138,16 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
     protected ?string $calculationMethod = null;
 
     /**
+     * @ORM\Column(type="string", length=80, nullable=true)
+     *
+     * @Assert\Type(type="string")
+     * @Assert\Length(min=0, max=80)
+     *
+     * @Serializer\Expose
+     */
+    protected ?string $supplierOrderNumber = null;
+
+    /**
      * @ORM\Column(type="integer", options={"default": 0})
      *
      * @Assert\Type(type="integer")
@@ -333,6 +343,18 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
     public function getCalculationMethod(): ?string
     {
         return $this->calculationMethod;
+    }
+
+    public function setSupplierOrderNumber(?string $supplierOrderNumber): self
+    {
+        $this->supplierOrderNumber = $supplierOrderNumber;
+
+        return $this;
+    }
+
+    public function getSupplierOrderNumber(): ?string
+    {
+        return $this->supplierOrderNumber;
     }
 
     public function setNumberOfItems(int $numberOfItems): self
