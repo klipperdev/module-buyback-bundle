@@ -12,6 +12,7 @@
 namespace Klipper\Module\BuybackBundle\DependencyInjection;
 
 use Klipper\Bundle\ApiBundle\Util\ControllerDefinitionUtil;
+use Klipper\Module\BuybackBundle\Controller\ApiAuditBatchController;
 use Klipper\Module\BuybackBundle\Controller\ApiAuditItemController;
 use Klipper\Module\BuybackBundle\Controller\ApiBuybackOfferController;
 use Klipper\Module\BuybackBundle\Doctrine\Listener\AuditBatchSubscriber;
@@ -46,6 +47,7 @@ class KlipperBuybackExtension extends Extension
         $loader->load('manager.xml');
         $loader->load('api_form.xml');
 
+        ControllerDefinitionUtil::set($container, ApiAuditBatchController::class);
         ControllerDefinitionUtil::set($container, ApiAuditItemController::class);
         ControllerDefinitionUtil::set($container, ApiBuybackOfferController::class);
     }
@@ -59,12 +61,11 @@ class KlipperBuybackExtension extends Extension
 
         $def = $container->getDefinition(AuditBatchSubscriber::class);
 
-        $def->replaceArgument(4, array_unique(array_merge($config['closed_statuses'], [
-            'accepted',
-            'refused',
+        $def->replaceArgument(3, array_unique(array_merge($config['closed_statuses'], [
+            'closed',
             'canceled',
         ])));
-        $def->replaceArgument(5, array_unique(array_merge($config['validated_statuses'], [
+        $def->replaceArgument(4, array_unique(array_merge($config['validated_statuses'], [
             'accepted',
         ])));
     }

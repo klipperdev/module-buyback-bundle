@@ -20,9 +20,7 @@ use Klipper\Component\CodeGenerator\CodeGenerator;
 use Klipper\Component\DoctrineChoice\ChoiceManagerInterface;
 use Klipper\Component\DoctrineExtensionsExtra\Util\ListenerUtil;
 use Klipper\Component\DoctrineExtra\Util\ClassUtils;
-use Klipper\Component\Resource\Object\ObjectFactoryInterface;
 use Klipper\Module\BuybackBundle\Model\AuditBatchInterface;
-use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -37,8 +35,6 @@ class AuditBatchSubscriber implements EventSubscriber
 
     private TranslatorInterface $translator;
 
-    private ObjectFactoryInterface $objectFactory;
-
     private array $closedStatues;
 
     private array $validatedStatues;
@@ -47,14 +43,12 @@ class AuditBatchSubscriber implements EventSubscriber
         ChoiceManagerInterface $choiceManager,
         CodeGenerator $generator,
         TranslatorInterface $translator,
-        ObjectFactoryInterface $objectFactory,
         array $closedStatues = [],
         array $validatedStatues = []
     ) {
         $this->choiceManager = $choiceManager;
         $this->generator = $generator;
         $this->translator = $translator;
-        $this->objectFactory = $objectFactory;
         $this->closedStatues = $closedStatues;
         $this->validatedStatues = $validatedStatues;
     }
@@ -101,7 +95,7 @@ class AuditBatchSubscriber implements EventSubscriber
                 || null === $identifierType
                 || null === $status
             ) {
-                if (null !== $account && $account instanceof BuybackModuleableInterface && null !== ($module = $account->getBuybackModule())) {
+                if ($account instanceof BuybackModuleableInterface && null !== ($module = $account->getBuybackModule())) {
                     $module->getWorkcenter();
 
                     if (null === $shippingAddress) {
@@ -156,14 +150,10 @@ class AuditBatchSubscriber implements EventSubscriber
         foreach ($uow->getScheduledEntityInsertions() as $object) {
             $this->validateModuleEnabled($object);
             $this->updateClosed($em, $object, true);
-            $this->validateClosedEmptyItems($object);
-            $this->convertToAuditItems($em, $object, true);
         }
 
         foreach ($uow->getScheduledEntityUpdates() as $object) {
             $this->updateClosed($em, $object);
-            $this->validateClosedEmptyItems($object);
-            $this->convertToAuditItems($em, $object);
         }
     }
 
@@ -171,7 +161,7 @@ class AuditBatchSubscriber implements EventSubscriber
     {
         if ($object instanceof AuditBatchInterface) {
             $account = $object->getAccount();
-            $module = null !== $account && $account instanceof BuybackModuleableInterface
+            $module = $account instanceof BuybackModuleableInterface
                 ? $account->getBuybackModule()
                 : null;
 
@@ -203,61 +193,6 @@ class AuditBatchSubscriber implements EventSubscriber
 
                 $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
                 $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
-            }
-        }
-    }
-
-    private function validateClosedEmptyItems(object $object): void
-    {
-        if ($object instanceof AuditBatchInterface) {
-            if ($object->isClosed() && $object->isValidated() && 0 === $object->getNumberOfItems()) {
-                ListenerUtil::thrownError($this->translator->trans(
-                    'klipper_buyback.audit_batch.cannot_be_validated',
-                    [],
-                    'validators'
-                ));
-            }
-        }
-    }
-
-    private function convertToAuditItems(EntityManagerInterface $em, object $object, bool $create = false): void
-    {
-        if ($object instanceof AuditBatchInterface) {
-            $uow = $em->getUnitOfWork();
-            $changeSet = $uow->getEntityChangeSet($object);
-
-            if ($create || isset($changeSet['status'])) {
-                $validated = null !== $object->getStatus() && 'validated' === $object->getStatus()->getValue();
-
-                if ($validated && !$object->isConverted()) {
-                    $object->setConverted(true);
-
-                    $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
-                    $uow = $em->getUnitOfWork();
-                    $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
-
-                    $this->createAuditItems($em, $object);
-                }
-            }
-        }
-    }
-
-    private function createAuditItems(EntityManagerInterface $em, AuditBatchInterface $object): void
-    {
-        $uow = $em->getUnitOfWork();
-
-        foreach ($object->getItems() as $item) {
-            for ($i = 0; $i < (int) $item->getReceivedQuantity(); ++$i) {
-                /** @var AuditItemInterface $auditItem */
-                $auditItem = $this->objectFactory->create(AuditItemInterface::class);
-                $auditItem->setAuditBatch($object);
-                $auditItem->setProduct($item->getProduct());
-                $auditItem->setProductCombination($item->getProductCombination());
-                $auditItem->setReceiptedAt($object->getReceiptedAt() ?? new \DateTime());
-
-                $em->persist($auditItem);
-                $auditItemMeta = $em->getClassMetadata(ClassUtils::getClass($auditItem));
-                $uow->computeChangeSet($auditItemMeta, $auditItem);
             }
         }
     }
