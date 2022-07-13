@@ -210,7 +210,7 @@ abstract class AbstractAuditBatch implements AuditBatchInterface
      * @Serializer\Expose
      * @Serializer\ReadOnlyProperty
      */
-    protected int $numberOfItems = 0;
+    protected int $numberOfRequestItems = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -292,7 +292,7 @@ abstract class AbstractAuditBatch implements AuditBatchInterface
      *     cascade={"persist", "remove"}
      * )
      */
-    protected ?Collection $items = null;
+    protected ?Collection $requestItems = null;
 
     public function setReference(?string $reference): self
     {
@@ -450,16 +450,16 @@ abstract class AbstractAuditBatch implements AuditBatchInterface
         return $this->receiptedAt;
     }
 
-    public function setNumberOfItems(int $numberOfItems): self
+    public function setNumberOfRequestItems(int $numberOfRequestItems): self
     {
-        $this->numberOfItems = $numberOfItems;
+        $this->numberOfRequestItems = $numberOfRequestItems;
 
         return $this;
     }
 
-    public function getNumberOfItems(): int
+    public function getNumberOfRequestItems(): int
     {
-        return $this->numberOfItems;
+        return $this->numberOfRequestItems;
     }
 
     public function setExpectedQuantity(int $expectedQuantity): self
@@ -546,8 +546,8 @@ abstract class AbstractAuditBatch implements AuditBatchInterface
         return $this->converted;
     }
 
-    public function getItems(): Collection
+    public function getRequestItems(): Collection
     {
-        return $this->items ?: $this->items = new ArrayCollection();
+        return $this->requestItems ?: $this->requestItems = new ArrayCollection();
     }
 }

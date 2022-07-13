@@ -130,9 +130,9 @@ interface AuditBatchInterface extends
     /**
      * @return static
      */
-    public function setNumberOfItems(int $numberOfItems);
+    public function setNumberOfRequestItems(int $numberOfRequestItems);
 
-    public function getNumberOfItems(): int;
+    public function getNumberOfRequestItems(): int;
 
     /**
      * @return static
@@ -186,5 +186,5 @@ interface AuditBatchInterface extends
     /**
      * @return AuditBatchRequestItemInterface[]
      */
-    public function getItems(): Collection;
+    public function getRequestItems(): Collection;
 }
