@@ -56,7 +56,7 @@ abstract class AbstractAuditBatchRequestItem implements AuditBatchRequestItemInt
     /**
      * @ORM\ManyToOne(
      *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditBatchInterface",
-     *     inversedBy="items"
+     *     inversedBy="requestItems"
      * )
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      *
