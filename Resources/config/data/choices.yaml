@@ -39,17 +39,29 @@ audit_batch_status:
         translations:
             fr: { label: En attente retour client }
     -   value: validated
-        label: Validated
+        label: Validated reception
         icon: fa-fw fa-check
         color: '#149c7d'
         translations:
-            fr: { label: Validée }
+            fr: { label: Réception validée }
+    -   value: in_progress
+        label: Audit in progress
+        icon: fa-fw fa-box
+        color: '#40c1b8'
+        translations:
+            fr: { label: Audit en cours }
+    -   value: closed
+        label: Closed
+        icon: fa-fw fa-check
+        color: '#149c7d'
+        translations:
+            fr: { label: Terminé }
     -   value: canceled
         label: Canceled
         icon: fa-fw fa-times
         color: '#b42727'
         translations:
-            fr: { label: Annulée }
+            fr: { label: Annulé }
 
 audit_item_status:
     -   value: confirmed
