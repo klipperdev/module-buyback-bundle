@@ -66,18 +66,22 @@ audit_batch_status:
 audit_item_status:
     -   value: confirmed
         label: Confirmed
+        color: '#607d8b'
         translations:
             fr: { label: Confirmé }
     -   value: qualified
         label: Qualified
+        color: '#f5c52f'
         translations:
             fr: { label: Qualifié }
     -   value: audited
         label: Audited
+        color: '#4bb85e'
         translations:
             fr: { label: Audité }
     -   value: valorised
         label: Valorised
+        color: '#149c7d'
         translations:
             fr: { label: Valorisé }
 
