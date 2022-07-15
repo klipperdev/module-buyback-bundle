@@ -123,7 +123,7 @@ class AuditBatchRequestItemSubscriber implements EventSubscriber
                     ->setParameter('numberOfRequestItems', $resItem['total'])
                     ->setParameter('expectedQuantity', (int) $resItem['expectedQuantity'])
                     ->setParameter('receivedQuantity', (int) $resItem['receivedQuantity'])
-                    ->setParameter('completed', 0 === (int) $resItem['emptyReceivedItem'])
+                    ->setParameter('completed', 0 === (int) $resItem['emptyReceivedItem'] && (int) $resItem['expectedQuantity'] > 0)
                     ->getQuery()
                     ->execute()
                 ;
