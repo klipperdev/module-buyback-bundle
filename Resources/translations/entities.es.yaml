@@ -40,8 +40,8 @@ audit_batch.associations.invoice_address: Dirección de facturación
 audit_batch.associations.status: Estado
 
 # Audit Batch Request Item
-audit_batch_request_item.name: Equipo de auditoria
-audit_batch_request_item.name.plural: Equipos de auditoria
+audit_batch_request_item.name: Equipo declarado en la auditoría
+audit_batch_request_item.name.plural: Equipos declarados en la auditoría
 audit_batch_request_item.fields.expected_quantity: Cantidad esperada
 audit_batch_request_item.fields.received_quantity: Cantidad recibida
 

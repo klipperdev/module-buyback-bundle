@@ -40,8 +40,8 @@ audit_batch.associations.invoice_address: Invoice address
 audit_batch.associations.status: Status
 
 # Audit Batch Request Item
-audit_batch_request_item.name: Audit device
-audit_batch_request_item.name.plural: Audit devices
+audit_batch_request_item.name: Declared audit device
+audit_batch_request_item.name.plural: Declared audit devices
 audit_batch_request_item.fields.expected_quantity: Expected quantity
 audit_batch_request_item.fields.received_quantity: Received quantity
 
