@@ -92,6 +92,24 @@ class AuditBatchRequestItemSubscriber implements EventSubscriber
                 ->getResult()
             ;
 
+            $existentQueryBatchIds = [];
+
+            foreach ($res as $resItem) {
+                $existentQueryBatchIds[] = $resItem['auditBatchId'];
+            }
+
+            foreach ($this->updateQuantities as $batchId) {
+                if (!\in_array($batchId, $existentQueryBatchIds, true)) {
+                    $res[] = [
+                        'auditBatchId' => $batchId,
+                        'total' => 0,
+                        'emptyReceivedItem' => 0,
+                        'expectedQuantity' => 0,
+                        'receivedQuantity' => 0,
+                    ];
+                }
+            }
+
             foreach ($res as $resItem) {
                 // Do not the persist/flush in postFlush event
                 $em->createQueryBuilder()
