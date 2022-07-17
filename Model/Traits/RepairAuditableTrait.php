@@ -35,7 +35,6 @@ trait RepairAuditableTrait
      *
      * @Serializer\Expose
      * @Serializer\MaxDepth(2)
-     * @Serializer\ReadOnlyProperty
      */
     protected ?AuditItemInterface $auditItem = null;
 
