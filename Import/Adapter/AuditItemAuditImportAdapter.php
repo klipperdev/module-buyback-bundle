@@ -55,6 +55,7 @@ class AuditItemAuditImportAdapter extends StandardImportAdapter
             'product_combination_reference',
             'condition_name',
             'repair_declared_breakdown_by_customer',
+            'comment',
         ];
         $sheet = $context->getActiveSheet();
         $rowIndex = $row->getRowIndex();

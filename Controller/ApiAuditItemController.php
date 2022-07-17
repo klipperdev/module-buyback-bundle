@@ -514,6 +514,7 @@ class ApiAuditItemController
             $sheet->setCellValueByColumnAndRow(4, 1, 'product_combination_reference');
             $sheet->setCellValueByColumnAndRow(5, 1, 'condition_name');
             $sheet->setCellValueByColumnAndRow(6, 1, 'repair_declared_breakdown_by_customer');
+            $sheet->setCellValueByColumnAndRow(7, 1, 'comment');
 
             $sheet->getColumnDimensionByColumn(1)->setAutoSize(true);
             $sheet->getColumnDimensionByColumn(2)->setAutoSize(true);
@@ -521,6 +522,7 @@ class ApiAuditItemController
             $sheet->getColumnDimensionByColumn(4)->setAutoSize(true);
             $sheet->getColumnDimensionByColumn(5)->setAutoSize(true);
             $sheet->getColumnDimensionByColumn(6)->setAutoSize(true);
+            $sheet->getColumnDimensionByColumn(7)->setAutoSize(true);
 
             $response = new StreamedResponse(
                 static function () use ($writer): void {
