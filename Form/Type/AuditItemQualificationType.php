@@ -19,28 +19,16 @@ use Klipper\Module\ProductBundle\Model\ProductCombinationInterface;
 use Klipper\Module\ProductBundle\Model\ProductInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
 class AuditItemQualificationType extends AbstractType
 {
-    private TranslatorInterface $translator;
-
-    public function __construct(
-        TranslatorInterface $translator
-    ) {
-        $this->translator = $translator;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -75,16 +63,6 @@ class AuditItemQualificationType extends AbstractType
                 'property_path' => 'repairDeclaredBreakdownByCustomer',
             ])
         ;
-
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
-            $data = $event->getData();
-
-            if (!empty($data['repair_declared_breakdown_by_customer']) && empty($data['device'])) {
-                $event->getForm()->addError(
-                    new FormError($this->translator->trans('klipper_buyback.audit_item.repair.device_required', [], 'validators'))
-                );
-            }
-        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

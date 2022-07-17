@@ -157,15 +157,5 @@ class ImportAuditItemQualificationType extends AbstractType
                 $event->setData(null);
             }
         });
-
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
-            $data = $event->getData();
-
-            if (!empty($data['repair_declared_breakdown_by_customer']) && empty($data['device_imei_or_sn'])) {
-                $event->getForm()->addError(
-                    new FormError($this->translator->trans('klipper_buyback.audit_item.repair.device_required', [], 'validators'))
-                );
-            }
-        });
     }
 }

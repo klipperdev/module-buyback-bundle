@@ -8,7 +8,6 @@
         <!-- Repair Listener -->
         <service id="Klipper\Module\BuybackBundle\Doctrine\Listener\RepairSubscriber">
             <tag name="doctrine.event_subscriber" priority="100" />
-            <argument type="service" id="translator"/>
         </service>
 
         <!-- Audit Repair Price Listener -->

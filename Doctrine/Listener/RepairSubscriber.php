@@ -15,27 +15,17 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
-use Klipper\Component\DoctrineExtensionsExtra\Util\ListenerUtil;
 use Klipper\Component\DoctrineExtra\Util\ClassUtils;
 use Klipper\Module\BuybackBundle\Model\Traits\AuditRepairableInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\BuybackModuleableInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\RepairAuditableInterface;
 use Klipper\Module\RepairBundle\Model\RepairInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
 class RepairSubscriber implements EventSubscriber
 {
-    private TranslatorInterface $translator;
-
-    public function __construct(
-        TranslatorInterface $translator
-    ) {
-        $this->translator = $translator;
-    }
-
     public function getSubscribedEvents(): array
     {
         return [
@@ -66,14 +56,6 @@ class RepairSubscriber implements EventSubscriber
                 if (null !== $module && null !== $module->getRepairPriceList()) {
                     $object->setPriceList($module->getRepairPriceList());
                 }
-            }
-
-            if (null !== $object->getAuditItem() && null === $object->getDevice()) {
-                ListenerUtil::thrownError($this->translator->trans(
-                    'klipper_buyback.audit_item.repair.device_required',
-                    [],
-                    'validators'
-                ), $object);
             }
         }
     }

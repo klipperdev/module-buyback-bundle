@@ -3,7 +3,6 @@ klipper_buyback.audit_batch.module_must_be_enabled: Le module de reprise doit ê
 klipper_buyback.audit_batch.shipping_address_required: L'adresse d'expédition est requise
 klipper_buyback.audit_batch.cannot_be_validated: La demande d'audit ne peut pas être validée sans équipement
 klipper_buyback.audit_item.previous_audit_already_open: Un précédent audit est déjà ouverte
-klipper_buyback.audit_item.repair.device_required: L'équipement doit être renseigné avant la création d'une maintenance pour un audit
 klipper_buyback.buyback_offer.module_must_be_enabled: Le module de reprise doit être activé pour ce compte
 klipper_buyback.buyback_offer.shipping_address_required: L'adresse d'expédition est requise
 klipper_buyback.buyback_offer.cannot_be_validated: L'offre de reprise ne peut pas être validée sans équipement

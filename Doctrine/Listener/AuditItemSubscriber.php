@@ -21,6 +21,7 @@ use Klipper\Component\DoctrineExtensionsExtra\Util\ListenerUtil;
 use Klipper\Component\DoctrineExtra\Util\ClassUtils;
 use Klipper\Component\Security\Model\UserInterface;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
+use Klipper\Module\BuybackBundle\Model\Traits\AuditRepairableInterface;
 use Klipper\Module\BuybackBundle\Model\Traits\DeviceAuditableInterface;
 use Klipper\Module\DeviceBundle\Model\DeviceInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -93,6 +94,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
             $this->updateBuybackOffer($em, $object);
+            $this->updateRepair($em, $object);
             $this->updateDevice($em, $object);
             $this->updateDeviceAccount($em, $object);
             $this->updateDeviceProduct($em, $object, true);
@@ -107,6 +109,7 @@ class AuditItemSubscriber implements EventSubscriber
             $this->updateValidated($em, $object);
             $this->updateAuditDates($em, $object);
             $this->updateAuditor($em, $object);
+            $this->updateRepair($em, $object);
             $this->updateDevice($em, $object);
             $this->updateDeviceAccount($em, $object);
             $this->updateDeviceProduct($em, $object);
@@ -308,6 +311,24 @@ class AuditItemSubscriber implements EventSubscriber
 
             $classMetadata = $em->getClassMetadata(ClassUtils::getClass($object));
             $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
+        }
+    }
+
+    private function updateRepair(EntityManagerInterface $em, object $object): void
+    {
+        if (!$object instanceof AuditItemInterface || !$object instanceof AuditRepairableInterface || null === $object->getRepair()) {
+            return;
+        }
+
+        $uow = $em->getUnitOfWork();
+        $changeSet = $uow->getEntityChangeSet($object);
+
+        if (isset($changeSet['device'])) {
+            $repair = $object->getRepair();
+            $repair->setDevice($changeSet['device'][1]);
+
+            $classMetadata = $em->getClassMetadata(ClassUtils::getClass($repair));
+            $uow->recomputeSingleEntityChangeSet($classMetadata, $repair);
         }
     }
 
