@@ -214,7 +214,7 @@ class AuditBatchSubscriber implements EventSubscriber
             $changeSet = $uow->getEntityChangeSet($object);
 
             if (isset($changeSet['buybackOffer'])) {
-                $this->updateBuybackOfferIds[$object->getId()] = $changeSet['buybackOffer'];
+                $this->updateBuybackOfferIds[$object->getId()] = $changeSet['buybackOffer'][1];
             }
         }
     }
