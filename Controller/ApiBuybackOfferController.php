@@ -143,7 +143,6 @@ class ApiBuybackOfferController
             ->where('ai.buybackOffer = :buybackOffer')
             ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'cs')
-            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('cs.value = :status')
 
@@ -185,7 +184,6 @@ class ApiBuybackOfferController
             ->join('ai.status', 'cs')
 
             ->where('ai.buybackOffer = :buybackOffer')
-            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('cs.value = :status')
 

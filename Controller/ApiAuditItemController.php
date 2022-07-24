@@ -272,7 +272,6 @@ class ApiAuditItemController
             ->leftJoin('pcai.attribute', 'pcaia')
 
             ->where('ab.account = :account')
-            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('ais.value = :status')
 
@@ -314,7 +313,6 @@ class ApiAuditItemController
             ->join('ai.status', 'ais')
 
             ->where('ab.account = :account')
-            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('ais.value = :status')
 
@@ -353,7 +351,6 @@ class ApiAuditItemController
             ->join('ai.status', 'ais')
 
             ->where('ab.account = :account')
-            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('ais.value = :status')
@@ -391,7 +388,6 @@ class ApiAuditItemController
             ->join('ai.status', 'cs')
 
             ->where('ab.account = :account')
-            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('cs.value = :status')
@@ -650,7 +646,6 @@ class ApiAuditItemController
             ->join('ai.status', 'cs')
 
             ->where('ab.account = :account')
-            ->andWhere('ab.supplierOrderNumber IS NOT NULL')
             ->andWhere('ai.auditCondition IS NOT NULL')
             ->andWhere('ai.buybackOffer IS NULL')
             ->andWhere('cs.value = :status')
