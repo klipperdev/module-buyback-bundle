@@ -48,7 +48,8 @@ abstract class AbstractAuditItem implements AuditItemInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditBatchInterface"
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditBatchInterface",
+     *     inversedBy="items"
      * )
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      *
@@ -108,7 +109,8 @@ abstract class AbstractAuditItem implements AuditItemInterface
 
     /**
      * @ORM\ManyToOne(
-     *     targetEntity="Klipper\Module\DeviceBundle\Model\DeviceInterface"
+     *     targetEntity="Klipper\Module\DeviceBundle\Model\DeviceInterface",
+     *     inversedBy="auditItems"
      * )
      *
      * @Serializer\Expose

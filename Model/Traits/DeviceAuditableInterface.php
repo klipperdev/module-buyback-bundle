@@ -11,6 +11,7 @@
 
 namespace Klipper\Module\BuybackBundle\Model\Traits;
 
+use Doctrine\Common\Collections\Collection;
 use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
 use Klipper\Module\BuybackBundle\Model\AuditItemInterface;
 
@@ -37,4 +38,9 @@ interface DeviceAuditableInterface
      * @return null|int|string
      */
     public function getLastAuditItemId();
+
+    /**
+     * @return AuditItemInterface[]
+     */
+    public function getAuditItems(): Collection;
 }

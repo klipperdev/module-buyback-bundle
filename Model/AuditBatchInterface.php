@@ -194,4 +194,9 @@ interface AuditBatchInterface extends
      * @return AuditBatchRequestItemInterface[]
      */
     public function getRequestItems(): Collection;
+
+    /**
+     * @return AuditItemInterface[]
+     */
+    public function getItems(): Collection;
 }

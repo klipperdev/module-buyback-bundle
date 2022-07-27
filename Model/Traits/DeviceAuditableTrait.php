@@ -11,6 +11,8 @@
 
 namespace Klipper\Module\BuybackBundle\Model\Traits;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Klipper\Module\BuybackBundle\Model\AuditConditionInterface;
@@ -47,6 +49,20 @@ trait DeviceAuditableTrait
      */
     protected ?AuditItemInterface $lastAuditItem = null;
 
+    /**
+     * @var null|AuditItemInterface[]|Collection
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface",
+     *     fetch="EXTRA_LAZY",
+     *     mappedBy="device"
+     * )
+     *
+     * @Serializer\Expose
+     * @Serializer\Groups({"Filter"})
+     */
+    protected ?Collection $auditItems = null;
+
     public function setAuditCondition(?AuditConditionInterface $auditCondition): self
     {
         $this->auditCondition = $auditCondition;
@@ -74,5 +90,10 @@ trait DeviceAuditableTrait
     public function getLastAuditItemId()
     {
         return null !== $this->getLastAuditItem() ? $this->getLastAuditItem()->getId() : null;
+    }
+
+    public function getAuditItems(): Collection
+    {
+        return $this->auditItems ?: $this->auditItems = new ArrayCollection();
     }
 }

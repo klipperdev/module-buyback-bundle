@@ -304,6 +304,20 @@ abstract class AbstractAuditBatch implements AuditBatchInterface
      */
     protected ?Collection $requestItems = null;
 
+    /**
+     * @var null|AuditItemInterface[]|Collection
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="Klipper\Module\BuybackBundle\Model\AuditItemInterface",
+     *     fetch="EXTRA_LAZY",
+     *     mappedBy="auditBatch"
+     * )
+     *
+     * @Serializer\Expose
+     * @Serializer\Groups({"Filter"})
+     */
+    protected ?Collection $items = null;
+
     public function setReference(?string $reference): self
     {
         $this->reference = $reference;
@@ -571,5 +585,10 @@ abstract class AbstractAuditBatch implements AuditBatchInterface
     public function getRequestItems(): Collection
     {
         return $this->requestItems ?: $this->requestItems = new ArrayCollection();
+    }
+
+    public function getItems(): Collection
+    {
+        return $this->items ?: $this->items = new ArrayCollection();
     }
 }
