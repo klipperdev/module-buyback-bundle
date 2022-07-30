@@ -122,6 +122,13 @@ interface BuybackOfferInterface extends
     /**
      * @return static
      */
+    public function setTotalRepairDeltaPrice(float $totalRepairDeltaPrice);
+
+    public function getTotalRepairDeltaPrice(): float;
+
+    /**
+     * @return static
+     */
     public function setTotalPrice(float $totalPrice);
 
     public function getTotalPrice(): float;

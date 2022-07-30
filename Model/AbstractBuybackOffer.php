@@ -195,6 +195,16 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
      * @Serializer\Expose
      * @Serializer\ReadOnlyProperty
      */
+    protected float $totalRepairDeltaPrice = 0.0;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     *
+     * @Assert\Type(type="float")
+     *
+     * @Serializer\Expose
+     * @Serializer\ReadOnlyProperty
+     */
     protected float $totalPrice = 0.0;
 
     /**
@@ -403,6 +413,18 @@ abstract class AbstractBuybackOffer implements BuybackOfferInterface
     public function getTotalRepairPrice(): float
     {
         return $this->totalRepairPrice;
+    }
+
+    public function setTotalRepairDeltaPrice(float $totalRepairDeltaPrice): self
+    {
+        $this->totalRepairDeltaPrice = $totalRepairDeltaPrice;
+
+        return $this;
+    }
+
+    public function getTotalRepairDeltaPrice(): float
+    {
+        return $this->totalRepairDeltaPrice;
     }
 
     public function setTotalPrice(float $totalPrice): self

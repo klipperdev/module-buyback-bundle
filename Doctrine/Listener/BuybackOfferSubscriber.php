@@ -212,6 +212,8 @@ class BuybackOfferSubscriber implements EventSubscriber
                 ->addSelect('SUM(ai.statePrice) as statePrice')
                 ->addSelect('SUM(ai.conditionPrice) as conditionPrice')
                 ->addSelect('SUM(CASE WHEN ai.includedRepairPrice = true THEN ai.repairPrice ELSE 0 END) as repairPrice')
+                ->addSelect('SUM(CASE WHEN ai.includedRepairPrice = true AND (ai.statePrice + ai.repairPrice) < 0 THEN ai.statePrice + ai.repairPrice ELSE 0 END) as repairDeltaStatePrice')
+                ->addSelect('SUM(CASE WHEN ai.includedRepairPrice = true AND (ai.conditionPrice + ai.repairPrice) < 0 THEN ai.conditionPrice + ai.repairPrice ELSE 0 END) as repairDeltaConditionPrice')
 
                 ->from(AuditItemInterface::class, 'ai')
                 ->join('ai.buybackOffer', 'abo')
@@ -238,6 +240,8 @@ class BuybackOfferSubscriber implements EventSubscriber
                         'statePrice' => 0,
                         'conditionPrice' => 0,
                         'repairPrice' => 0,
+                        'repairDeltaStatePrice' => 0,
+                        'repairDeltaConditionPrice' => 0,
                     ];
                 }
             }
@@ -247,9 +251,11 @@ class BuybackOfferSubscriber implements EventSubscriber
                 if ((float) $resItem['statePrice'] >= (float) $resItem['conditionPrice']) {
                     $calculationMethod = 'by_state';
                     $totalPrice = (float) $resItem['statePrice'];
+                    $totalRepairDeltaPrice = (float) $resItem['repairDeltaStatePrice'];
                 } else {
                     $calculationMethod = 'by_condition';
                     $totalPrice = (float) $resItem['conditionPrice'];
+                    $totalRepairDeltaPrice = (float) $resItem['repairDeltaConditionPrice'];
                 }
 
                 $totalPrice = $totalPrice + (float) $resItem['repairPrice'];
@@ -260,6 +266,7 @@ class BuybackOfferSubscriber implements EventSubscriber
                     ->set('bo.totalStatePrice', ':statePrice')
                     ->set('bo.totalConditionPrice', ':conditionPrice')
                     ->set('bo.totalRepairPrice', ':repairPrice')
+                    ->set('bo.totalRepairDeltaPrice', ':totalRepairDeltaPrice')
                     ->set('bo.totalPrice', ':totalPrice')
                     ->set('bo.calculationMethod', ':calculationMethod')
 
@@ -270,6 +277,7 @@ class BuybackOfferSubscriber implements EventSubscriber
                     ->setParameter('statePrice', (float) $resItem['statePrice'])
                     ->setParameter('conditionPrice', (float) $resItem['conditionPrice'])
                     ->setParameter('repairPrice', (float) $resItem['repairPrice'])
+                    ->setParameter('totalRepairDeltaPrice', $totalRepairDeltaPrice)
                     ->setParameter('totalPrice', $totalPrice)
                     ->setParameter('calculationMethod', $calculationMethod)
 

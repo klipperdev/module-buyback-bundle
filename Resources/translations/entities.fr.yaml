@@ -76,6 +76,7 @@ buyback_offer.fields.number_of_items: Quantité
 buyback_offer.fields.total_condition_price: Total par condition
 buyback_offer.fields.total_state_price: Total par état
 buyback_offer.fields.total_repair_price: Total des réparations
+buyback_offer.fields.total_repair_delta_price: Total du delta négatif des réparations
 buyback_offer.fields.total_price: Montant de la reprise
 buyback_offer.fields.comment: Commentaire
 buyback_offer.fields.closed: Clôturée
