@@ -772,7 +772,6 @@ class ApiAuditItemController
             if (null !== $formData->getRepairDeclaredBreakdownByCustomer()
                 && $audit instanceof AuditRepairableInterface
                 && null === $audit->getRepair()
-                && null !== $audit->getDevice()
             ) {
                 $repair = $auditManager->transferToRepair($audit);
                 $repair->setDeclaredBreakdownByCustomer($formData->getRepairDeclaredBreakdownByCustomer());
