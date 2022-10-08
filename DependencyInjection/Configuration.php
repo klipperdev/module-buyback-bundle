@@ -66,7 +66,7 @@ class Configuration implements ConfigurationInterface
             ->scalarPrototype()->end()
             ->end()
             ->end()
-            ;
+        ;
     }
 
     private function getBuybackOfferNode(): NodeDefinition
@@ -81,6 +81,6 @@ class Configuration implements ConfigurationInterface
             ->scalarPrototype()->end()
             ->end()
             ->end()
-            ;
+        ;
     }
 }
