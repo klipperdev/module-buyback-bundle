@@ -66,7 +66,7 @@ class ApiBuybackOfferController
             ->leftJoin('pcai.attribute', 'pcaia')
 
             ->where('ai.buybackOffer = :buybackOffer')
-            ->andWhere('ais.value = :status')
+            ->andWhere('ais.value IN (:statuses)')
 
             ->groupBy('p.id')
             ->addGroupBy('pc.id')
@@ -75,7 +75,7 @@ class ApiBuybackOfferController
             ->addOrderBy('p.name')
 
             ->setParameter('buybackOffer', $id)
-            ->setParameter('status', 'valorised')
+            ->setParameter('statuses', ['audited', 'valorised'])
             ->setParameter('null', null)
         ;
 
@@ -108,14 +108,14 @@ class ApiBuybackOfferController
             ->join('ai.status', 'ais')
 
             ->where('ai.buybackOffer = :buybackOffer')
-            ->andWhere('ais.value = :status')
+            ->andWhere('ais.value IN (:statuses)')
 
             ->groupBy('ac.id')
 
             ->orderBy('ac.label')
 
             ->setParameter('buybackOffer', $id)
-            ->setParameter('status', 'valorised')
+            ->setParameter('statuses', ['audited', 'valorised'])
         ;
 
         $this->filterAvailableQueryByEmptyPrice($qb);
@@ -144,10 +144,10 @@ class ApiBuybackOfferController
             ->join('ai.auditBatch', 'ab')
             ->join('ai.status', 'cs')
             ->andWhere('ai.auditCondition IS NOT NULL')
-            ->andWhere('cs.value = :status')
+            ->andWhere('cs.value IN (:statuses)')
 
             ->setParameter('buybackOffer', $id)
-            ->setParameter('status', 'valorised')
+            ->setParameter('statuses', ['audited', 'valorised'])
         ;
 
         $this->filterAvailableQueryByEmptyPrice($qb);
@@ -185,16 +185,17 @@ class ApiBuybackOfferController
 
             ->where('ai.buybackOffer = :buybackOffer')
             ->andWhere('ai.auditCondition IS NOT NULL')
-            ->andWhere('cs.value = :status')
+            ->andWhere('cs.value IN (:statuses)')
 
             ->setParameter('buybackOffer', $id)
-            ->setParameter('status', 'valorised')
+            ->setParameter('statuses', ['audited', 'valorised'])
         ;
 
         $this->filterAvailableQueryByEmptyPrice($qb);
         $this->filterAvailableQueryByProducts($request, $qb);
         $this->filterAvailableQueryByConditions($request, $qb);
         $this->filterAvailableQueryByRepairs($request, $qb);
+        $this->filterAvailableQueryByAuditItems($request, $qb);
         $this->filterAvailableQueryByAuditItems($request, $qb);
 
         /** @var AuditItemInterface[] $audits */
